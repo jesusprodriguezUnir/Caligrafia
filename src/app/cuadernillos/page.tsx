@@ -29,6 +29,23 @@ const FASES = [
   }
 ];
 
+const ESPECIALIDADES = [
+  {
+    titulo: "Módulo 123: Dominio Numérico",
+    descripcion: "Ejercicios especializados para el trazado correcto de números del 0 al 9.",
+    etiqueta: "Numérica",
+    color: "#10B981", // Emerald
+    archivo: "/recursos/numeros.png"
+  },
+  {
+    titulo: "Taller: Escritura Creativa",
+    descripcion: "Desarrollo de la narrativa y caligrafía libre a través de disparadores creativos.",
+    etiqueta: "Creatividad",
+    color: "#8B5CF6", // Violet
+    archivo: "/recursos/creatividad.png"
+  }
+];
+
 export default function Cuadernillos() {
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -41,17 +58,18 @@ export default function Cuadernillos() {
 
   return (
     <main className={styles.main}>
-      <div className={`${styles.hero} glass`} style={{ maxWidth: "1100px", padding: "3rem" }}>
-        <h1 className={styles.title} style={{ fontSize: "2.5rem" }}>Catálogo Técnico de Recursos</h1>
+      <div className={`${styles.hero} glass`} style={{ maxWidth: "1160px", padding: "4rem" }}>
+        <h1 className={styles.title} style={{ fontSize: "2.8rem" }}>Catálogo Técnico de Recursos</h1>
         <p className={styles.subtitle}>
-          Material de alta calidad diseñado para el desarrollo progresivo de la escritura manual.
+          Material de alta calidad diseñado para el desarrollo progresivo de la escritura y habilidades numéricas.
         </p>
         
+        <h2 style={{ textAlign: "left", margin: "2rem 0 1rem", borderBottom: "2px solid #f1f5f9", paddingBottom: "0.5rem", color: "var(--color-secondary)" }}>Fases de Aprendizaje</h2>
         <div style={{ 
           display: "grid", 
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", 
           gap: "2rem", 
-          margin: "3rem 0",
+          marginBottom: "4rem",
           textAlign: "left"
         }}>
           {FASES.map((fase, i) => (
@@ -81,30 +99,73 @@ export default function Cuadernillos() {
               
               <div style={{ position: "relative", width: "100%", height: "180px", backgroundColor: "#f8fafc", borderRadius: "var(--radius-sm)", marginBottom: "1.5rem", border: "1px solid #f1f5f9", overflow: "hidden", cursor: "zoom-in" }} onClick={() => setPreview(fase.archivo)}>
                 <Image src={fase.archivo} alt={fase.titulo} fill style={{ objectFit: "cover", opacity: 0.8 }} />
-                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.05)" }}>
-                  <span style={{ background: "white", padding: "8px 16px", borderRadius: "100px", fontSize: "0.8rem", fontWeight: 600, boxShadow: "var(--shadow-sm)" }}>Vista Previa</span>
-                </div>
               </div>
 
-              <div style={{ display: "flex", gap: "0.8rem", marginTop: "auto" }}>
-                <button 
-                  onClick={() => handleDownload(fase.archivo, fase.titulo)}
-                  className="btn-primary" 
-                  style={{ flex: 1, padding: "10px" }}
-                >
-                  Descargar
-                </button>
+              <button 
+                onClick={() => handleDownload(fase.archivo, fase.titulo)}
+                className="btn-primary" 
+                style={{ marginTop: "auto", width: "100%" }}
+              >
+                Descargar Material
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <h2 style={{ textAlign: "left", margin: "2rem 0 1rem", borderBottom: "2px solid #f1f5f9", paddingBottom: "0.5rem", color: "var(--color-secondary)" }}>Módulos Especializados</h2>
+        <div style={{ 
+          display: "grid", 
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", 
+          gap: "2rem", 
+          marginBottom: "3rem",
+          textAlign: "left"
+        }}>
+          {ESPECIALIDADES.map((esp, i) => (
+            <div key={i} style={{ 
+              background: "white", 
+              padding: "2rem", 
+              borderRadius: "var(--radius-lg)",
+              border: `1px solid #E2E8F0`,
+              boxShadow: "var(--shadow-md)",
+              display: "flex",
+              flexDirection: "column"
+            }}>
+              <div style={{ marginBottom: "1.5rem" }}>
+                <span style={{ 
+                  background: esp.color, 
+                  color: "#fff", 
+                  padding: "4px 12px", 
+                  borderRadius: "4px", 
+                  fontSize: "0.75rem", 
+                  fontWeight: "bold",
+                  textTransform: "uppercase",
+                  letterSpacing: "1px"
+                }}>{esp.etiqueta}</span>
+                <h3 style={{ marginTop: "1rem", color: "var(--color-text)", fontSize: "1.3rem" }}>{esp.titulo}</h3>
+                <p style={{ fontSize: "0.95rem", color: "#64748b", marginTop: "0.5rem", lineHeight: "1.5" }}>{esp.descripcion}</p>
               </div>
+              
+              <div style={{ position: "relative", width: "100%", height: "180px", backgroundColor: "#f8fafc", borderRadius: "var(--radius-sm)", marginBottom: "1.5rem", border: "1px solid #f1f5f9", overflow: "hidden", cursor: "zoom-in" }} onClick={() => setPreview(esp.archivo)}>
+                <Image src={esp.archivo} alt={esp.titulo} fill style={{ objectFit: "cover", opacity: 0.8 }} />
+              </div>
+
+              <button 
+                onClick={() => handleDownload(esp.archivo, esp.titulo)}
+                className="btn-primary" 
+                style={{ marginTop: "auto", width: "100%", backgroundColor: esp.color, color: "white" }}
+              >
+                Descargar Módulo
+              </button>
             </div>
           ))}
         </div>
 
         {/* Modal de Previsualización */}
         {preview && (
-          <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.8)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }} onClick={() => setPreview(null)}>
-            <div style={{ position: "relative", maxWidth: "90%", maxHeight: "90%", backgroundColor: "white", borderRadius: "var(--radius-lg)", overflow: "auto" }}>
+          <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }} onClick={() => setPreview(null)}>
+            <div style={{ position: "relative", maxWidth: "90%", maxHeight: "90%", backgroundColor: "white", borderRadius: "var(--radius-lg)", overflow: "auto", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)" }}>
                <img src={preview} style={{ display: "block", width: "auto", height: "auto", maxWidth: "100%" }} alt="Preview" />
-               <button style={{ position: "absolute", top: "1rem", right: "1rem", background: "white", border: "none", borderRadius: "50%", width: "40px", height: "40px", cursor: "pointer", fontWeight: "bold", fontSize: "1.2rem", boxShadow: "var(--shadow-md)" }}>×</button>
+               <button style={{ position: "absolute", top: "1rem", right: "1rem", background: "white", border: "none", borderRadius: "50%", width: "40px", height: "40px", cursor: "pointer", fontWeight: "bold", fontSize: "1.2rem", color: "var(--color-text)" }}>×</button>
             </div>
           </div>
         )}
