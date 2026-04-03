@@ -99,7 +99,7 @@ export async function processPDFs(): Promise<ProcessResult[]> {
       cover.drawCircle({ x: width / 2 + 50, y: 80, size: 30, color: rgb(1, 0.6, 0.2), opacity: 0.7 }); // Burbuja naranja
 
       // Título principal arcoíris/divertido
-      cover.drawText("CALIGRAFÍA MÁGICA", {
+      cover.drawText("CALIGRA-FIATE", {
          x: 70,
          y: height - 160,
          size: 38,
@@ -177,7 +177,7 @@ export async function processPDFs(): Promise<ProcessResult[]> {
          });
 
          // Pie de página infantil
-         newPage.drawText("Caligrafía Mágica", {
+         newPage.drawText("Caligra-fiate", {
             x: origW / 2 - 50,
             y: 18,
             size: 14,

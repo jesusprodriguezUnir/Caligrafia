@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Caligrafía Mágica - ¡Aprende Jugando!",
+  title: "Caligra-fiate - ¡Aprende Jugando!",
   description: "¡La plataforma más divertida para que los niños aprendan caligrafía con cuadernos mágicos y juegos de escritura!",
 };
 

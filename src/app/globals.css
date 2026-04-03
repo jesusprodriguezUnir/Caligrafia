@@ -101,3 +101,56 @@ a {
 .hero {
   animation: fadeIn 0.8s ease-out forwards;
 }
+
+/* Mobile responsiveness improvements */
+@media (max-width: 768px) {
+  :root {
+    --radius-lg: 35px;
+    --radius-md: 20px;
+    --border-thick: 3px solid #1A1A1A;
+  }
+
+  body {
+    font-size: 100%;
+  }
+
+  .btn-primary {
+    padding: 14px 28px;
+    font-size: 0.95rem;
+    min-height: 44px;
+    border-radius: var(--radius-md);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --radius-lg: 25px;
+    --radius-md: 15px;
+    --border-thick: 3px solid #1A1A1A;
+    --shadow-flat: 4px 4px 0px rgba(0,0,0,1);
+  }
+
+  body {
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+  }
+
+  .btn-primary {
+    padding: 16px 24px;
+    font-size: 1rem;
+    min-height: 48px;
+    width: 100%;
+    border-radius: var(--radius-md);
+  }
+
+  .glass {
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.98);
+  }
+
+  /* Hacer que las grillas sean de 1 columna en móvil */
+  [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+}

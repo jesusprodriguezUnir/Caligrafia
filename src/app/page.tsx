@@ -8,19 +8,20 @@ export default function Home() {
       <div className={`${styles.hero}`} style={{ 
         background: "white", 
         border: "var(--border-thick)", 
-        padding: "3.5rem", 
+        padding: "clamp(1.5rem, 5vw, 3.5rem)", 
         borderRadius: "var(--radius-lg)", 
         boxShadow: "var(--shadow-flat)",
         maxWidth: "1100px",
         margin: "0 auto",
-        position: "relative"
+        position: "relative",
+        width: "100%"
       }}>
         {/* Adorno de esquina hand-drawn */}
         <div style={{ position: "absolute", top: "-20px", right: "40px", background: "white", border: "var(--border-thick)", borderRadius: "15px", padding: "8px 20px", fontWeight: 900, transform: "rotate(5deg)", fontSize: "0.9rem" }}>
           ¡NUEVO CURSO! 🖍️
         </div>
 
-        <div style={{ position: "relative", width: "100%", height: "350px", borderRadius: "var(--radius-md)", overflow: "hidden", marginBottom: "2.5rem", border: "var(--border-thick)" }}>
+        <div style={{ position: "relative", width: "100%", height: "clamp(200px, 50vw, 350px)", borderRadius: "var(--radius-md)", overflow: "hidden", marginBottom: "2.5rem", border: "var(--border-thick)" }}>
            <Image 
              src="/hero-play.png" 
              alt="Caligrafía Creativa" 
@@ -30,12 +31,12 @@ export default function Home() {
            />
         </div>
         
-        <h1 className={styles.title} style={{ fontWeight: 900, fontSize: "4rem", color: "var(--color-primary)", lineHeight: 1.1 }}>
-          <span style={{ fontSize: "1.5rem", display: "block", color: "var(--color-accent)", fontFamily: "var(--font-hand)", marginBottom: "0.5rem" }}>Aprende de forma divertida</span>
-          CALIGRAFÍA <span style={{ color: "var(--color-secondary)" }}>MÁGICA</span>
+        <h1 className={styles.title} style={{ fontWeight: 900, fontSize: "clamp(2rem, 8vw, 4rem)", color: "var(--color-primary)", lineHeight: 1.1 }}>
+          <span style={{ fontSize: "clamp(1rem, 4vw, 1.5rem)", display: "block", color: "var(--color-accent)", fontFamily: "var(--font-hand)", marginBottom: "0.5rem" }}>Aprende de forma divertida</span>
+          CALIGRA-<span style={{ color: "var(--color-secondary)" }}><br className="mobile-break" />FIATE</span>
         </h1>
         
-        <p className={styles.subtitle} style={{ color: "#475569", fontWeight: 600, fontSize: "1.3rem", marginBottom: "3rem", maxWidth: "800px", margin: "1rem auto 3rem" }}>
+        <p className={styles.subtitle} style={{ color: "#475569", fontWeight: 600, fontSize: "clamp(0.9rem, 3vw, 1.3rem)", marginBottom: "3rem", maxWidth: "800px", margin: "1rem auto 3rem" }}>
           ¡Crea, practica y juega con letras mágicas en un entorno lleno de creatividad! 🌟
         </p>
         
@@ -44,7 +45,7 @@ export default function Home() {
           background: "linear-gradient(135deg, #0EA5E9 0%, #1A1A1A 100%)",
           border: "var(--border-thick)",
           borderRadius: "var(--radius-md)",
-          padding: "2rem 2.5rem",
+          padding: "clamp(1.5rem, 4vw, 2.5rem)",
           color: "white",
           display: "flex",
           alignItems: "center",
@@ -63,7 +64,7 @@ export default function Home() {
             <div style={{ display: "inline-block", background: "var(--color-accent)", border: "2px solid white", borderRadius: "30px", padding: "3px 14px", fontSize: "0.78rem", fontWeight: 900, marginBottom: "0.7rem", letterSpacing: "1px" }}>
               ✨ GENERADOR DE FICHAS
             </div>
-            <h2 style={{ fontSize: "3.5rem", fontWeight: 800, margin: "0 0 0.4rem", lineHeight: 1.1, fontFamily: "var(--font-calligraphy)", textShadow: "2px 2px 0px rgba(0,0,0,0.1)" }}>
+            <h2 style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", fontWeight: 800, margin: "0 0 0.4rem", lineHeight: 1.1, fontFamily: "var(--font-calligraphy)", textShadow: "2px 2px 0px rgba(0,0,0,0.1)" }}>
               Caligra<span style={{ color: "#EF4444" }}>-</span>Fíate
             </h2>
             <p style={{ margin: 0, opacity: 0.85, fontSize: "1rem", fontWeight: 600 }}>
