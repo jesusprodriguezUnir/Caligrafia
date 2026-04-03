@@ -16,24 +16,21 @@ export default function Home() {
         position: "relative",
         width: "100%"
       }}>
-        {/* Adorno de esquina hand-drawn */}
-        <div style={{ position: "absolute", top: "-20px", right: "40px", background: "white", border: "var(--border-thick)", borderRadius: "15px", padding: "8px 20px", fontWeight: 900, transform: "rotate(5deg)", fontSize: "0.9rem" }}>
-          ¡NUEVO CURSO! 🖍️
-        </div>
-
-        <div style={{ position: "relative", width: "100%", height: "clamp(200px, 50vw, 350px)", borderRadius: "var(--radius-md)", overflow: "hidden", marginBottom: "2.5rem", border: "var(--border-thick)" }}>
+        <div style={{ position: "relative", width: "min(100%, 620px)", aspectRatio: "1 / 1", borderRadius: "var(--radius-md)", overflow: "hidden", margin: "0 auto 2.5rem", border: "var(--border-thick)", background: "linear-gradient(180deg, #d9f1ff 0%, #edf7ff 100%)", boxShadow: "6px 6px 0 #1a1a1a" }}>
            <Image 
-             src="/hero-play.png" 
-             alt="Caligrafía Creativa" 
+             src="/hero.png" 
+             alt="Nina sonriendo mientras aprende caligrafia" 
              fill
              priority
-             style={{ objectFit: "cover" }}
+             sizes="(max-width: 1100px) 100vw, 1100px"
+             quality={100}
+             style={{ objectFit: "cover", objectPosition: "center 35%" }}
            />
         </div>
         
-        <h1 className={styles.title} style={{ fontWeight: 900, fontSize: "clamp(2rem, 8vw, 4rem)", color: "var(--color-primary)", lineHeight: 1.1 }}>
+        <h1 className={styles.title} style={{ fontWeight: 900, fontSize: "clamp(1.35rem, 7vw, 3.6rem)", color: "var(--color-primary)", lineHeight: 1.1, whiteSpace: "nowrap", letterSpacing: "-0.02em" }}>
           <span style={{ fontSize: "clamp(1rem, 4vw, 1.5rem)", display: "block", color: "var(--color-accent)", fontFamily: "var(--font-hand)", marginBottom: "0.5rem" }}>Aprende de forma divertida</span>
-          CALIGRA-<span style={{ color: "var(--color-secondary)" }}><br className="mobile-break" />FIATE</span>
+          CALIGRA-<span style={{ color: "var(--color-secondary)" }}>F<span className={styles.pencilAccentLetter}>ı</span>ATE</span>
         </h1>
         
         <p className={styles.subtitle} style={{ color: "#475569", fontWeight: 600, fontSize: "clamp(0.9rem, 3vw, 1.3rem)", marginBottom: "3rem", maxWidth: "800px", margin: "1rem auto 3rem" }}>
@@ -65,7 +62,7 @@ export default function Home() {
               ✨ GENERADOR DE FICHAS
             </div>
             <h2 style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", fontWeight: 800, margin: "0 0 0.4rem", lineHeight: 1.1, fontFamily: "var(--font-calligraphy)", textShadow: "2px 2px 0px rgba(0,0,0,0.1)" }}>
-              Caligra<span style={{ color: "#EF4444" }}>-</span>Fíate
+              Caligra<span style={{ color: "#EF4444" }}>-</span>F<span className={styles.pencilAccentLetter}>ı</span>ate
             </h2>
             <p style={{ margin: 0, opacity: 0.85, fontSize: "1rem", fontWeight: 600 }}>
               Crea fichas personalizadas paso a paso: formato, márgenes, tipo de letra y contenido.

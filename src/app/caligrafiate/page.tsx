@@ -555,7 +555,7 @@ export default function CaligrafiatePage() {
       <header className={styles.header}>
         <Link href="/" className={styles.backBtn}>← Inicio</Link>
         <h1 className={styles.brand}>
-          Caligra<span className={styles.brandUnder}>-</span>Fíate
+          Caligra<span className={styles.brandUnder}>-</span>F<span className={styles.brandPencilI}>ı</span>ate
         </h1>
         <span className={styles.tagline}>Tu ficha. Tu ritmo. Tu letra. ✍️</span>
       </header>
