@@ -178,9 +178,10 @@ export default function Cuadernillos() {
         {/* Enlaces a otras zonas mágicas */}
         <div style={{ 
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gridTemplateColumns: "minmax(300px, 560px)",
           gap: "2rem",
-          marginTop: "5rem"
+          marginTop: "5rem",
+          justifyContent: "center"
         }}>
           <div style={{ 
             padding: "2.5rem", 
@@ -193,20 +194,6 @@ export default function Cuadernillos() {
             <p style={{ color: "#0F766E", fontSize: "1rem", fontWeight: 600 }}>¡Usa el Generador Mágico para escribir lo que quieras!</p>
             <Link href="/generador" className="btn-primary" style={{ marginTop: "1.5rem", width: "100%", padding: "15px", borderRadius: "50px", backgroundColor: "#0D9488", boxShadow: "0 6px 0px #0F766E" }}>
               🪄 Abrir Generador
-            </Link>
-          </div>
-
-          <div style={{ 
-            padding: "2.5rem", 
-            backgroundColor: "#FAF5FF", 
-            borderRadius: "40px", 
-            textAlign: "center",
-            border: "4px dashed #A855F7"
-          }}>
-            <h2 style={{ fontSize: "1.8rem", marginBottom: "0.5rem", color: "#7E22CE", fontWeight: 800 }}>Mega Colección 🚀</h2>
-            <p style={{ color: "#6B21A8", fontSize: "1rem", fontWeight: 600 }}>¡Tenemos más de 80 cuadernos históricos para ti!</p>
-            <Link href="/coleccion-completa" className="btn-primary" style={{ marginTop: "1.5rem", width: "100%", padding: "15px", borderRadius: "50px", backgroundColor: "#7E22CE", boxShadow: "0 6px 0px #6B21A8" }}>
-              🌈 Explorar Todo
             </Link>
           </div>
         </div>

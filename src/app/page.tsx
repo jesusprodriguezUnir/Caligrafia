@@ -100,21 +100,7 @@ export default function Home() {
             textDecoration: "none",
             color: "white"
           }}>
-            Sabes más &gt;
-          </Link>
-          {/* Nuevo botón para la Mega Colección */}
-          <Link href="/coleccion-completa" style={{ 
-            padding: "20px 40px", 
-            fontSize: "1.4rem", 
-            borderRadius: "var(--radius-md)", 
-            backgroundColor: "#FDE047", 
-            color: "var(--color-primary)", 
-            border: "var(--border-thick)",
-            boxShadow: "6px 6px 0px #A16207",
-            fontWeight: 900,
-            textDecoration: "none"
-          }}>
-            Mega Biblioteca 📚
+            Saber más &gt;
           </Link>
         </div>
       </div>
