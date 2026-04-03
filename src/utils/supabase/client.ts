@@ -1,9 +1,25 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-// Make sure to add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env.local
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+const supabaseAnonKey =
+	process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+	process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+	"";
 
-// Exporting a singleton client. Since we are doing output: 'export' for GitHub pages, 
-// we rely entirely on the standard browser localStorage for Supabase Auth persistence.
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+let supabaseClient: SupabaseClient | null = null;
+
+export function getSupabaseClient() {
+	if (supabaseClient) {
+		return supabaseClient;
+	}
+
+	if (!supabaseUrl || !supabaseAnonKey) {
+		throw new Error(
+			"Supabase env vars faltantes. Define NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY (o NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)."
+		);
+	}
+
+	// Singleton client for browser runtime in static deployments.
+	supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+	return supabaseClient;
+}

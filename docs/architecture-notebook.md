@@ -18,6 +18,7 @@ This notebook covers the frontend application (Next.js), its static export capab
 ## 3. Architectural Constraints
 - **Next.js Static Export**: The application is configured with `output: 'export'`, meaning no server-side Next.js features (like API routes or SSR) can be used.
 - **Client-Side Supabase**: All database and auth interactions must happen on the client.
+- **Remote Processing**: Heavy operations (like PDF batch processing) must run outside Next.js runtime, using Supabase Edge Functions.
 - **Device Support**: Must work well on tablets and desktops with touch or mouse input for the canvas.
 
 ## 4. Architecture Overview
@@ -36,6 +37,7 @@ The system follows a **Component-Based Architecture** using React and Next.js.
 - **Authentication**: Managed via Supabase Auth (client-side persistence).
 - **Database**: PostgreSQL (provided by Supabase) for storing user progress or booklet metadata.
 - **Storage**: Supabase Storage for PDF booklets (if applicable).
+- **Edge Functions**: `process-pdfs` function handles admin-triggered PDF processing for static deployments.
 
 ## 5. Key Architectural Decisions
 | Decision ID | Decision | Rationale | Status |
@@ -44,6 +46,7 @@ The system follows a **Component-Based Architecture** using React and Next.js.
 | AD-002 | Canvas API for Lienzo | Standard browser API for high-performance interactive drawing without external heavy libraries. | Accepted |
 | AD-003 | Supabase | Provides a robust, serverless backend that integrates easily with a static frontend. | Accepted |
 | AD-004 | Vanilla CSS + CSS Modules | Maximum control over performance and design aesthetics without the overhead of heavy utility frameworks like Tailwind for the core kids-UI. | Accepted |
+| AD-005 | Move PDF processing to Supabase Edge Function | Keeps static export compatibility while enabling admin batch jobs. | Accepted |
 
 ## 6. Subsystem Decomposition
 - **UI Components**: Reusable buttons, cards, and glassmorphism elements.

@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Caligrafia Magica
 
-## Getting Started
+Aplicacion Next.js con export estatico y backend desacoplado en Supabase.
 
-First, run the development server:
+## Requisitos
+
+- Node.js 20+
+- Proyecto Supabase creado
+
+## Variables de entorno
+
+Copia `.env.example` a `.env.local` y completa los valores:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Variables usadas por el frontend:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` (o `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`)
+- `NEXT_PUBLIC_SUPABASE_PROCESS_PDFS_FUNCTION` (opcional, default `process-pdfs`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Desarrollo local
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Arquitectura de procesado PDF
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+El proyecto se despliega como estatico (`output: "export"`), por lo que no usa API Routes de Next.js en produccion.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+El boton de administracion `/admin/pdf-manager` invoca una **Supabase Edge Function**:
 
-## Deploy on Vercel
+- Funcion: `process-pdfs`
+- Archivo: `supabase/functions/process-pdfs/index.ts`
+- Seguridad: requiere usuario autenticado con rol `admin`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Despliegue de la Edge Function
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Instala y autentica Supabase CLI.
+1. Vincula el proyecto:
+
+```bash
+supabase link --project-ref zxzwclhuglgpybesobmt
+```
+
+1. Configura secretos para la funcion (ejemplo):
+
+```bash
+supabase secrets set PDF_SOURCE_BUCKET=recursos
+supabase secrets set PDF_OUTPUT_BUCKET=recursos
+supabase secrets set PDF_SOURCE_PREFIX=
+supabase secrets set PDF_OUTPUT_PREFIX=processed
+```
+
+1. Despliega la funcion:
+
+```bash
+supabase functions deploy process-pdfs
+```
+
+## Despliegue en Vercel
+
+1. Importa el repositorio en Vercel.
+1. En Project Settings -> Environment Variables, agrega `NEXT_PUBLIC_SUPABASE_URL`.
+1. En Project Settings -> Environment Variables, agrega `NEXT_PUBLIC_SUPABASE_ANON_KEY` (puedes usar tu key publishable).
+1. En Project Settings -> Environment Variables, agrega `NEXT_PUBLIC_SUPABASE_PROCESS_PDFS_FUNCTION` = `process-pdfs`.
+1. Ejecuta deploy.
+
+## Verificacion
+
+1. Abre la app desplegada.
+2. Inicia sesion con un usuario admin en Supabase.
+3. Accede a `/admin/pdf-manager` y ejecuta el procesamiento.
+4. Verifica resultados en Supabase Storage bajo el prefijo `processed/`.

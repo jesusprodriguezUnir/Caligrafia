@@ -3,27 +3,56 @@
 import { useState } from "react";
 import Link from "next/link";
 import styles from "../../page.module.css";
+import { getSupabaseClient } from "@/utils/supabase/client";
+
+interface ProcessResult {
+  fileName: string;
+  success: boolean;
+  outputPath?: string;
+  error?: string;
+}
+
+interface ProcessResponse {
+  success: boolean;
+  message?: string;
+  results?: ProcessResult[];
+  error?: string;
+}
+
+const PROCESS_FUNCTION_NAME =
+  process.env.NEXT_PUBLIC_SUPABASE_PROCESS_PDFS_FUNCTION || "process-pdfs";
 
 export default function PDFManager() {
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<ProcessResult[]>([]);
   const [status, setStatus] = useState<"idle" | "running" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const startProcessing = async () => {
     setLoading(true);
     setStatus("running");
+    setErrorMessage("");
+
     try {
-      const response = await fetch("/api/admin/process-pdfs", {
-        method: "POST",
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase.functions.invoke<ProcessResponse>(PROCESS_FUNCTION_NAME, {
+        body: {},
       });
-      const data = await response.json();
-      if (data.success) {
-        setResults(data.results);
+
+      if (error) {
+        throw new Error(error.message || "No se pudo ejecutar la función de procesamiento");
+      }
+
+      if (data?.success) {
+        setResults(data.results || []);
         setStatus("success");
       } else {
+        setErrorMessage(data?.error || "La función devolvió un error");
         setStatus("error");
       }
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Error inesperado al procesar PDFs";
+      setErrorMessage(message);
       setStatus("error");
     } finally {
       setLoading(false);
@@ -75,7 +104,7 @@ export default function PDFManager() {
                 </div>
                 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem" }}>
-                    {results.map((res: any, idx: number) => (
+                    {results.map((res: ProcessResult, idx: number) => (
                         <div key={idx} style={{ 
                             background: "white", 
                             padding: "1rem 1.5rem", 
@@ -101,7 +130,12 @@ export default function PDFManager() {
 
         {status === "error" && (
             <div style={{ color: "#B91C1C", fontSize: "1.2rem", fontWeight: "bold", textAlign: "center", padding: "2rem", background: "#FEE2E2", border: "4px dashed #F87171", borderRadius: "20px" }}>
-                ¡Oh no! 🐵 Algo se ha roto. ¡Avisa a los mecánicos!
+                <div>¡Oh no! 🐵 Algo se ha roto. ¡Avisa a los mecánicos!</div>
+                {errorMessage && (
+                  <p style={{ marginTop: "0.75rem", fontSize: "1rem", fontWeight: 600 }}>
+                    {errorMessage}
+                  </p>
+                )}
             </div>
         )}
 
