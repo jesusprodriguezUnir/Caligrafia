@@ -1,21 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
 
 :root {
-  /* Professional Premium UI Colors */
-  --color-primary: #3B82F6; /* Modern Blue */
-  --color-secondary: #1E293B; /* Slate Dark */
-  --color-accent: #F59E0B; /* Amber */
-  --color-background: #F8FAFC; /* Extra light gray-blue background */
-  --color-text: #0F172A; /* Deep Slate text */
+  /* Mundo Primaria Inspired Playful UI Colors - Blue Version */
+  --color-primary: #0EA5E9; /* Sky Blue Deep */
+  --color-secondary: #38BDF8; /* Light Sky Blue */
+  --color-accent: #FDE047; /* Sunny Yellow */
+  --color-success: #4ADE80; /* Playful Green */
+  --color-background: #F0F9FF; /* Very Light Blue */
+  --color-text: #020617; /* Slate Darkest */
   --color-surface: #FFFFFF;
   
-  --radius-lg: 12px; /* Smaller, cleaner corners */
-  --radius-md: 8px;
-  --radius-sm: 4px;
+  --radius-lg: 40px; /* Even rounder! */
+  --radius-md: 20px;
+  --radius-sm: 12px;
   
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 4px 6px -1px rgba(14, 165, 233, 0.1);
+  --shadow-md: 0 10px 15px -3px rgba(14, 165, 233, 0.2);
+  --shadow-lg: 0 20px 25px -5px rgba(14, 165, 233, 0.3);
 }
 
 * {

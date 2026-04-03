@@ -5,191 +5,201 @@ import Link from "next/link";
 import styles from "../page.module.css";
 import Image from "next/image";
 
-const FASES = [
-  {
-    titulo: "Fase 1: Trazos Fundamentales",
-    descripcion: "Ejercicios de grafomotricidad para el control inicial del trazo. Líneas, curvas y patrones básicos.",
-    etiqueta: "Principiante",
-    color: "#3B82F6",
-    archivo: "/recursos/fase1.png"
-  },
-  {
-    titulo: "Fase 2: El Alfabeto Completo",
-    descripcion: "Guía completa de letras mayúsculas y minúsculas con indicadores de dirección.",
-    etiqueta: "Intermedio",
-    color: "#1E293B",
-    archivo: "/recursos/fase2.png"
-  },
-  {
-    titulo: "Fase 3: Fluidez y Frases",
-    descripcion: "Práctica de caligrafía aplicada a frases comunes para mejorar la conexión entre letras.",
-    etiqueta: "Avanzado",
-    color: "#F59E0B",
-    archivo: "/recursos/fase3.png"
-  }
-];
-
-const ESPECIALIDADES = [
-  {
-    titulo: "Módulo 123: Dominio Numérico",
-    descripcion: "Ejercicios especializados para el trazado correcto de números del 0 al 9.",
-    etiqueta: "Numérica",
-    color: "#10B981", // Emerald
-    archivo: "/recursos/numeros.png"
-  },
-  {
-    titulo: "Taller: Escritura Creativa",
-    descripcion: "Desarrollo de la narrativa y caligrafía libre a través de disparadores creativos.",
-    etiqueta: "Creatividad",
-    color: "#8B5CF6", // Violet
-    archivo: "/recursos/creatividad.png"
-  }
+const CATEGORIAS_MAGICAS = [
+  { id: 1, titulo: "Preescritura", emoji: "🌀", desc: "¡Controla tu mano mágica con trazos y ondas!", archivo: "/test-cuadernos/1-test.pdf" },
+  { id: 2, titulo: "Vocales Mayúsculas", emoji: "🅰️", desc: "A, E, I, O, U en grande para gritar fuerte.", archivo: "/test-cuadernos/2-test.pdf" },
+  { id: 3, titulo: "Abecedario Mayúsculas", emoji: "🔠", desc: "¡Todas las letras gigantes de la A a la Z!", archivo: "/test-cuadernos/3-test.pdf" },
+  { id: 4, titulo: "Vocales Minúsculas", emoji: "ᵃ", desc: "A, e, i, o, u pequeñitas y saltarinas.", archivo: "/test-cuadernos/4-test.pdf" },
+  { id: 5, titulo: "Abecedario Minúsculas", emoji: "🔡", desc: "¡Todas las letras pequeñas para escribir cuentos!", archivo: "/test-cuadernos/5-test.pdf" },
+  { id: 6, titulo: "Palabras Mayúsculas", emoji: "🍎", desc: "¡Escribe tus primeras palabras en grande!", archivo: "/test-cuadernos/6-test.pdf" },
+  { id: 7, titulo: "Palabras Minúsculas", emoji: "☀️", desc: "¡Aprende a escribir palabras de verdad!", archivo: "/test-cuadernos/7-test.pdf" },
+  { id: 8, titulo: "Frases Mayúsculas", emoji: "📢", desc: "¡Construye mensajes importantes en gigante!", archivo: "/test-cuadernos/8-test.pdf" },
+  { id: 9, titulo: "Frases Minúsculas", emoji: "💬", desc: "¡Escribe frases bonitas para tus amigos!", archivo: "/test-cuadernos/9-test.pdf" },
+  { id: 10, titulo: "Textos Mágicos", emoji: "📖", desc: "¡Conviértete en un gran escritor de historias!", archivo: "/test-cuadernos/10-test.pdf" },
 ];
 
 export default function Cuadernillos() {
+  const [activeTab, setActiveTab] = useState(1);
   const [preview, setPreview] = useState<string | null>(null);
 
-  const handleDownload = (archivo: string, titulo: string) => {
+  const currentCategory = CATEGORIAS_MAGICAS.find(c => c.id === activeTab);
+
+  const handleDownload = (archivo?: string, titulo?: string) => {
+    if (!archivo) return;
     const link = document.createElement('a');
     link.href = archivo;
-    link.download = `${titulo.replace(/\s+/g, '-').toLowerCase()}.png`;
+    link.download = `${titulo || 'cuaderno'}.pdf`;
     link.click();
   };
 
   return (
-    <main className={styles.main}>
-      <div className={`${styles.hero} glass`} style={{ maxWidth: "1160px", padding: "4rem" }}>
-        <h1 className={styles.title} style={{ fontSize: "2.8rem" }}>Catálogo Técnico de Recursos</h1>
-        <p className={styles.subtitle}>
-          Material de alta calidad diseñado para el desarrollo progresivo de la escritura y habilidades numéricas.
-        </p>
+    <main className={styles.main} style={{ background: "#E0F2FE", backgroundImage: "radial-gradient(#BAE6FD 2px, transparent 2px)", backgroundSize: "40px 40px" }}>
+      <div className={`${styles.hero} glass`} style={{ maxWidth: "1200px", padding: "3rem", border: "8px solid white", borderRadius: "50px", boxShadow: "var(--shadow-lg)", background: "white" }}>
         
-        <h2 style={{ textAlign: "left", margin: "2rem 0 1rem", borderBottom: "2px solid #f1f5f9", paddingBottom: "0.5rem", color: "var(--color-secondary)" }}>Fases de Aprendizaje</h2>
-        <div style={{ 
-          display: "grid", 
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", 
-          gap: "2rem", 
-          marginBottom: "4rem",
-          textAlign: "left"
-        }}>
-          {FASES.map((fase, i) => (
-            <div key={i} style={{ 
-              background: "white", 
-              padding: "2rem", 
-              borderRadius: "var(--radius-lg)",
-              border: `1px solid #E2E8F0`,
-              boxShadow: "var(--shadow-md)",
-              display: "flex",
-              flexDirection: "column"
-            }}>
-              <div style={{ marginBottom: "1.5rem" }}>
-                <span style={{ 
-                  background: i === 2 ? "var(--color-accent)" : "var(--color-primary)", 
-                  color: "#fff", 
-                  padding: "4px 12px", 
-                  borderRadius: "4px", 
-                  fontSize: "0.75rem", 
-                  fontWeight: "bold",
-                  textTransform: "uppercase",
-                  letterSpacing: "1px"
-                }}>{fase.etiqueta}</span>
-                <h3 style={{ marginTop: "1rem", color: "var(--color-text)", fontSize: "1.3rem" }}>{fase.titulo}</h3>
-                <p style={{ fontSize: "0.95rem", color: "#64748b", marginTop: "0.5rem", lineHeight: "1.5" }}>{fase.descripcion}</p>
-              </div>
-              
-              <div style={{ position: "relative", width: "100%", height: "180px", backgroundColor: "#f8fafc", borderRadius: "var(--radius-sm)", marginBottom: "1.5rem", border: "1px solid #f1f5f9", overflow: "hidden", cursor: "zoom-in" }} onClick={() => setPreview(fase.archivo)}>
-                <Image src={fase.archivo} alt={fase.titulo} fill style={{ objectFit: "cover", opacity: 0.8 }} />
-              </div>
+        <h1 className={styles.title} style={{ fontSize: "3.5rem", color: "var(--color-primary)", fontWeight: 900 }}>¡El Cofre de los Cuadernos! 🎁</h1>
+        <p className={styles.subtitle} style={{ fontSize: "1.3rem", color: "#475569", fontWeight: 600, marginBottom: "3rem" }}>
+          ¡Elige tu aventura favorita y empieza a dibujar letras mágicas hoy mismo! ✨
+        </p>
 
-              <button 
-                onClick={() => handleDownload(fase.archivo, fase.titulo)}
-                className="btn-primary" 
-                style={{ marginTop: "auto", width: "100%" }}
-              >
-                Descargar Material
-              </button>
-            </div>
+        {/* Sistema de 10 Pestañas Infantiles */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center", marginBottom: "3rem" }}>
+          {CATEGORIAS_MAGICAS.map(cat => (
+            <button 
+              key={cat.id}
+              onClick={() => setActiveTab(cat.id)}
+              style={{
+                padding: "1rem 1.5rem",
+                borderRadius: "50px",
+                border: "none",
+                backgroundColor: activeTab === cat.id ? "var(--color-primary)" : "#F1F5F9",
+                color: activeTab === cat.id ? "white" : "#64748B",
+                fontWeight: 800,
+                fontSize: "1rem",
+                cursor: "pointer",
+                transition: "all 0.1s",
+                boxShadow: activeTab === cat.id ? "0 5px 0px #0369A1" : "0 5px 0px #CBD5E1",
+                transform: activeTab === cat.id ? "translateY(2px)" : "none",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px"
+              }}
+            >
+              <span style={{ fontSize: "1.3rem" }}>{cat.emoji === "sol" ? "☀️" : cat.emoji === "APPLE" ? "🍎" : cat.emoji}</span>
+              {cat.titulo}
+            </button>
           ))}
         </div>
 
-        <h2 style={{ textAlign: "left", margin: "2rem 0 1rem", borderBottom: "2px solid #f1f5f9", paddingBottom: "0.5rem", color: "var(--color-secondary)" }}>Módulos Especializados</h2>
+        {/* Sección de Contenido Activo */}
         <div style={{ 
-          display: "grid", 
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", 
-          gap: "2rem", 
-          marginBottom: "3rem",
-          textAlign: "left"
+          background: "#F8FAFC", 
+          padding: "3rem", 
+          borderRadius: "40px", 
+          border: "5px dashed var(--color-secondary)",
+          textAlign: "center",
+          animation: "fadeIn 0.4s ease-out"
         }}>
-          {ESPECIALIDADES.map((esp, i) => (
-            <div key={i} style={{ 
-              background: "white", 
-              padding: "2rem", 
-              borderRadius: "var(--radius-lg)",
-              border: `1px solid #E2E8F0`,
-              boxShadow: "var(--shadow-md)",
-              display: "flex",
-              flexDirection: "column"
-            }}>
-              <div style={{ marginBottom: "1.5rem" }}>
-                <span style={{ 
-                  background: esp.color, 
-                  color: "#fff", 
-                  padding: "4px 12px", 
-                  borderRadius: "4px", 
-                  fontSize: "0.75rem", 
-                  fontWeight: "bold",
-                  textTransform: "uppercase",
-                  letterSpacing: "1px"
-                }}>{esp.etiqueta}</span>
-                <h3 style={{ marginTop: "1rem", color: "var(--color-text)", fontSize: "1.3rem" }}>{esp.titulo}</h3>
-                <p style={{ fontSize: "0.95rem", color: "#64748b", marginTop: "0.5rem", lineHeight: "1.5" }}>{esp.descripcion}</p>
-              </div>
-              
-              <div style={{ position: "relative", width: "100%", height: "180px", backgroundColor: "#f8fafc", borderRadius: "var(--radius-sm)", marginBottom: "1.5rem", border: "1px solid #f1f5f9", overflow: "hidden", cursor: "zoom-in" }} onClick={() => setPreview(esp.archivo)}>
-                <Image src={esp.archivo} alt={esp.titulo} fill style={{ objectFit: "cover", opacity: 0.8 }} />
-              </div>
+          <div style={{ marginBottom: "2rem" }}>
+            <span style={{ fontSize: "4rem" }}>{currentCategory?.emoji === "sol" ? "☀️" : currentCategory?.emoji === "APPLE" ? "🍎" : currentCategory?.emoji}</span>
+            <h2 style={{ fontSize: "2.5rem", color: "var(--color-secondary)", fontWeight: 900, marginTop: "1rem" }}>
+              Nivel {currentCategory?.id}: {currentCategory?.titulo}
+            </h2>
+            <p style={{ fontSize: "1.2rem", color: "#64748B", fontWeight: 600 }}>{currentCategory?.desc}</p>
+          </div>
 
-              <button 
-                onClick={() => handleDownload(esp.archivo, esp.titulo)}
-                className="btn-primary" 
-                style={{ marginTop: "auto", width: "100%", backgroundColor: esp.color, color: "white" }}
-              >
-                Descargar Módulo
-              </button>
-            </div>
-          ))}
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", 
+            gap: "2rem",
+            justifyItems: "center"
+          }}>
+            {/* Aquí simulamos los cuadernos disponibles para cada categoría */}
+            {[1, 2, 3].map(item => (
+              <div key={item} style={{ 
+                background: "white", 
+                padding: "1.5rem", 
+                borderRadius: "30px", 
+                border: "4px solid #E2E8F0",
+                boxShadow: "0 10px 20px rgba(0,0,0,0.05)",
+                width: "100%",
+                maxWidth: "320px"
+              }}>
+                <div style={{ 
+                  width: "100%", 
+                  height: "200px", 
+                  backgroundColor: "#F1F5F9", 
+                  borderRadius: "20px", 
+                  marginBottom: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "4rem",
+                  border: "2px dashed #CBD5E1"
+                }}>
+                   {currentCategory?.emoji}
+                </div>
+                <h4 style={{ fontWeight: 800, color: "#334155", fontSize: "1.2rem" }}>Cuaderno #{currentCategory?.id}.{item}</h4>
+                <div style={{ display: "flex", gap: "10px", marginTop: "1.2rem" }}>
+                  <button 
+                    onClick={() => setPreview(currentCategory?.archivo || null)}
+                    style={{ flex: 1, backgroundColor: "#F1F5F9", color: "#64748B", borderRadius: "50px", padding: "12px", fontWeight: 800, border: "2px solid #E2E8F0", cursor: "pointer" }}
+                  >
+                    🔍 Ver
+                  </button>
+                  <button 
+                    onClick={() => handleDownload(currentCategory?.archivo, `${currentCategory?.titulo}-${item}`)}
+                    className="btn-primary" 
+                    style={{ flex: 2, borderRadius: "50px", padding: "14px", fontWeight: 800, fontSize: "1.1rem", boxShadow: "0 6px 0px #0369A1" }}
+                  >
+                    📥 Bajar
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Modal de Previsualización */}
+        {/* Modal de Previsualización Mágico */}
         {preview && (
-          <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }} onClick={() => setPreview(null)}>
-            <div style={{ position: "relative", maxWidth: "90%", maxHeight: "90%", backgroundColor: "white", borderRadius: "var(--radius-lg)", overflow: "auto", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)" }}>
-               <img src={preview} style={{ display: "block", width: "auto", height: "auto", maxWidth: "100%" }} alt="Preview" />
-               <button style={{ position: "absolute", top: "1rem", right: "1rem", background: "white", border: "none", borderRadius: "50%", width: "40px", height: "40px", cursor: "pointer", fontWeight: "bold", fontSize: "1.2rem", color: "var(--color-text)" }}>×</button>
+          <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
+            <div style={{ position: "relative", width: "90%", height: "90%", backgroundColor: "white", borderRadius: "40px", overflow: "hidden", display: "flex", flexDirection: "column", border: "8px solid var(--color-primary)" }}>
+               <div style={{ padding: "1.5rem 2rem", borderBottom: "4px dashed #E2E8F0", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#F8FAFC" }}>
+                 <h3 style={{ fontSize: "1.8rem", fontWeight: 900, color: "var(--color-primary)" }}>✨ Vista Previa Mágica ✨</h3>
+                 <button 
+                  onClick={() => setPreview(null)}
+                  style={{ background: "#38BDF8", border: "none", borderRadius: "50%", width: "45px", height: "45px", cursor: "pointer", fontWeight: "bold", color: "white", fontSize: "1.5rem", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 0px #0369A1" }}>×</button>
+               </div>
+               <iframe 
+                src={`${preview}#toolbar=0`} 
+                style={{ width: "100%", height: "100%", border: "none" }}
+                title="Preview Cuaderno"
+               />
             </div>
           </div>
         )}
 
+        {/* Enlaces a otras zonas mágicas */}
         <div style={{ 
-          padding: "2.5rem", 
-          backgroundColor: "#F1F5F9", 
-          borderRadius: "var(--radius-lg)", 
-          marginTop: "2rem",
-          textAlign: "center",
-          border: "1px solid #E2E8F0"
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: "2rem",
+          marginTop: "5rem"
         }}>
-          <h2 style={{ fontSize: "1.8rem", marginBottom: "0.5rem" }}>¿Buscas algo específico?</h2>
-          <p style={{ color: "#475569" }}>Utiliza nuestra herramienta avanzada para generar recursos personalizados con el texto que necesites.</p>
-          <Link href="/generador" className="btn-primary" style={{ marginTop: "1.5rem", padding: "14px 40px" }}>
-            Abrir Generador de Recursos →
+          <div style={{ 
+            padding: "2.5rem", 
+            backgroundColor: "#F0FDFA", 
+            borderRadius: "40px", 
+            textAlign: "center",
+            border: "4px dashed #2DD4BF"
+          }}>
+            <h2 style={{ fontSize: "1.8rem", marginBottom: "0.5rem", color: "#0D9488", fontWeight: 800 }}>¿Quieres tus frases?</h2>
+            <p style={{ color: "#0F766E", fontSize: "1rem", fontWeight: 600 }}>¡Usa el Generador Mágico para escribir lo que quieras!</p>
+            <Link href="/generador" className="btn-primary" style={{ marginTop: "1.5rem", width: "100%", padding: "15px", borderRadius: "50px", backgroundColor: "#0D9488", boxShadow: "0 6px 0px #0F766E" }}>
+              🪄 Abrir Generador
+            </Link>
+          </div>
+
+          <div style={{ 
+            padding: "2.5rem", 
+            backgroundColor: "#FAF5FF", 
+            borderRadius: "40px", 
+            textAlign: "center",
+            border: "4px dashed #A855F7"
+          }}>
+            <h2 style={{ fontSize: "1.8rem", marginBottom: "0.5rem", color: "#7E22CE", fontWeight: 800 }}>Mega Colección 🚀</h2>
+            <p style={{ color: "#6B21A8", fontSize: "1rem", fontWeight: 600 }}>¡Tenemos más de 80 cuadernos históricos para ti!</p>
+            <Link href="/coleccion-completa" className="btn-primary" style={{ marginTop: "1.5rem", width: "100%", padding: "15px", borderRadius: "50px", backgroundColor: "#7E22CE", boxShadow: "0 6px 0px #6B21A8" }}>
+              🌈 Explorar Todo
+            </Link>
+          </div>
+        </div>
+
+        <div style={{ marginTop: "4rem" }}>
+          <Link href="/" style={{ color: "var(--color-primary)", fontWeight: 800, fontSize: "1.1rem", textDecoration: "underline", textUnderlineOffset: "4px" }}>
+            🏠 ¡Volver a mi Casa!
           </Link>
         </div>
 
-        <div style={{ marginTop: "3rem" }}>
-          <Link href="/" style={{ color: "var(--color-primary)", fontWeight: 600 }}>
-            &larr; Volver al Panel Principal
-          </Link>
-        </div>
       </div>
     </main>
   );

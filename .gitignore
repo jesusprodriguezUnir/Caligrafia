@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Resources and PDFs (Large files)
+/public/recursos/
+/public/test-cuadernos/
+/public/processed/
+/public/pdfs/

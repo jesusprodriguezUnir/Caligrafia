@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Caligrafía Mágica - Aprende Jugando",
-  description: "La plataforma web más Premium e interactiva para que los niños aprendan caligrafía con los mejores cuadernillos y lienzos mágicos.",
+  title: "Caligrafía Mágica - ¡Aprende Jugando!",
+  description: "¡La plataforma más divertida para que los niños aprendan caligrafía con cuadernos mágicos y juegos de escritura!",
 };
+
+import { SecretTrigger } from "@/components/SecretTrigger";
 
 export default function RootLayout({
   children,
@@ -13,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body>
+        <SecretTrigger />
+        {children}
+      </body>
     </html>
   );
 }
