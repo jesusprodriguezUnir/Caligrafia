@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useRef, useEffect, useCallback } from "react";
 import styles from "./caligrafiate.module.css";
 
@@ -48,6 +49,7 @@ interface Config {
 
 const W = 794; // A4 @ 96dpi ≈ 794px wide
 const H = 1123;
+const CONTACT_ROUTE = "/contacto";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // HELPERS DE CANVAS
@@ -375,6 +377,8 @@ export default function CaligrafiatePage() {
   const [config, setConfig] = useState<Config>(defaultConfig);
   const [animDir, setAnimDir] = useState<"forward" | "back">("forward");
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [contactPageUrl, setContactPageUrl] = useState(CONTACT_ROUTE);
+  const [contactQrDataUrl, setContactQrDataUrl] = useState<string>("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const updateConfig = <K extends keyof Config>(key: K, val: Config[K]) =>
@@ -443,6 +447,46 @@ export default function CaligrafiatePage() {
       renderCanvas();
     }
   }, [config.textoLibre, renderCanvas, step, config.modoContenido]);
+
+  // QR para acceso rapido a la pagina de contacto
+  useEffect(() => {
+    const resolvedUrl =
+      typeof window !== "undefined"
+        ? `${window.location.origin}${CONTACT_ROUTE}`
+        : CONTACT_ROUTE;
+
+    setContactPageUrl(resolvedUrl);
+
+    let isMounted = true;
+
+    const generateQr = async () => {
+      try {
+        const QRCode = (await import("qrcode")).default;
+        const dataUrl = await QRCode.toDataURL(resolvedUrl, {
+          width: 220,
+          margin: 1,
+          color: {
+            dark: "#1A1A1A",
+            light: "#FFFFFFFF",
+          },
+        });
+
+        if (isMounted) {
+          setContactQrDataUrl(dataUrl);
+        }
+      } catch {
+        if (isMounted) {
+          setContactQrDataUrl("");
+        }
+      }
+    };
+
+    generateQr();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // ── Descarga PNG ──────────────────────────────────────────────────────────
   const descargarPng = () => {
@@ -878,6 +922,35 @@ export default function CaligrafiatePage() {
                 height={H}
                 className={styles.canvas}
               />
+            </div>
+
+            <div className={styles.contactQrCard}>
+              <div className={styles.contactQrContent}>
+                <h3 className={styles.contactQrTitle}>QR de contacto</h3>
+                <p className={styles.contactQrText}>
+                  Escanea este codigo QR para abrir nuestra pagina de contacto.
+                </p>
+                <Link className={styles.contactQrLink} href={CONTACT_ROUTE}>
+                  Ir a contacto
+                </Link>
+              </div>
+
+              <div className={styles.contactQrImageWrap}>
+                {contactQrDataUrl ? (
+                  <Image
+                    src={contactQrDataUrl}
+                    alt={`QR para abrir ${contactPageUrl}`}
+                    className={styles.contactQrImage}
+                    width={176}
+                    height={176}
+                    unoptimized
+                  />
+                ) : (
+                  <div className={styles.contactQrFallback}>
+                    Cargando QR...
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className={styles.downloadBar}>

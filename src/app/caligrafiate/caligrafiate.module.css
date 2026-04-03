@@ -358,6 +358,82 @@
   display: block;
 }
 
+.contactQrCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  background: #f8fafc;
+  border: 2px solid var(--color-primary);
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  box-shadow: 5px 5px 0 #1a1a1a;
+}
+
+.contactQrContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.contactQrTitle {
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  font-weight: 900;
+}
+
+.contactQrText {
+  font-size: 0.92rem;
+  color: #334155;
+  line-height: 1.4;
+}
+
+.contactQrLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  background: #ffffff;
+  font-weight: 800;
+  font-size: 0.9rem;
+  box-shadow: 3px 3px 0 #1a1a1a;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.contactQrLink:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #1a1a1a;
+}
+
+.contactQrImageWrap {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 176px;
+  height: 176px;
+  border-radius: 12px;
+  border: 2px dashed #94a3b8;
+  background: #ffffff;
+}
+
+.contactQrImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.contactQrFallback {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
 .downloadBar {
   display: flex;
   gap: 1rem;
@@ -695,5 +771,7 @@
   .backBtn { position: static; margin-bottom: 0.5rem; }
   .header { padding-top: 1.5rem; }
   .stepLine { width: 30px; }
+  .contactQrCard { flex-direction: column; align-items: flex-start; }
+  .contactQrImageWrap { width: 160px; height: 160px; }
   .downloadBar { flex-direction: column; }
 }
