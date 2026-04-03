@@ -1,22 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Indie+Flower&display=swap');
 
 :root {
-  /* Mundo Primaria Inspired Playful UI Colors - Blue Version */
-  --color-primary: #0EA5E9; /* Sky Blue Deep */
-  --color-secondary: #38BDF8; /* Light Sky Blue */
-  --color-accent: #FDE047; /* Sunny Yellow */
-  --color-success: #4ADE80; /* Playful Green */
-  --color-background: #F0F9FF; /* Very Light Blue */
-  --color-text: #020617; /* Slate Darkest */
+  /* Play Fun Learning Aesthetic */
+  --color-primary: #1A1A1A; /* Strong Outlines */
+  --color-secondary: #0EA5E9; /* Educational Blue */
+  --color-accent: #EF4444; /* Alert Red */
+  --color-success: #22C55E;
+  --color-background: #B6E1E8; /* Signature Light Blue */
   --color-surface: #FFFFFF;
+  --color-text: #1A1A1A;
   
-  --radius-lg: 40px; /* Even rounder! */
-  --radius-md: 20px;
-  --radius-sm: 12px;
+  --font-main: 'Outfit', sans-serif;
+  --font-hand: 'Indie Flower', cursive;
   
-  --shadow-sm: 0 4px 6px -1px rgba(14, 165, 233, 0.1);
-  --shadow-md: 0 10px 15px -3px rgba(14, 165, 233, 0.2);
-  --shadow-lg: 0 20px 25px -5px rgba(14, 165, 233, 0.3);
+  --radius-lg: 50px;
+  --radius-md: 25px;
+  --radius-sm: 15px;
+  
+  --border-thick: 4px solid #1A1A1A;
+  --shadow-flat: 8px 8px 0px rgba(0,0,0,1);
+}
+
+body {
+  background-color: var(--color-background);
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10 C 20 5, 30 15, 40 10 S 60 5, 70 15 S 90 20, 100 30' stroke='rgba(255,255,255,0.3)' fill='none' stroke-width='2'/%3E%3Ccircle cx='80' cy='80' r='5' fill='rgba(255,255,255,0.2)'/%3E%3Crect x='20' y='60' width='10' height='10' stroke='rgba(255,255,255,0.2)' fill='none' stroke-width='1' transform='rotate(15)'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
 }
 
 * {

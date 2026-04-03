@@ -33,38 +33,50 @@ export default function Cuadernillos() {
   };
 
   return (
-    <main className={styles.main} style={{ background: "#E0F2FE", backgroundImage: "radial-gradient(#BAE6FD 2px, transparent 2px)", backgroundSize: "40px 40px" }}>
-      <div className={`${styles.hero} glass`} style={{ maxWidth: "1200px", padding: "3rem", border: "8px solid white", borderRadius: "50px", boxShadow: "var(--shadow-lg)", background: "white" }}>
+    <main className={styles.main} style={{ fontFamily: "var(--font-main)" }}>
+      <div className={`${styles.hero}`} style={{ 
+        maxWidth: "1250px", 
+        padding: "3.5rem", 
+        border: "var(--border-thick)", 
+        borderRadius: "var(--radius-lg)", 
+        boxShadow: "var(--shadow-flat)", 
+        background: "white",
+        margin: "0 auto"
+      }}>
         
-        <h1 className={styles.title} style={{ fontSize: "3.5rem", color: "var(--color-primary)", fontWeight: 900 }}>¡El Cofre de los Cuadernos! 🎁</h1>
-        <p className={styles.subtitle} style={{ fontSize: "1.3rem", color: "#475569", fontWeight: 600, marginBottom: "3rem" }}>
+        <h1 className={styles.title} style={{ fontSize: "3.5rem", color: "var(--color-primary)", fontWeight: 900 }}>
+          <span style={{ fontFamily: "var(--font-hand)", color: "var(--color-secondary)", fontSize: "1.5rem", display: "block" }}>¡El Tesoro de las Letras!</span>
+          EL COFRE DE <span style={{ color: "var(--color-secondary)" }}>CUADERNOS</span> 🎁
+        </h1>
+        
+        <p className={styles.subtitle} style={{ fontSize: "1.2rem", color: "#475569", fontWeight: 600, marginBottom: "3rem" }}>
           ¡Elige tu aventura favorita y empieza a dibujar letras mágicas hoy mismo! ✨
         </p>
 
-        {/* Sistema de 10 Pestañas Infantiles */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center", marginBottom: "3rem" }}>
+        {/* Sistema de 10 Pestañas Play Fun style */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: "center", marginBottom: "3rem" }}>
           {CATEGORIAS_MAGICAS.map(cat => (
             <button 
               key={cat.id}
               onClick={() => setActiveTab(cat.id)}
               style={{
-                padding: "1rem 1.5rem",
-                borderRadius: "50px",
-                border: "none",
-                backgroundColor: activeTab === cat.id ? "var(--color-primary)" : "#F1F5F9",
-                color: activeTab === cat.id ? "white" : "#64748B",
-                fontWeight: 800,
-                fontSize: "1rem",
+                padding: "0.8rem 1.5rem",
+                borderRadius: "15px",
+                border: "var(--border-thick)",
+                backgroundColor: activeTab === cat.id ? "var(--color-secondary)" : "white",
+                color: activeTab === cat.id ? "white" : "var(--color-primary)",
+                fontWeight: 900,
+                fontSize: "0.95rem",
                 cursor: "pointer",
                 transition: "all 0.1s",
-                boxShadow: activeTab === cat.id ? "0 5px 0px #0369A1" : "0 5px 0px #CBD5E1",
-                transform: activeTab === cat.id ? "translateY(2px)" : "none",
+                boxShadow: activeTab === cat.id ? "4px 4px 0px #0369A1" : "4px 4px 0px #1A1A1A",
+                transform: activeTab === cat.id ? "translate(2px, 2px)" : "none",
                 display: "flex",
                 alignItems: "center",
                 gap: "8px"
               }}
             >
-              <span style={{ fontSize: "1.3rem" }}>{cat.emoji === "sol" ? "☀️" : cat.emoji === "APPLE" ? "🍎" : cat.emoji}</span>
+              <span style={{ fontSize: "1.2rem" }}>{cat.emoji === "sol" ? "☀️" : cat.emoji === "APPLE" ? "🍎" : cat.emoji}</span>
               {cat.titulo}
             </button>
           ))}
@@ -72,66 +84,65 @@ export default function Cuadernillos() {
 
         {/* Sección de Contenido Activo */}
         <div style={{ 
-          background: "#F8FAFC", 
+          background: "white", 
           padding: "3rem", 
-          borderRadius: "40px", 
-          border: "5px dashed var(--color-secondary)",
+          borderRadius: "30px", 
+          border: "4px solid #1A1A1A",
           textAlign: "center",
-          animation: "fadeIn 0.4s ease-out"
+          boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)"
         }}>
           <div style={{ marginBottom: "2rem" }}>
-            <span style={{ fontSize: "4rem" }}>{currentCategory?.emoji === "sol" ? "☀️" : currentCategory?.emoji === "APPLE" ? "🍎" : currentCategory?.emoji}</span>
-            <h2 style={{ fontSize: "2.5rem", color: "var(--color-secondary)", fontWeight: 900, marginTop: "1rem" }}>
+            <span style={{ fontSize: "4.5rem" }}>{currentCategory?.emoji === "sol" ? "☀️" : currentCategory?.emoji === "APPLE" ? "🍎" : currentCategory?.emoji}</span>
+            <h2 style={{ fontSize: "2.8rem", color: "var(--color-primary)", fontWeight: 900, marginTop: "1rem" }}>
               Nivel {currentCategory?.id}: {currentCategory?.titulo}
             </h2>
-            <p style={{ fontSize: "1.2rem", color: "#64748B", fontWeight: 600 }}>{currentCategory?.desc}</p>
+            <p style={{ fontSize: "1.5rem", color: "var(--color-secondary)", fontWeight: 400, fontFamily: "var(--font-hand)" }}>{currentCategory?.desc}</p>
           </div>
 
           <div style={{ 
             display: "grid", 
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", 
-            gap: "2rem",
+            gap: "2.5rem",
             justifyItems: "center"
           }}>
-            {/* Aquí simulamos los cuadernos disponibles para cada categoría */}
             {[1, 2, 3].map(item => (
               <div key={item} style={{ 
                 background: "white", 
-                padding: "1.5rem", 
-                borderRadius: "30px", 
-                border: "4px solid #E2E8F0",
-                boxShadow: "0 10px 20px rgba(0,0,0,0.05)",
+                padding: "2rem", 
+                borderRadius: "20px", 
+                border: "var(--border-thick)",
+                boxShadow: "6px 6px 0px #E2E8F0",
                 width: "100%",
-                maxWidth: "320px"
+                maxWidth: "340px"
               }}>
                 <div style={{ 
                   width: "100%", 
-                  height: "200px", 
-                  backgroundColor: "#F1F5F9", 
-                  borderRadius: "20px", 
-                  marginBottom: "1rem",
+                  height: "220px", 
+                  backgroundColor: "#F8FAFC", 
+                  borderRadius: "15px", 
+                  marginBottom: "1.5rem",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "4rem",
+                  fontSize: "4.5rem",
                   border: "2px dashed #CBD5E1"
                 }}>
                    {currentCategory?.emoji}
                 </div>
-                <h4 style={{ fontWeight: 800, color: "#334155", fontSize: "1.2rem" }}>Cuaderno #{currentCategory?.id}.{item}</h4>
-                <div style={{ display: "flex", gap: "10px", marginTop: "1.2rem" }}>
+                <h4 style={{ fontWeight: 900, color: "var(--color-primary)", fontSize: "1.3rem" }}>Cuaderno Mágico {currentCategory?.id}.{item}</h4>
+                <div style={{ display: "flex", gap: "12px", marginTop: "1.5rem" }}>
                   <button 
                     onClick={() => setPreview(currentCategory?.archivo || null)}
-                    style={{ flex: 1, backgroundColor: "#F1F5F9", color: "#64748B", borderRadius: "50px", padding: "12px", fontWeight: 800, border: "2px solid #E2E8F0", cursor: "pointer" }}
+                    style={{ flex: 1, backgroundColor: "white", color: "var(--color-primary)", borderRadius: "12px", padding: "12px", fontWeight: 900, border: "3px solid #1A1A1A", cursor: "pointer", boxShadow: "4px 4px 0px #1A1A1A" }}
                   >
-                    🔍 Ver
+                    🔍 Ver &gt;
                   </button>
                   <button 
                     onClick={() => handleDownload(currentCategory?.archivo, `${currentCategory?.titulo}-${item}`)}
                     className="btn-primary" 
-                    style={{ flex: 2, borderRadius: "50px", padding: "14px", fontWeight: 800, fontSize: "1.1rem", boxShadow: "0 6px 0px #0369A1" }}
+                    style={{ flex: 2, borderRadius: "12px", padding: "12px", fontWeight: 900, fontSize: "1.1rem", backgroundColor: "var(--color-secondary)", border: "3px solid #1A1A1A", color: "white", boxShadow: "4px 4px 0px #0369A1" }}
                   >
-                    📥 Bajar
+                    📥 Bajar &gt;
                   </button>
                 </div>
               </div>
@@ -139,15 +150,17 @@ export default function Cuadernillos() {
           </div>
         </div>
 
-        {/* Modal de Previsualización Mágico */}
+        {/* Modal de Previsualización Mágico Play Fun style */}
         {preview && (
-          <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-            <div style={{ position: "relative", width: "90%", height: "90%", backgroundColor: "white", borderRadius: "40px", overflow: "hidden", display: "flex", flexDirection: "column", border: "8px solid var(--color-primary)" }}>
-               <div style={{ padding: "1.5rem 2rem", borderBottom: "4px dashed #E2E8F0", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#F8FAFC" }}>
-                 <h3 style={{ fontSize: "1.8rem", fontWeight: 900, color: "var(--color-primary)" }}>✨ Vista Previa Mágica ✨</h3>
+          <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(182, 225, 232, 0.9)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
+            <div style={{ position: "relative", width: "95%", height: "92%", backgroundColor: "white", borderRadius: "30px", overflow: "hidden", display: "flex", flexDirection: "column", border: "var(--border-thick)", boxShadow: "15px 15px 0px rgba(0,0,0,0.2)" }}>
+               <div style={{ padding: "1.5rem 2.5rem", borderBottom: "var(--border-thick)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#F8FAFC" }}>
+                 <h3 style={{ fontSize: "2rem", fontWeight: 900, color: "var(--color-primary)" }}>
+                   ✨ <span style={{ fontFamily: "var(--font-hand)" }}>Echando un vistazo</span> ✨
+                 </h3>
                  <button 
                   onClick={() => setPreview(null)}
-                  style={{ background: "#38BDF8", border: "none", borderRadius: "50%", width: "45px", height: "45px", cursor: "pointer", fontWeight: "bold", color: "white", fontSize: "1.5rem", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 0px #0369A1" }}>×</button>
+                  style={{ background: "white", border: "var(--border-thick)", borderRadius: "10px", width: "50px", height: "50px", cursor: "pointer", fontWeight: "900", color: "var(--color-primary)", fontSize: "1.5rem", boxShadow: "4px 4px 0px #1A1A1A" }}>X</button>
                </div>
                <iframe 
                 src={`${preview}#toolbar=0`} 

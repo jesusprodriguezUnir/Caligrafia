@@ -4,29 +4,67 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className={styles.main} style={{ background: "var(--color-background)", backgroundImage: "radial-gradient(var(--color-secondary) 1.5px, transparent 1.5px)", backgroundSize: "50px 50px" }}>
-      <div className={`${styles.hero} glass`} style={{ border: "8px solid white", padding: "3rem", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)" }}>
-        <div style={{ position: "relative", width: "100%", height: "300px", borderRadius: "100px", overflow: "hidden", marginBottom: "2.5rem", boxShadow: "var(--shadow-lg)", border: "8px solid #E0F2FE" }}>
+    <main className={styles.main} style={{ fontFamily: "var(--font-main)" }}>
+      <div className={`${styles.hero}`} style={{ 
+        background: "white", 
+        border: "var(--border-thick)", 
+        padding: "3.5rem", 
+        borderRadius: "var(--radius-lg)", 
+        boxShadow: "var(--shadow-flat)",
+        maxWidth: "1100px",
+        margin: "0 auto",
+        position: "relative"
+      }}>
+        {/* Adorno de esquina hand-drawn */}
+        <div style={{ position: "absolute", top: "-20px", right: "40px", background: "white", border: "var(--border-thick)", borderRadius: "15px", padding: "8px 20px", fontWeight: 900, transform: "rotate(5deg)", fontSize: "0.9rem" }}>
+          ¡NUEVO CURSO! 🖍️
+        </div>
+
+        <div style={{ position: "relative", width: "100%", height: "350px", borderRadius: "var(--radius-md)", overflow: "hidden", marginBottom: "2.5rem", border: "var(--border-thick)" }}>
            <Image 
-             src="/hero.png" 
-             alt="Aprende Caligrafía Jugando" 
+             src="/hero-play.png" 
+             alt="Caligrafía Creativa" 
              fill
              priority
              style={{ objectFit: "cover" }}
            />
         </div>
-        <h1 className={styles.title} style={{ fontWeight: 900, fontSize: "4.5rem", color: "var(--color-primary)", textShadow: "4px 4px 0px rgba(14, 165, 233, 0.1)" }}>
-          ¡Aventuras de <span style={{ color: "var(--color-secondary)", textDecoration: "underline" }}>Caligrafía</span> Mágica!
+        
+        <h1 className={styles.title} style={{ fontWeight: 900, fontSize: "4rem", color: "var(--color-primary)", lineHeight: 1.1 }}>
+          <span style={{ fontSize: "1.5rem", display: "block", color: "var(--color-accent)", fontFamily: "var(--font-hand)", marginBottom: "0.5rem" }}>Aprende de forma divertida</span>
+          CALIGRAFÍA <span style={{ color: "var(--color-secondary)" }}>MÁGICA</span>
         </h1>
-        <p className={styles.subtitle} style={{ color: "var(--color-text)", fontWeight: 700, fontSize: "1.4rem", marginBottom: "3rem" }}>
-          ¡Practica sobre hojas mágicas, gana estrellas y diviértete con cada trazo! ✏️🌟
+        
+        <p className={styles.subtitle} style={{ color: "#475569", fontWeight: 600, fontSize: "1.3rem", marginBottom: "3rem", maxWidth: "800px", margin: "1rem auto 3rem" }}>
+          ¡Crea, practica y juega con letras mágicas en un entorno lleno de creatividad! 🌟
         </p>
-        <div className={styles.actions} style={{ gap: "1.5rem" }}>
-          <Link href="/cuadernillos" className="btn-primary" style={{ padding: "20px 45px", fontSize: "1.4rem", borderRadius: "100px", boxShadow: "0 10px 0px #0369A1", backgroundColor: "var(--color-primary)" }}>
-            🚀 ¡Quiero mi Cuaderno!
+        
+        <div className={styles.actions} style={{ gap: "2rem", justifyContent: "center" }}>
+          <Link href="/cuadernillos" className="btn-primary" style={{ 
+            padding: "20px 50px", 
+            fontSize: "1.5rem", 
+            borderRadius: "var(--radius-md)", 
+            backgroundColor: "var(--color-secondary)", 
+            border: "var(--border-thick)",
+            boxShadow: "6px 6px 0px #0369A1",
+            fontWeight: 900,
+            textDecoration: "none",
+            color: "white"
+          }}>
+            Sabes más &gt;
           </Link>
-          <Link href="/lienzo" style={{ padding: "20px 45px", fontSize: "1.4rem", border: "5px solid var(--color-primary)", borderRadius: "100px", background: "white", color: "var(--color-primary)", fontWeight: 900, boxShadow: "0 10px 0px #BAE6FD" }}>
-            🎨 Dibujo Libre
+          <Link href="/lienzo" style={{ 
+            padding: "20px 50px", 
+            fontSize: "1.5rem", 
+            borderRadius: "var(--radius-md)", 
+            background: "white", 
+            color: "var(--color-primary)", 
+            border: "var(--border-thick)",
+            boxShadow: "6px 6px 0px #1A1A1A",
+            fontWeight: 900,
+            textDecoration: "none"
+          }}>
+            A jugar &gt;
           </Link>
         </div>
       </div>
