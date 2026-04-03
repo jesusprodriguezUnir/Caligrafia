@@ -39,10 +39,59 @@ export default function Home() {
           ¡Crea, practica y juega con letras mágicas en un entorno lleno de creatividad! 🌟
         </p>
         
-        <div className={styles.actions} style={{ gap: "2rem", justifyContent: "center" }}>
+        {/* Tarjeta destacada — Caligraf_iate */}
+        <div style={{
+          background: "linear-gradient(135deg, #0EA5E9 0%, #1A1A1A 100%)",
+          border: "var(--border-thick)",
+          borderRadius: "var(--radius-md)",
+          padding: "2rem 2.5rem",
+          color: "white",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "1.5rem",
+          boxShadow: "8px 8px 0px #000",
+          flexWrap: "wrap",
+          marginBottom: "2rem",
+          textAlign: "left",
+          position: "relative",
+          overflow: "hidden"
+        }}>
+          {/* Doodle de fondo */}
+          <div style={{ position: "absolute", right: "20px", top: "10px", fontSize: "6rem", opacity: 0.1, transform: "rotate(15deg)" }}>✍️</div>
+          <div style={{ flex: 1, minWidth: "220px" }}>
+            <div style={{ display: "inline-block", background: "var(--color-accent)", border: "2px solid white", borderRadius: "30px", padding: "3px 14px", fontSize: "0.78rem", fontWeight: 900, marginBottom: "0.7rem", letterSpacing: "1px" }}>
+              ✨ GENERADOR DE FICHAS
+            </div>
+            <h2 style={{ fontSize: "3.5rem", fontWeight: 800, margin: "0 0 0.4rem", lineHeight: 1.1, fontFamily: "var(--font-calligraphy)", textShadow: "2px 2px 0px rgba(0,0,0,0.1)" }}>
+              Caligra<span style={{ color: "#EF4444" }}>-</span>Fíate
+            </h2>
+            <p style={{ margin: 0, opacity: 0.85, fontSize: "1rem", fontWeight: 600 }}>
+              Crea fichas personalizadas paso a paso: formato, márgenes, tipo de letra y contenido.
+            </p>
+          </div>
+          <Link href="/caligrafiate" style={{
+            flexShrink: 0,
+            padding: "16px 32px",
+            background: "white",
+            color: "var(--color-primary)",
+            border: "3px solid white",
+            borderRadius: "50px",
+            fontWeight: 900,
+            fontSize: "1.1rem",
+            textDecoration: "none",
+            boxShadow: "4px 4px 0 #EF4444",
+            display: "inline-block",
+            whiteSpace: "nowrap"
+          }}>
+            Crear ficha →
+          </Link>
+        </div>
+
+        <div className={styles.actions} style={{ gap: "2rem", justifyContent: "center", flexWrap: "wrap" }}>
           <Link href="/cuadernillos" className="btn-primary" style={{ 
-            padding: "20px 50px", 
-            fontSize: "1.5rem", 
+            padding: "20px 40px", 
+            fontSize: "1.4rem", 
             borderRadius: "var(--radius-md)", 
             backgroundColor: "var(--color-secondary)", 
             border: "var(--border-thick)",
@@ -53,9 +102,23 @@ export default function Home() {
           }}>
             Sabes más &gt;
           </Link>
+          {/* Nuevo botón para la Mega Colección */}
+          <Link href="/coleccion-completa" style={{ 
+            padding: "20px 40px", 
+            fontSize: "1.4rem", 
+            borderRadius: "var(--radius-md)", 
+            backgroundColor: "#FDE047", 
+            color: "var(--color-primary)", 
+            border: "var(--border-thick)",
+            boxShadow: "6px 6px 0px #A16207",
+            fontWeight: 900,
+            textDecoration: "none"
+          }}>
+            Mega Biblioteca 📚
+          </Link>
           <Link href="/lienzo" style={{ 
-            padding: "20px 50px", 
-            fontSize: "1.5rem", 
+            padding: "20px 40px", 
+            fontSize: "1.4rem", 
             borderRadius: "var(--radius-md)", 
             background: "white", 
             color: "var(--color-primary)", 

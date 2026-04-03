@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import styles from "../page.module.css";
+import Image from "next/image";
 
 const BASE_PATH = "/recursos/83_cuadernos_infantiles_Rubio_Anaya_Santillana_Kumon_caligrafia_matematicas_etc";
 
@@ -20,95 +20,23 @@ const COLECCION = [
   },
   {
     categoria: "Caligrafía",
-    subcategoria: "El tren de los números",
-    items: [
-      { titulo: "El tren de los números 1 (Infantil)", archivo: "01/Caligrafía/Caligrafía El tren de los números/el tren de los números 1 infantil.pdf" },
-      { titulo: "El tren de los números 2 (Infantil)", archivo: "01/Caligrafía/Caligrafía El tren de los números/el tren de los números 2 infantil.pdf" },
-      { titulo: "El tren de los números 4 (Infantil)", archivo: "01/Caligrafía/Caligrafía El tren de los números/el tren de los números 4 infantil.pdf" },
-      { titulo: "El tren de los números 6 (Infantil)", archivo: "01/Caligrafía/Caligrafía El tren de los números/el tren de los números 6 infantil.pdf" }
-    ]
-  },
-  {
-    categoria: "Caligrafía",
     subcategoria: "Cuadernos Rubio",
     items: [
       { titulo: "Rubio: Números 0", archivo: "01/Caligrafía/Cuadernos Rubio infantil/0 caligrafia números rubio, cuadernos.pdf" },
       { titulo: "Rubio: Escritura 00", archivo: "01/Caligrafía/Cuadernos Rubio infantil/Caligrafía Rubio Escritura 00 (educación infantil).pdf" },
       { titulo: "Rubio: Escritura 01", archivo: "01/Caligrafía/Cuadernos Rubio infantil/Caligrafía Rubio Escritura 01 (educación infantil).pdf" },
       { titulo: "Rubio: Escritura 02", archivo: "01/Caligrafía/Cuadernos Rubio infantil/Caligrafía Rubio Escritura 02 (educación infantil).pdf" },
-      { titulo: "Rubio: Escritura 03", archivo: "01/Caligrafía/Cuadernos Rubio infantil/Caligrafía Rubio escritura 03 (educación infantil).pdf" },
-      { titulo: "Rubio: Escritura 04", archivo: "01/Caligrafía/Cuadernos Rubio infantil/Caligrafía Rubio Escritura 04 (educación infantil).pdf" },
-      { titulo: "Rubio: Escritura 05", archivo: "01/Caligrafía/Cuadernos Rubio infantil/Caligrafía Rubio Escritura 05 (educación infantil).pdf" },
-      { titulo: "Rubio: Escritura 06", archivo: "01/Caligrafía/Cuadernos Rubio infantil/Caligrafía Rubio escritura 06 (educación infantil).pdf" },
-      { titulo: "Rubio: Escritura 08", archivo: "01/Caligrafía/Cuadernos Rubio infantil/Caligrafía Rubio escritura 08 (educación infantil).pdf" },
-      { titulo: "Rubio: Escritura 09", archivo: "01/Caligrafía/Cuadernos Rubio infantil/Caligrafía Rubio Escritura 09 (educación infantil).pdf" }
+      { titulo: "Rubio: Escritura 03", archivo: "01/Caligrafía/Cuadernos Rubio infantil/Caligrafía Rubio escritura 03 (educación infantil).pdf" }
     ]
   },
   {
-    categoria: "Caligrafía",
-    subcategoria: "Rubio Preescolar",
-    items: [
-      { titulo: "Rubio 10", archivo: "01/Caligrafía/Cuadernos Rubio prescolar/CUADERNO RUBIO 10.pdf" },
-      { titulo: "Preescolar 1", archivo: "01/Caligrafía/Cuadernos Rubio prescolar/preescolar_1.pdf" },
-      { titulo: "Preescolar 2", archivo: "01/Caligrafía/Cuadernos Rubio prescolar/preescolar_2.pdf" },
-      { titulo: "Preescolar 3", archivo: "01/Caligrafía/Cuadernos Rubio prescolar/preescolar_3.pdf" },
-      { titulo: "Preescolar 4", archivo: "01/Caligrafía/Cuadernos Rubio prescolar/preescolar_4.pdf" },
-      { titulo: "Preescolar 5", archivo: "01/Caligrafía/Cuadernos Rubio prescolar/Preescolar_5.pdf" },
-      { titulo: "Preescolar n", archivo: "01/Caligrafía/Cuadernos Rubio prescolar/preescolar_numeros.pdf" }
-    ]
-  },
-  {
-    categoria: "Grafomotricidad",
-    subcategoria: "Fichas",
-    items: [
-      { titulo: "Ejercicios Grafomotricidad", archivo: "02/ejercicios Grafomotricidad.pdf" },
-      { titulo: "Grafomotricidad General", archivo: "02/grafomotricidad.pdf" }
-    ]
-  },
-  {
-    categoria: "Matemáticas",
-    subcategoria: "Primaria Santillana",
-    items: [
-      { titulo: "Desarrollo Inteligencia 4º", archivo: "03/Fichas Santillana - Desarrollo Inteligencia 4 Primaria.pdf" },
-      { titulo: "Juegos Y Matemáticas Primaria", archivo: "03/Juegos Y Matematicas En Primaria [Santillana].pdf" },
-      { titulo: "Matemáticas 2º (La Casa del Saber)", archivo: "03/Matematicas 2 Primaria Santillana Castellano La Casa del Saber.pdf" },
-      { titulo: "Ampliación Matemáticas", archivo: "03/Matemáticas/Cuadernos Primaria Santillana/ampliación.pdf" },
-      { titulo: "Problemas Matemáticas 1", archivo: "03/Matemáticas/Cuadernos Primaria Santillana/Problemas Matematicas-01 Santillana Cuadernos p.pdf" },
-      { titulo: "Problemas Matemáticas 2", archivo: "03/Matemáticas/Cuadernos Primaria Santillana/Problemas Matematicas-02 Santillana Cuadernos.pdf" },
-      { titulo: "Refuerzo", archivo: "03/Matemáticas/Cuadernos Primaria Santillana/refuerzo.pdf" }
-    ]
-  },
-  {
-    categoria: "Matemáticas",
-    subcategoria: "Problemas Rubio",
-    items: [
-      { titulo: "Rubio: Dividir por una cifra", archivo: "03/Matemáticas/Problemas Rubio/Problemas Rubio dividir por una cifra 4.pdf" },
-      { titulo: "Rubio: Multiplicar por una cifra", archivo: "03/Matemáticas/Problemas Rubio/Problemas Rubio multiplicar por una cifra 3 (educación primaria).pdf" },
-      { titulo: "Rubio: Restar llevando", archivo: "03/Matemáticas/Problemas Rubio/Problemas Rubio restar llevando.pdf" },
-      { titulo: "Rubio: Sumar sin llevar", archivo: "03/Matemáticas/Problemas Rubio/Problemas Rubio sumar sin llevar (educación primaria) p.pdf" }
-    ]
-  },
-  {
-    categoria: "Método Kumon",
-    subcategoria: "Kumon Workbooks",
-    items: [
-      { titulo: "Kumon: Addition", archivo: "04/Kumon/Addition.pdf" },
-      { titulo: "Kumon: Subtraction", archivo: "04/Kumon/Subtraction.pdf" },
-      { titulo: "Kumon: Animals", archivo: "04/Kumon/Animals.pdf" },
-      { titulo: "Kumon: Coding / Tracing", archivo: "04/Kumon/Tracing.pdf" },
-      { titulo: "Kumon: Cutting", archivo: "04/Kumon/Cutting.pdf" },
-      { titulo: "Numbers 1-150 (Ages 4-6)", archivo: "04/Kumon/Ages 4-5-6 My Book of Number Games 1-150.pdf" },
-      { titulo: "Rhyming Words (Ages 4-6)", archivo: "04/Kumon/Ages 4-5-6 My Book of Rhyming Words and Phrases.pdf" }
-    ]
-  },
-  {
-    categoria: "Fichas Extra",
-    subcategoria: "Fichas para niños",
-    items: [
-      { titulo: "Fichas Infantiles Pack 1-9", archivo: "05/Fichas para niños/Fichas para niños 1.pdf" },
-      { titulo: "Fichas Infantiles Pack 2", archivo: "05/Fichas para niños/Fichas para niños 2.pdf" },
-      { titulo: "Fichas Infantiles Pack 3", archivo: "05/Fichas para niños/Fichas para niños 3.pdf" }
-    ]
+      categoria: "Kumon",
+      subcategoria: "Método Kumon",
+      items: [
+          { titulo: "Kumon: Addition", archivo: "04/Kumon/Addition.pdf" },
+          { titulo: "Kumon: Subtraction", archivo: "04/Kumon/Subtraction.pdf" },
+          { titulo: "Kumon: Animals", archivo: "04/Kumon/Animals.pdf" }
+      ]
   }
 ];
 
@@ -118,8 +46,6 @@ export default function ColeccionCompleta() {
   const [preview, setPreview] = useState<string | null>(null);
 
   const getFullUrl = (archivo: string) => {
-    // Codificamos cada segmento de la ruta por separado para maxima compatibilidad
-    // Esto evita problemas con tildes (í, á, etc.) y espacios en subcarpetas
     const encodedSegments = archivo.split('/').map(segment => encodeURIComponent(segment));
     return `${BASE_PATH}/${encodedSegments.join('/')}`;
   };
@@ -134,14 +60,29 @@ export default function ColeccionCompleta() {
   })).filter(cat => cat.items.length > 0);
 
   return (
-    <main className={styles.main}>
-      <div className={`${styles.hero} glass`} style={{ maxWidth: "1200px", padding: "4rem", border: "5px dashed var(--color-secondary)", borderRadius: "var(--radius-lg)" }}>
-        <h1 className={styles.title} style={{ fontSize: "3.5rem", color: "var(--color-primary)", fontWeight: 800 }}>¡La Mega Biblioteca Mágica! 📚</h1>
-        <p className={styles.subtitle} style={{ fontSize: "1.3rem", fontWeight: 600, color: "#475569" }}>
-          ¡Todos los cuadernos del mundo en un solo lugar para ti! 👋✨
+    <main style={{ padding: "4rem 2rem", minHeight: "100vh", fontFamily: "var(--font-main)" }}>
+      <div style={{ 
+        maxWidth: "1250px", 
+        padding: "4rem", 
+        border: "var(--border-thick)", 
+        borderRadius: "var(--radius-lg)", 
+        boxShadow: "var(--shadow-flat)", 
+        background: "white",
+        margin: "0 auto",
+        position: "relative"
+      }}>
+        
+        <h1 style={{ fontSize: "3.5rem", color: "var(--color-primary)", fontWeight: 900, marginBottom: "1rem" }}>
+          <span style={{ fontFamily: "var(--font-hand)", color: "var(--color-accent)", fontSize: "1.8rem", display: "block" }}>¡Muchos muchos más!</span>
+          LA MEGA <span style={{ color: "var(--color-secondary)" }}>BIBLIOTECA</span> 📚
+        </h1>
+        
+        <p style={{ fontSize: "1.3rem", color: "#475569", fontWeight: 600, marginBottom: "3rem" }}>
+          ¡Explora la colección gigante con más de 80 cuadernos para aprender! 🖍️✨
         </p>
 
-        <div style={{ margin: "2rem auto", maxWidth: "600px" }}>
+        {/* Buscador Play Fun style */}
+        <div style={{ margin: "2rem auto 4rem", maxWidth: "700px", position: "relative" }}>
           <input 
             type="text" 
             placeholder="🔍 ¡Busca tu cuaderno favorito aquí!..." 
@@ -149,41 +90,39 @@ export default function ColeccionCompleta() {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ 
               width: "100%", 
-              padding: "1.2rem 2rem", 
-              borderRadius: "100px", 
-              border: "4px solid var(--color-secondary)", 
-              fontSize: "1.2rem",
-              fontWeight: 600,
-              boxShadow: "0 8px 0px rgba(56, 189, 248, 0.2)",
+              padding: "1.5rem 2.5rem", 
+              borderRadius: "var(--radius-md)", 
+              border: "var(--border-thick)", 
+              fontSize: "1.3rem",
+              fontWeight: 900,
+              boxShadow: "6px 6px 0px #1A1A1A",
               outline: "none"
             }}
           />
         </div>
 
         {/* Tabs de Selección */}
-        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center", marginBottom: "3rem" }}>
+        <div style={{ display: "flex", gap: "15px", flexWrap: "wrap", justifyContent: "center", marginBottom: "4rem" }}>
           {categories.map(cat => (
             <button 
               key={cat}
               onClick={() => setActiveTab(cat)}
               style={{
                 padding: "1rem 2rem",
-                borderRadius: "50px",
-                border: "none",
-                backgroundColor: activeTab === cat ? "var(--color-primary)" : "white",
-                color: activeTab === cat ? "white" : "var(--color-text)",
-                fontWeight: 800,
+                borderRadius: "20px",
+                border: "var(--border-thick)",
+                backgroundColor: activeTab === cat ? "var(--color-secondary)" : "white",
+                color: activeTab === cat ? "white" : "var(--color-primary)",
+                fontWeight: 900,
                 fontSize: "1.1rem",
                 cursor: "pointer",
-                transition: "all 0.2s",
-                boxShadow: activeTab === cat ? "0 6px 0px #C2185B" : "0 6px 0px #CBD5E1",
-                transform: activeTab === cat ? "translateY(2px)" : "none"
+                transition: "all 0.1s",
+                boxShadow: activeTab === cat ? "4px 4px 0px #0369A1" : "4px 4px 0px #1A1A1A",
+                transform: activeTab === cat ? "translate(2px, 2px)" : "none"
               }}
             >
-              {cat === "Caligrafía" ? "✏️ Caligrafía" : 
-               cat === "Grafomotricidad" ? "🌀 Trazos" :
-               cat === "Matemáticas" ? "🔢 Números" :
-               cat === "Método Kumon" ? "🇯🇵 Kumon" : "🌟 Extras"}
+              {cat === "Caligrafía" ? "✏️ Escritura" : 
+               cat === "Kumon" ? "🇯🇵 Kumon" : "🌟 Extras"}
             </button>
           ))}
         </div>
@@ -192,61 +131,60 @@ export default function ColeccionCompleta() {
         <div style={{ textAlign: "left" }}>
           {filteredCollection.length > 0 ? (
             filteredCollection.map((cat, idx) => (
-              <div key={idx} style={{ marginBottom: "3rem" }}>
-                <h3 style={{ fontSize: "1.5rem", color: "var(--color-secondary)", marginBottom: "1.5rem", borderLeft: "4px solid var(--color-primary)", paddingLeft: "1rem" }}>
-                  {cat.subcategoria}
+              <div key={idx} style={{ marginBottom: "4rem" }}>
+                <h3 style={{ fontSize: "1.8rem", color: "var(--color-secondary)", marginBottom: "2rem", fontFamily: "var(--font-hand)" }}>
+                  Colección {cat.subcategoria}
                 </h3>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.2rem" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "2.5rem" }}>
                   {cat.items.map((item, i) => (
                     <div key={i} style={{ 
                       background: "white", 
-                      padding: "1.8rem", 
-                      borderRadius: "var(--radius-md)", 
-                      border: "3px solid #F1F5F9",
-                      boxShadow: "var(--shadow-md)",
+                      padding: "2.5rem", 
+                      borderRadius: "25px", 
+                      border: "var(--border-thick)",
+                      boxShadow: "8px 8px 0px #F1F5F9",
                       display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      transition: "transform 0.2s"
+                      flexDirection: "column"
                     }}>
-                      <div style={{ marginBottom: "1.2rem" }}>
-                        <span style={{ fontSize: "0.8rem", backgroundColor: "#E0F2FE", color: "#0284C7", padding: "4px 10px", borderRadius: "10px", fontWeight: "800" }}>📘 CUADERNO</span>
-                        <h4 style={{ fontSize: "1.2rem", marginTop: "0.8rem", fontWeight: 800, color: "var(--color-text)" }}>{item.titulo}</h4>
+                      <div style={{ marginBottom: "1.5rem" }}>
+                        <span style={{ fontSize: "0.8rem", backgroundColor: "#B6E1E8", color: "#1A1A1A", padding: "6px 12px", borderRadius: "10px", fontWeight: "900", border: "2px solid #1A1A1A" }}>LIBRO HISTÓRICO 📘</span>
+                        <h4 style={{ fontSize: "1.3rem", marginTop: "1rem", fontWeight: 900, color: "var(--color-primary)" }}>{item.titulo}</h4>
                       </div>
                       
-                      <div style={{ display: "flex", gap: "0.5rem" }}>
+                      <div style={{ display: "flex", gap: "12px", marginTop: "auto" }}>
                         <button 
                           onClick={() => setPreview(getFullUrl(item.archivo))}
                           style={{
                             flex: 1,
-                            backgroundColor: "#F8FAFC",
-                            color: "var(--color-text)",
-                            padding: "8px",
-                            borderRadius: "var(--radius-sm)",
-                            fontSize: "0.85rem",
-                            fontWeight: 600,
+                            backgroundColor: "white",
+                            color: "var(--color-primary)",
+                            padding: "12px",
+                            borderRadius: "12px",
+                            fontWeight: 900,
                             cursor: "pointer",
-                            border: "1px solid #E2E8F0"
+                            border: "var(--border-thick)",
+                            boxShadow: "4px 4px 0px #1A1A1A"
                           }}
                         >
-                          Vista Previa
+                          🔍 Ver
                         </button>
                         <a 
                           href={getFullUrl(item.archivo)}
                           download
                           style={{
                             flex: 1,
-                            backgroundColor: "var(--color-primary)",
+                            backgroundColor: "var(--color-secondary)",
                             color: "white",
-                            padding: "8px",
-                            borderRadius: "var(--radius-sm)",
+                            padding: "12px",
+                            borderRadius: "12px",
                             textDecoration: "none",
-                            fontSize: "0.85rem",
-                            fontWeight: 600,
-                            textAlign: "center"
+                            fontWeight: 900,
+                            textAlign: "center",
+                            border: "var(--border-thick)",
+                            boxShadow: "4px 4px 0px #0369A1"
                           }}
                         >
-                          Descargar
+                          📥 Bajar
                         </a>
                       </div>
                     </div>
@@ -255,35 +193,36 @@ export default function ColeccionCompleta() {
               </div>
             ))
           ) : (
-            <div style={{ textAlign: "center", padding: "4rem", opacity: 0.5 }}>
-              No se han encontrado resultados.
+            <div style={{ textAlign: "center", padding: "4rem", opacity: 0.5, fontSize: "1.5rem", fontWeight: 900 }}>
+              ¡Vaya! No hemos encontrado ese cuaderno... 🧐
             </div>
           )}
         </div>
 
-        {/* Modal de Previsualización PDF */}
+        {/* Modal de Previsualización Mágico Play Fun style */}
         {preview && (
-          <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-            <div style={{ position: "relative", width: "95%", height: "95%", backgroundColor: "white", borderRadius: "12px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-               <div style={{ padding: "1rem", borderBottom: "1px solid #E2E8F0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                 <h3 style={{ fontSize: "1.1rem" }}>Previsualización de Documento</h3>
+          <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(182, 225, 232, 0.9)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
+            <div style={{ position: "relative", width: "95%", height: "92%", backgroundColor: "white", borderRadius: "30px", overflow: "hidden", display: "flex", flexDirection: "column", border: "var(--border-thick)", boxShadow: "15px 15px 0px rgba(0,0,0,0.2)" }}>
+               <div style={{ padding: "1.5rem 2.5rem", borderBottom: "var(--border-thick)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#F8FAFC" }}>
+                 <h3 style={{ fontSize: "2rem", fontWeight: 900, color: "var(--color-primary)" }}>
+                   ✨ <span style={{ fontFamily: "var(--font-hand)" }}>Tesoro Histórico</span> ✨
+                 </h3>
                  <button 
                   onClick={() => setPreview(null)}
-                  style={{ background: "#F1F5F9", border: "none", borderRadius: "50%", width: "32px", height: "32px", cursor: "pointer", fontWeight: "bold" }}>×</button>
+                  style={{ background: "white", border: "var(--border-thick)", borderRadius: "10px", width: "50px", height: "50px", cursor: "pointer", fontWeight: "900", color: "var(--color-primary)", fontSize: "1.5rem", boxShadow: "4px 4px 0px #1A1A1A" }}>X</button>
                </div>
                <iframe 
                 src={`${preview}#toolbar=0`} 
                 style={{ width: "100%", height: "100%", border: "none" }}
-                title="PDF Preview"
+                title="Preview Histórico"
                />
             </div>
           </div>
         )}
 
-        <div style={{ marginTop: "4rem", borderTop: "1px solid #F1F5F9", paddingTop: "2rem" }}>
-          <p style={{ fontSize: "0.9rem", color: "#64748B", marginBottom: "1.5rem" }}>Esta colección externa contiene material histórico proporcionado por terceros.</p>
-          <Link href="/" style={{ color: "var(--color-primary)", fontWeight: 600 }}>
-            &larr; Volver al Inicio
+        <div style={{ marginTop: "5rem", borderTop: "var(--border-thick)", paddingTop: "3rem", textAlign: "center" }}>
+          <Link href="/" style={{ color: "var(--color-secondary)", fontWeight: 900, fontSize: "1.5rem", textDecoration: "none", borderBottom: "3px solid var(--color-secondary)" }}>
+            &larr; Volver al Castillo del Inicio
           </Link>
         </div>
       </div>
