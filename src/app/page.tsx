@@ -116,19 +116,6 @@ export default function Home() {
           }}>
             Mega Biblioteca 📚
           </Link>
-          <Link href="/lienzo" style={{ 
-            padding: "20px 40px", 
-            fontSize: "1.4rem", 
-            borderRadius: "var(--radius-md)", 
-            background: "white", 
-            color: "var(--color-primary)", 
-            border: "var(--border-thick)",
-            boxShadow: "6px 6px 0px #1A1A1A",
-            fontWeight: 900,
-            textDecoration: "none"
-          }}>
-            A jugar &gt;
-          </Link>
         </div>
       </div>
 
