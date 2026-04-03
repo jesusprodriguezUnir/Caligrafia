@@ -12,46 +12,9 @@
   align-items: center;
   padding: 0 1.5rem 4rem;
   font-family: var(--font-main);
-  
-  background-color: #f6fbff; /* Color de hoja clara */
-  
-  /* Pauta azul horizontal y margen rojo vertical para TODA la página */
-  background-image: 
-    linear-gradient(90deg, transparent 94px, #ffb3b3 94px, #ffb3b3 96px, transparent 96px),
-    repeating-linear-gradient(rgba(0,180,255,0.15) 0px, rgba(0,180,255,0.15) 1px, transparent 1px, transparent 28px);
-  background-size: 100% 100%, 100% 28px;
-  background-attachment: fixed;
 
   position: relative;
   overflow-x: hidden;
-}
-
-/* Agujeros de espiral en el lateral izquierdo de la página */
-.main::before {
-  content: "";
-  position: fixed;
-  top: 0; bottom: 0; left: 15px;
-  width: 25px;
-  background-image: radial-gradient(circle, #DCCFA8 40%, transparent 45%);
-  background-size: 25px 28px;
-  background-repeat: repeat-y;
-  z-index: 5;
-  pointer-events: none;
-}
-
-/* Lápiz decorativo en la esquina superior izquierda */
-.main::after {
-  content: "✎";
-  position: fixed;
-  top: 15px;
-  left: 45px;
-  font-size: 30px;
-  color: #2563eb;
-  font-family: Arial, sans-serif;
-  transform: rotate(-45deg);
-  opacity: 0.8;
-  z-index: 6;
-  pointer-events: none;
 }
 
 /* ── Header ─────────────────────────────────────────────────────────────── */
