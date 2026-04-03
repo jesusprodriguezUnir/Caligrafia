@@ -6,16 +6,16 @@ import styles from "../page.module.css";
 import Image from "next/image";
 
 const CATEGORIAS_MAGICAS = [
-  { id: 1, titulo: "Preescritura", emoji: "🌀", desc: "¡Controla tu mano mágica con trazos y ondas!", archivo: "/test-cuadernos/1-test.pdf" },
-  { id: 2, titulo: "Vocales Mayúsculas", emoji: "🅰️", desc: "A, E, I, O, U en grande para gritar fuerte.", archivo: "/test-cuadernos/2-test.pdf" },
-  { id: 3, titulo: "Abecedario Mayúsculas", emoji: "🔠", desc: "¡Todas las letras gigantes de la A a la Z!", archivo: "/test-cuadernos/3-test.pdf" },
-  { id: 4, titulo: "Vocales Minúsculas", emoji: "ᵃ", desc: "A, e, i, o, u pequeñitas y saltarinas.", archivo: "/test-cuadernos/4-test.pdf" },
-  { id: 5, titulo: "Abecedario Minúsculas", emoji: "🔡", desc: "¡Todas las letras pequeñas para escribir cuentos!", archivo: "/test-cuadernos/5-test.pdf" },
-  { id: 6, titulo: "Palabras Mayúsculas", emoji: "🍎", desc: "¡Escribe tus primeras palabras en grande!", archivo: "/test-cuadernos/6-test.pdf" },
-  { id: 7, titulo: "Palabras Minúsculas", emoji: "☀️", desc: "¡Aprende a escribir palabras de verdad!", archivo: "/test-cuadernos/7-test.pdf" },
-  { id: 8, titulo: "Frases Mayúsculas", emoji: "📢", desc: "¡Construye mensajes importantes en gigante!", archivo: "/test-cuadernos/8-test.pdf" },
-  { id: 9, titulo: "Frases Minúsculas", emoji: "💬", desc: "¡Escribe frases bonitas para tus amigos!", archivo: "/test-cuadernos/9-test.pdf" },
-  { id: 10, titulo: "Textos Mágicos", emoji: "📖", desc: "¡Conviértete en un gran escritor de historias!", archivo: "/test-cuadernos/10-test.pdf" },
+  { id: 1, titulo: "Preescritura", emoji: "🌀", desc: "¡Controla tu mano mágica con trazos y ondas!", ejercicios: ["Trazos en Zig-Zag", "Líneas de Montañas", "Ondas del Mar"] },
+  { id: 2, titulo: "Vocales Mayúsculas", emoji: "🅰️", desc: "A, E, I, O, U en grande para gritar fuerte.", ejercicios: ["Vocal A y E", "Vocal I y O", "Vocal U y Repaso"] },
+  { id: 3, titulo: "Abecedario Mayúsculas", emoji: "🔠", desc: "¡Todas las letras gigantes de la A a la Z!", ejercicios: ["Letras A a la D", "Letras E a la H", "De la I a la L"] },
+  { id: 4, titulo: "Vocales Minúsculas", emoji: "ᵃ", desc: "A, e, i, o, u pequeñitas y saltarinas.", ejercicios: ["Vocales a, e", "Vocales i, o", "Vocal u"] },
+  { id: 5, titulo: "Abecedario Minúsculas", emoji: "🔡", desc: "¡Todas las letras pequeñas para escribir cuentos!", ejercicios: ["Letras a, b, c", "Letras d, e, f", "Letras g, h, i"] },
+  { id: 6, titulo: "Palabras Mayúsculas", emoji: "🍎", desc: "¡Escribe tus primeras palabras en grande!", ejercicios: ["MAMÁ Y PAPÁ", "EL SOL", "LA LUNA"] },
+  { id: 7, titulo: "Palabras Minúsculas", emoji: "☀️", desc: "¡Aprende a escribir palabras de verdad!", ejercicios: ["casa y perro", "sol y luna", "mami y papi"] },
+  { id: 8, titulo: "Frases Mayúsculas", emoji: "📢", desc: "¡Construye mensajes importantes en gigante!", ejercicios: ["EL SOL BRILLA", "HOLA AMIGO", "JUGAR ES DIVERTIDO"] },
+  { id: 9, titulo: "Frases Minúsculas", emoji: "💬", desc: "¡Escribe frases bonitas para tus amigos!", ejercicios: ["mi gato es lindo", "me gusta leer", "el cielo es azul"] },
+  { id: 10, titulo: "Textos Mágicos", emoji: "📖", desc: "¡Conviértete en un gran escritor de historias!", ejercicios: ["El Dragón Azul", "El Hada Rosa", "El Bosque Mágico"] },
 ];
 
 export default function Cuadernillos() {
@@ -105,48 +105,52 @@ export default function Cuadernillos() {
             gap: "2.5rem",
             justifyItems: "center"
           }}>
-            {[1, 2, 3].map(item => (
-              <div key={item} style={{ 
-                background: "white", 
-                padding: "2rem", 
-                borderRadius: "20px", 
-                border: "var(--border-thick)",
-                boxShadow: "6px 6px 0px #E2E8F0",
-                width: "100%",
-                maxWidth: "340px"
-              }}>
-                <div style={{ 
-                  width: "100%", 
-                  height: "220px", 
-                  backgroundColor: "#F8FAFC", 
-                  borderRadius: "15px", 
-                  marginBottom: "1.5rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "4.5rem",
-                  border: "2px dashed #CBD5E1"
+            {[1, 2, 3].map(item => {
+              const archivoPath = `/test-cuadernos/${currentCategory?.id}.${item}-test.pdf`;
+              const nombreEjercicio = currentCategory?.ejercicios[item-1];
+              return (
+                <div key={item} style={{ 
+                  background: "white", 
+                  padding: "2rem", 
+                  borderRadius: "20px", 
+                  border: "var(--border-thick)",
+                  boxShadow: "6px 6px 0px #E2E8F0",
+                  width: "100%",
+                  maxWidth: "340px"
                 }}>
-                   {currentCategory?.emoji}
+                  <div style={{ 
+                    width: "100%", 
+                    height: "220px", 
+                    backgroundColor: "#F8FAFC", 
+                    borderRadius: "15px", 
+                    marginBottom: "1.5rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "4.5rem",
+                    border: "2px dashed #CBD5E1"
+                  }}>
+                     {currentCategory?.emoji}
+                  </div>
+                  <h4 style={{ fontWeight: 900, color: "var(--color-primary)", fontSize: "1.3rem" }}>Reto: {nombreEjercicio}</h4>
+                  <div style={{ display: "flex", gap: "12px", marginTop: "1.5rem" }}>
+                    <button 
+                      onClick={() => setPreview(archivoPath)}
+                      style={{ flex: 1, backgroundColor: "white", color: "var(--color-primary)", borderRadius: "12px", padding: "12px", fontWeight: 900, border: "3px solid #1A1A1A", cursor: "pointer", boxShadow: "4px 4px 0px #1A1A1A" }}
+                    >
+                      🔍 Ver &gt;
+                    </button>
+                    <button 
+                      onClick={() => handleDownload(archivoPath, `${nombreEjercicio}`)}
+                      className="btn-primary" 
+                      style={{ flex: 2, borderRadius: "12px", padding: "12px", fontWeight: 900, fontSize: "1.1rem", backgroundColor: "var(--color-secondary)", border: "3px solid #1A1A1A", color: "white", boxShadow: "4px 4px 0px #0369A1" }}
+                    >
+                      📥 Bajar &gt;
+                    </button>
+                  </div>
                 </div>
-                <h4 style={{ fontWeight: 900, color: "var(--color-primary)", fontSize: "1.3rem" }}>Cuaderno Mágico {currentCategory?.id}.{item}</h4>
-                <div style={{ display: "flex", gap: "12px", marginTop: "1.5rem" }}>
-                  <button 
-                    onClick={() => setPreview(currentCategory?.archivo || null)}
-                    style={{ flex: 1, backgroundColor: "white", color: "var(--color-primary)", borderRadius: "12px", padding: "12px", fontWeight: 900, border: "3px solid #1A1A1A", cursor: "pointer", boxShadow: "4px 4px 0px #1A1A1A" }}
-                  >
-                    🔍 Ver &gt;
-                  </button>
-                  <button 
-                    onClick={() => handleDownload(currentCategory?.archivo, `${currentCategory?.titulo}-${item}`)}
-                    className="btn-primary" 
-                    style={{ flex: 2, borderRadius: "12px", padding: "12px", fontWeight: 900, fontSize: "1.1rem", backgroundColor: "var(--color-secondary)", border: "3px solid #1A1A1A", color: "white", boxShadow: "4px 4px 0px #0369A1" }}
-                  >
-                    📥 Bajar &gt;
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
