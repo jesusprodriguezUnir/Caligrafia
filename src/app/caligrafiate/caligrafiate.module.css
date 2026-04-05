@@ -294,6 +294,10 @@
 .optionIcon {
   font-size: 2.5rem;
 }
+.optionIconImg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
 .optionSub {
   font-size: 0.82rem;
   color: #666;

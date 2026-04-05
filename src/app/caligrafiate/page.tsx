@@ -593,8 +593,8 @@ export default function CaligrafiatePage() {
                 [
                   { val: "pauta-guiada", icon: "📏", label: "Pauta guiada", sub: "3 líneas por renglón (ascendente, base, descendente)" },
                   { val: "pauta-normal", icon: "📄", label: "Pauta normal", sub: "2 líneas por renglón" },
-                  { val: "cuadricula-5", icon: "⊞", label: "Cuadrícula 5mm", sub: "Integrada en cuadrícula de 5mm" },
-                  { val: "cuadricula-4", icon: "⊟", label: "Cuadrícula 4mm", sub: "Integrada en cuadrícula de 4mm" },
+                  { val: "cuadricula-5", icon: "/icon-cuadricula-5.svg", label: "Cuadrícula 5mm", sub: "Integrada en cuadrícula de 5mm" },
+                  { val: "cuadricula-4", icon: "/icon-cuadricula-4.svg", label: "Cuadrícula 4mm", sub: "Integrada en cuadrícula de 4mm" },
                 ] as const
               ).map(({ val, icon, label, sub }) => (
                 <button
@@ -602,7 +602,9 @@ export default function CaligrafiatePage() {
                   className={`${styles.optionCard} ${config.formato === val ? styles.optionSelected : ""}`}
                   onClick={() => updateConfig("formato", val)}
                 >
-                  <span className={styles.optionIcon}>{icon}</span>
+                  <span className={styles.optionIcon}>
+                    {icon.startsWith("/") ? <img src={icon} alt={label} className={styles.optionIconImg} /> : icon}
+                  </span>
                   <strong>{label}</strong>
                   <span className={styles.optionSub}>{sub}</span>
                 </button>
