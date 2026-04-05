@@ -4,105 +4,147 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className={styles.main} style={{ fontFamily: "var(--font-main)" }}>
-      <div className={`${styles.hero}`} style={{ 
+    <main className={styles.main}>
+      {/* 🎈 PLAYFUL HERO SECTION */}
+      <div className={styles.hero} style={{ 
         background: "white", 
         border: "var(--border-thick)", 
-        padding: "clamp(1.5rem, 5vw, 3.5rem)", 
+        padding: "clamp(2rem, 6vw, 4rem)", 
         borderRadius: "var(--radius-lg)", 
         boxShadow: "var(--shadow-flat)",
         maxWidth: "1100px",
         margin: "0 auto",
         position: "relative",
-        width: "100%"
+        width: "100%",
+        textAlign: "center"
       }}>
-        <div style={{ position: "relative", width: "min(100%, 620px)", aspectRatio: "1 / 1", borderRadius: "var(--radius-md)", overflow: "hidden", margin: "0 auto 2.5rem", border: "var(--border-thick)", background: "linear-gradient(180deg, #d9f1ff 0%, #edf7ff 100%)", boxShadow: "6px 6px 0 #1a1a1a" }}>
+        <div style={{ position: "relative", width: "100%", maxWidth: "700px", aspectRatio: "16 / 9", borderRadius: "12px", overflow: "hidden", margin: "0 auto 3rem", border: "var(--border-thick)", background: "linear-gradient(180deg, #d9f1ff 0%, #edf7ff 100%)", boxShadow: "6px 6px 0 #1a1a1a" }}>
            <Image 
              src="/hero.png" 
-             alt="Nina sonriendo mientras aprende caligrafia" 
+             alt="Un lápiz mágico gigante escribiendo CALIGRA-FÍATE con el acento de lápiz" 
              fill
              priority
-             sizes="(max-width: 1100px) 100vw, 1100px"
+             sizes="(max-width: 1200px) 100vw, 700px"
              quality={100}
-             style={{ objectFit: "cover", objectPosition: "center 35%" }}
+             style={{ objectFit: "cover" }}
            />
         </div>
         
-        <h1 className={styles.title} style={{ fontWeight: 900, fontSize: "clamp(1.35rem, 7vw, 3.6rem)", color: "var(--color-primary)", lineHeight: 1.1, whiteSpace: "nowrap", letterSpacing: "-0.02em" }}>
-          <span style={{ fontSize: "clamp(1rem, 4vw, 1.5rem)", display: "block", color: "var(--color-accent)", fontFamily: "var(--font-hand)", marginBottom: "0.5rem" }}>Aprende de forma divertida</span>
-          CALIGRA-<span style={{ color: "var(--color-secondary)" }}>F<span className={styles.pencilAccentLetter}>ı</span>ATE</span>
+        <h1 className={styles.title} style={{ 
+          fontFamily: "var(--font-display)", 
+          fontWeight: 800, 
+          fontSize: "clamp(2rem, 8vw, 4.5rem)", 
+          color: "var(--color-primary)", 
+          lineHeight: 1.1, 
+          marginBottom: "1.5rem",
+          textShadow: "3px 3px 0 rgba(14, 165, 233, 0.1)"
+        }}>
+          CALIGRA-<span className="pencilAccentLetter">FÍ</span>ATE
         </h1>
         
-        <p className={styles.subtitle} style={{ color: "#475569", fontWeight: 600, fontSize: "clamp(0.9rem, 3vw, 1.3rem)", marginBottom: "3rem", maxWidth: "800px", margin: "1rem auto 3rem" }}>
-          ¡Crea, practica y juega con letras mágicas en un entorno lleno de creatividad! 🌟
-        </p>
-        
-        {/* Tarjeta destacada — Caligraf_iate */}
-        <div style={{
-          background: "linear-gradient(135deg, #0EA5E9 0%, #1A1A1A 100%)",
-          border: "var(--border-thick)",
-          borderRadius: "var(--radius-md)",
-          padding: "clamp(1.5rem, 4vw, 2.5rem)",
-          color: "white",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "1.5rem",
-          boxShadow: "8px 8px 0px #000",
-          flexWrap: "wrap",
-          marginBottom: "2rem",
-          textAlign: "left",
-          position: "relative",
-          overflow: "hidden"
+        <p className={styles.subtitle} style={{ 
+          color: "#475569", 
+          fontWeight: 700, 
+          fontSize: "clamp(1rem, 3vw, 1.4rem)", 
+          maxWidth: "800px", 
+          margin: "0 auto 3.5rem", 
+          lineHeight: 1.6,
+          fontFamily: "var(--font-hand)",
+          textTransform: "uppercase",
+          letterSpacing: "1px"
         }}>
-          {/* Doodle de fondo */}
-          <div style={{ position: "absolute", right: "20px", top: "10px", fontSize: "6rem", opacity: 0.1, transform: "rotate(15deg)" }}>✍️</div>
-          <div style={{ flex: 1, minWidth: "220px" }}>
-            <div style={{ display: "inline-block", background: "var(--color-accent)", border: "2px solid white", borderRadius: "30px", padding: "3px 14px", fontSize: "0.78rem", fontWeight: 900, marginBottom: "0.7rem", letterSpacing: "1px" }}>
-              ✨ GENERADOR DE FICHAS
-            </div>
-            <h2 style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", fontWeight: 800, margin: "0 0 0.4rem", lineHeight: 1.1, fontFamily: "var(--font-calligraphy)", textShadow: "2px 2px 0px rgba(0,0,0,0.1)" }}>
-              Caligra<span style={{ color: "#EF4444" }}>-</span>F<span className={styles.pencilAccentLetter}>ı</span>ate
-            </h2>
-            <p style={{ margin: 0, opacity: 0.85, fontSize: "1rem", fontWeight: 600 }}>
-              Crea fichas personalizadas paso a paso: formato, márgenes, tipo de letra y contenido.
-            </p>
-          </div>
-          <Link href="/caligrafiate" style={{
-            flexShrink: 0,
-            padding: "16px 32px",
-            background: "white",
-            color: "var(--color-primary)",
-            border: "3px solid white",
-            borderRadius: "50px",
-            fontWeight: 900,
-            fontSize: "1.1rem",
-            textDecoration: "none",
-            boxShadow: "4px 4px 0 #EF4444",
-            display: "inline-block",
-            whiteSpace: "nowrap"
-          }}>
-            Crear ficha →
-          </Link>
-        </div>
+          ¡Aprende Jugando con Letras Mágicas! ✨
+        </p>
 
-        <div className={styles.actions} style={{ gap: "2rem", justifyContent: "center", flexWrap: "wrap" }}>
-          <Link href="/cuadernillos" className="btn-primary" style={{ 
-            padding: "20px 40px", 
-            fontSize: "1.4rem", 
-            borderRadius: "var(--radius-md)", 
-            backgroundColor: "var(--color-secondary)", 
-            border: "var(--border-thick)",
-            boxShadow: "6px 6px 0px #0369A1",
-            fontWeight: 900,
-            textDecoration: "none",
-            color: "white"
-          }}>
-            Saber más &gt;
-          </Link>
-        </div>
+        <Link href="/caligrafiate" style={{
+          padding: "20px 50px",
+          background: "var(--color-cta)",
+          color: "white",
+          borderRadius: "100px",
+          fontWeight: 800,
+          fontSize: "1.5rem",
+          textDecoration: "none",
+          boxShadow: "8px 8px 0 #1a1a1a",
+          display: "inline-block",
+          border: "var(--border-thick)",
+          transition: "transform 0.1s ease, box-shadow 0.1s ease",
+        }} className="cta-button-hover">
+          Crear ficha ahora →
+        </Link>
       </div>
 
+      {/* 🏗️ SECCIÓN DE BENEFICIOS */}
+      <section className="sectionContainer">
+        <div className="sectionHeader">
+          <h2 className="sectionTitle" style={{ fontFamily: "var(--font-display)" }}>¿Por qué practicar?</h2>
+          <p className="sectionSubtitle" style={{ fontWeight: 700 }}>¡Aprender a escribir es un superpoder!</p>
+        </div>
+        <div className="featureGrid">
+          <div className="featureCard" style={{ borderColor: "#22C55E" }}>
+            <span className="featureIcon">🧠</span>
+            <h3 className="featureTitle" style={{ fontFamily: "var(--font-display)" }}>Psicomotricidad</h3>
+            <p className="featureText">Mejora la precisión de tu mano mientras te diviertes trazando letras mágicas.</p>
+          </div>
+          <div className="featureCard" style={{ borderColor: "#0EA5E9" }}>
+            <span className="featureIcon">🎯</span>
+            <h3 className="featureTitle" style={{ fontFamily: "var(--font-display)" }}>Concentración</h3>
+            <p className="featureText">Enfócate en cada trazo y descubre la paz que da dibujar tus propias palabras.</p>
+          </div>
+          <div className="featureCard" style={{ borderColor: "#EF4444" }}>
+            <span className="featureIcon">🎨</span>
+            <h3 className="featureTitle" style={{ fontFamily: "var(--font-display)" }}>Creatividad</h3>
+            <p className="featureText">Personaliza tus fichas y convierte la tarea en un momento de creación artística.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 🖼️ SECCIÓN DE EJEMPLOS */}
+      <section className="sectionContainer" style={{ background: "white", padding: "5rem 2rem", borderRadius: "var(--radius-lg)", border: "var(--border-thick)", boxShadow: "var(--shadow-flat)" }}>
+        <div className="sectionHeader">
+          <h2 className="sectionTitle" style={{ fontFamily: "var(--font-display)" }}>Fichas para cada etapa</h2>
+          <p className="sectionSubtitle" style={{ fontWeight: 700 }}>Desde tus primeros puntos hasta frases completas.</p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "3rem" }}>
+          <div style={{ padding: "10px", border: "var(--border-thick)", borderRadius: "var(--radius-md)", background: "#f0f9ff", transform: "rotate(-2deg)", textAlign: "center" }}>
+            <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>✏️</div>
+            <strong style={{ fontSize: "1.2rem", display: "block" }}>Letra Punteada</strong>
+            <p>Ideal para empezar a calcar.</p>
+          </div>
+          <div style={{ padding: "10px", border: "var(--border-thick)", borderRadius: "var(--radius-md)", background: "#f0fdf4", transform: "rotate(2deg)", textAlign: "center" }}>
+            <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>📏</div>
+            <strong style={{ fontSize: "1.2rem", display: "block" }}>Pauta Guiada</strong>
+            <p>Para controlar la altura.</p>
+          </div>
+          <div style={{ padding: "10px", border: "var(--border-thick)", borderRadius: "var(--radius-md)", background: "#fff7ed", transform: "rotate(-1deg)", textAlign: "center" }}>
+            <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>⊞</div>
+            <strong style={{ fontSize: "1.2rem", display: "block" }}>Cuadrícula</strong>
+            <p>Perfecta para matemáticas.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 💬 TESTIMONIOS */}
+      <section className="sectionContainer">
+        <div style={{ maxWidth: "900px", margin: "0 auto", textAlign: "center" }}>
+          <h2 className="sectionTitle" style={{ fontFamily: "var(--font-display)" }}>Lo que dicen los profes</h2>
+          <div style={{ marginTop: "3rem", padding: "3rem", background: "white", border: "var(--border-thick)", borderRadius: "var(--radius-md)", boxShadow: "var(--shadow-flat)" }}>
+            <p style={{ fontStyle: "italic", fontSize: "1.2rem", color: "var(--color-primary)", marginBottom: "1.5rem", fontWeight: 700 }}>
+              "¡Es la mejor forma de que mis alumnos practiquen caligrafía sin aburrirse! El lápiz mágico les motiva muchísimo."
+            </p>
+            <strong style={{ color: "var(--color-secondary)", fontSize: "1.1rem" }}>— Profa. Laura, Escuela Infantil El Bosque</strong>
+          </div>
+        </div>
+      </section>
+
+      {/* ℹ️ SOBRE NOSOTROS */}
+      <section className="sectionContainer" style={{ marginBottom: "8rem" }}>
+        <div style={{ background: "var(--color-secondary)", color: "white", padding: "4rem", borderRadius: "var(--radius-lg)", border: "var(--border-thick)", boxShadow: "8px 8px 0 var(--color-primary)" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "2.5rem", marginBottom: "1.5rem" }}>Nuestra Magia</h2>
+          <p style={{ fontSize: "1.2rem", lineHeight: 1.8, fontWeight: 700 }}>
+            Caligra-Fíate nace para devolver la ilusión por la escritura. Combinamos la pedagogía clásica con un entorno digital amigable para que cada niño descubra su propio estilo a su propio ritmo.
+          </p>
+        </div>
+      </section>
     </main>
   );
 }
