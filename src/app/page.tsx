@@ -123,19 +123,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 💬 TESTIMONIOS */}
-      <section className="sectionContainer">
-        <div style={{ maxWidth: "900px", margin: "0 auto", textAlign: "center" }}>
-          <h2 className="sectionTitle" style={{ fontFamily: "var(--font-display)" }}>Lo que dicen los profes</h2>
-          <div style={{ marginTop: "3rem", padding: "3rem", background: "white", border: "var(--border-thick)", borderRadius: "var(--radius-md)", boxShadow: "var(--shadow-flat)" }}>
-            <p style={{ fontStyle: "italic", fontSize: "1.2rem", color: "var(--color-primary)", marginBottom: "1.5rem", fontWeight: 700 }}>
-              "¡Es la mejor forma de que mis alumnos practiquen caligrafía sin aburrirse! El lápiz mágico les motiva muchísimo."
-            </p>
-            <strong style={{ color: "var(--color-secondary)", fontSize: "1.1rem" }}>— Profa. Laura, Escuela Infantil El Bosque</strong>
-          </div>
-        </div>
-      </section>
-
       {/* ℹ️ SOBRE NOSOTROS */}
       <section className="sectionContainer" style={{ marginBottom: "8rem" }}>
         <div style={{ background: "var(--color-secondary)", color: "white", padding: "4rem", borderRadius: "var(--radius-lg)", border: "var(--border-thick)", boxShadow: "8px 8px 0 var(--color-primary)" }}>
