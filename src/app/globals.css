@@ -115,16 +115,17 @@ a {
 .pencilAccentLetter {
   position: relative;
   display: inline-block;
+  color: inherit;
 }
 
 .pencilAccentLetter::after {
   content: "✏️";
   position: absolute;
-  top: -0.65em;
-  left: 0.15em;
-  font-size: 0.45em;
-  transform: rotate(-35deg);
-  filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.2));
+  top: -0.6em;
+  left: 0.1em;
+  font-size: 0.45em; /* Large enough to be clearly seen as the accent */
+  transform: rotate(-25deg);
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1));
 }
 
 /* Landing Page Sections */

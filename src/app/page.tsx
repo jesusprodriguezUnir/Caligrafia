@@ -21,7 +21,7 @@ export default function Home() {
         <div style={{ position: "relative", width: "100%", maxWidth: "700px", aspectRatio: "16 / 9", borderRadius: "12px", overflow: "hidden", margin: "0 auto 3rem", border: "var(--border-thick)", background: "linear-gradient(180deg, #d9f1ff 0%, #edf7ff 100%)", boxShadow: "6px 6px 0 #1a1a1a" }}>
            <Image 
              src="/hero.png" 
-             alt="Un lápiz mágico gigante escribiendo CALIGRA-FÍATE con el acento de lápiz" 
+             alt="Un lápiz mágico gigante escribiendo CALIGRA-FIATE con el acento de lápiz" 
              fill
              priority
              sizes="(max-width: 1200px) 100vw, 700px"
@@ -39,7 +39,7 @@ export default function Home() {
           marginBottom: "1.5rem",
           textShadow: "3px 3px 0 rgba(14, 165, 233, 0.1)"
         }}>
-          CALIGRA-<span className="pencilAccentLetter">FÍ</span>ATE
+          CALIGRA-F<span className="pencilAccentLetter">I</span>ATE
         </h1>
         
         <p className={styles.subtitle} style={{ 
@@ -141,7 +141,7 @@ export default function Home() {
         <div style={{ background: "var(--color-secondary)", color: "white", padding: "4rem", borderRadius: "var(--radius-lg)", border: "var(--border-thick)", boxShadow: "8px 8px 0 var(--color-primary)" }}>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "2.5rem", marginBottom: "1.5rem" }}>Nuestra Magia</h2>
           <p style={{ fontSize: "1.2rem", lineHeight: 1.8, fontWeight: 700 }}>
-            Caligra-Fíate nace para devolver la ilusión por la escritura. Combinamos la pedagogía clásica con un entorno digital amigable para que cada niño descubra su propio estilo a su propio ritmo.
+            Caligra-Fiate nace para devolver la ilusión por la escritura. Combinamos la pedagogía clásica con un entorno digital amigable para que cada niño descubra su propio estilo a su propio ritmo.
           </p>
         </div>
       </section>

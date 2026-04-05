@@ -338,7 +338,7 @@ function drawTextoLibre(
   ctx.fillStyle = "rgba(14,165,233,0.04)";
   ctx.font = "bold 72px Arial";
   ctx.textAlign = "center";
-  ctx.fillText("Caligra-Fíate", 0, 0);
+  ctx.fillText("Caligra-Fiate", 0, 0);
   ctx.restore();
 }
 
@@ -434,7 +434,7 @@ export default function CaligrafiatePage() {
     ctx.fillStyle = "rgba(14,165,233,0.05)";
     ctx.font = "bold 80px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("Caligra-Fíate", 0, 0);
+    ctx.fillText("Caligra-Fiate", 0, 0);
     ctx.restore();
   }, [config]);
 
@@ -550,7 +550,7 @@ export default function CaligrafiatePage() {
       <header className={styles.header}>
         <Link href="/" className={styles.backBtn}>← Inicio</Link>
         <h1 className={styles.brand}>
-          CALIGRA<span className={styles.brandUnder}>-</span>F<span className={styles.pencilAccentLetter}>Í</span>ATE
+          CALIGRA<span className={styles.brandUnder}>-</span>F<span className={styles.pencilAccentLetter}>I</span>ATE
         </h1>
         <span className={styles.tagline}>¡Aprende Jugando con Letras Mágicas! ✨</span>
       </header>
