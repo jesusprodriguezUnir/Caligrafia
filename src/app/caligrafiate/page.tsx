@@ -338,7 +338,7 @@ function drawTextoLibre(
   ctx.fillStyle = "rgba(14,165,233,0.04)";
   ctx.font = "bold 72px Arial";
   ctx.textAlign = "center";
-  ctx.fillText("Caligra-Fíate", 0, 0);
+  ctx.fillText("Caligra-Fiate", 0, 0);
   ctx.restore();
 }
 
@@ -416,37 +416,32 @@ export default function CaligrafiatePage() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    
+    // Solo dibujar si tenemos los datos mínimos (formato y margen)
+    // Opcionalmente, podemos dibujar una hoja vacía
     drawLineasGuia(ctx, config.formato, config.margen);
+    
     if (config.modoContenido === "libre") {
       drawTextoLibre(ctx, config);
-    } else {
+    } else if (config.modoContenido === "predefinido") {
       drawContenidoSample(ctx, config);
-
-      // Marca de agua sutil
-      ctx.save();
-      ctx.translate(W / 2, H / 2);
-      ctx.rotate(-Math.PI / 6);
-      ctx.fillStyle = "rgba(14,165,233,0.05)";
-      ctx.font = "bold 80px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText("Caligra-Fíate", 0, 0);
-      ctx.restore();
     }
+
+    // Marca de agua sutil
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    ctx.rotate(-Math.PI / 6);
+    ctx.fillStyle = "rgba(14,165,233,0.05)";
+    ctx.font = "bold 80px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Caligra-Fiate", 0, 0);
+    ctx.restore();
   }, [config]);
 
-  // Renderizar en paso 4, o en tiempo real si estamos en modo libre
+  // Actualización PROACTIVA del canvas en cada cambio de configuración
   useEffect(() => {
-    if (step === 4) {
-      renderCanvas();
-    }
-  }, [renderCanvas, step]);
-
-  // Actualización en tiempo real del canvas en modo libre (paso 3 de contenido)
-  useEffect(() => {
-    if (step === 4 && config.modoContenido === "libre") {
-      renderCanvas();
-    }
-  }, [config.textoLibre, renderCanvas, step, config.modoContenido]);
+    renderCanvas();
+  }, [config, renderCanvas]);
 
   // QR para acceso rapido a la pagina de contacto
   useEffect(() => {
@@ -555,9 +550,9 @@ export default function CaligrafiatePage() {
       <header className={styles.header}>
         <Link href="/" className={styles.backBtn}>← Inicio</Link>
         <h1 className={styles.brand}>
-          Caligra<span className={styles.brandUnder}>-</span>F<span className={styles.brandPencilI}>ı</span>ate
+          CALIGRA<span className={styles.brandUnder}>-</span>F<span className={styles.pencilAccentLetter}>I</span>ATE
         </h1>
-        <span className={styles.tagline}>Tu ficha. Tu ritmo. Tu letra. ✍️</span>
+        <span className={styles.tagline}>¡Aprende Jugando con Letras Mágicas! ✨</span>
       </header>
 
       {/* STEPPER */}
@@ -580,8 +575,10 @@ export default function CaligrafiatePage() {
         ))}
       </div>
 
-      {/* CARD */}
-      <div className={styles.card} data-anim={animDir} key={step}>
+      <div className={styles.layoutWrapper}>
+        <div className={styles.controlsSide}>
+          {/* CARD */}
+          <div className={styles.card} data-anim={animDir} key={step}>
 
         {/* ──── PASO 0: Formato ────────────────────────────────────────────── */}
         {step === 0 && (
@@ -650,7 +647,7 @@ export default function CaligrafiatePage() {
               <span className={styles.stepNum}>3</span>
               Tipo de letra
             </h2>
-            <p className={styles.stepDesc}>Elige el estilo de letra según la edad del alumno:</p>
+            <p className={styles.stepDesc}>Seleccione el estilo de letra:</p>
             <div className={styles.optionRow}>
               {(
                 [
@@ -658,7 +655,7 @@ export default function CaligrafiatePage() {
                     val: "escolar",
                     icon: "🏠",
                     label: "Letra escolar",
-                    sub: "Tipo 'casa' enlazada. Ideal para Infantil y primeros ciclos de Primaria.",
+                    sub: "Tipo 'casa' enlazada.",
                     preview: "mamá",
                     font: "Georgia, serif",
                   },
@@ -666,7 +663,7 @@ export default function CaligrafiatePage() {
                     val: "punteada",
                     icon: "✏️",
                     label: "Letra punteada",
-                    sub: "Ideal para calcar y repasar las letras siguiendo los puntos.",
+                    sub: "Para calcar y repasar.",
                     preview: "mamá",
                     font: "Georgia, serif",
                     isPunteada: true,
@@ -675,7 +672,7 @@ export default function CaligrafiatePage() {
                     val: "imprenta",
                     icon: "🔤",
                     label: "Imprenta / Mayúsculas",
-                    sub: "Para alumnos más mayores. Enfocado en frases y textos completos.",
+                    sub: "Para textos completos.",
                     preview: "MAMÁ",
                     font: "Arial, sans-serif",
                   },
@@ -686,7 +683,6 @@ export default function CaligrafiatePage() {
                   className={`${styles.optionCard} ${styles.optionCardLarge} ${config.tipoLetra === val ? styles.optionSelected : ""}`}
                   onClick={() => updateConfig("tipoLetra", val)}
                 >
-                  <span className={styles.optionIcon}>{icon}</span>
                   <strong>{label}</strong>
                   <span className={styles.optionSub}>{sub}</span>
                   <span className={isPunteada ? styles.letterPreviewDotted : styles.letterPreview} style={{ fontFamily: font }}>
@@ -901,27 +897,17 @@ export default function CaligrafiatePage() {
               <span className={styles.stepNum}>🎉</span>
               ¡Tu ficha está lista!
             </h2>
-            <div className={styles.summaryBar}>
+            <div className={styles.summaryBar} style={{ marginBottom: "2rem" }}>
               <span>📐 {config.formato?.replace("-", " ").replace("cuadricula", "Cuadrícula") ?? "—"}</span>
               <span>⬛ Margen: {config.margen === "con" ? "Sí" : "No"}</span>
-              <span>✍️ {config.tipoLetra === "escolar" ? "Letra escolar" : "Imprenta"}</span>
+              <span>✍️ {config.tipoLetra === "escolar" ? "Letra escolar" : config.tipoLetra === "punteada" ? "Letra punteada" : "Imprenta"}</span>
               {config.modoContenido === "libre" ? (
                 <>
                   <span>✏️ Texto libre · {config.textoLibre.numLineas} líneas</span>
-                  {config.textoLibre.enunciado && <span>📌 {config.textoLibre.enunciado}</span>}
                 </>
               ) : (
                 <span>📋 {contentLabel(config.contenido)}</span>
               )}
-            </div>
-
-            <div className={styles.canvasWrapper}>
-              <canvas
-                ref={canvasRef}
-                width={W}
-                height={H}
-                className={styles.canvas}
-              />
             </div>
 
             <div className={styles.contactQrCard}>
@@ -991,6 +977,34 @@ export default function CaligrafiatePage() {
           )}
         </div>
       </div>
-    </main>
-  );
+    </div>
+
+    {/* SIDEBAR PREVIEW */}
+      <aside className={styles.previewSide}>
+        <h3 className={styles.previewTitle}>✨ Vista Previa</h3>
+        <div className={styles.canvasWrapper}>
+          {(config.formato || config.margen) ? (
+             <canvas
+              ref={canvasRef}
+              width={W}
+              height={H}
+              className={styles.canvas}
+            />
+          ) : (
+            <div className={styles.previewEmpty}>
+              <span className={styles.previewEmptyIcon}>📄</span>
+              <p>Selecciona un formato para empezar a ver tu ficha en tiempo real.</p>
+            </div>
+          )}
+        </div>
+        
+        {step === 4 && (
+          <p style={{ fontSize: "0.85rem", color: "#64748b", textAlign: "center", fontStyle: "italic" }}>
+            Revisa que todo esté correcto antes de descargar.
+          </p>
+        )}
+      </aside>
+    </div>
+  </main>
+);
 }
