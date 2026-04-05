@@ -1,5 +1,62 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Sniglet:wght@400;800&family=Caveat:wght@400;700&family=Outfit:wght@400;700;900&display=swap');
 
+/* --- CUSTOM EDUCATIONAL FONTS --- */
+@font-face {
+  font-family: 'Massallera';
+  src: url('/fonts/massallera/massallera.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Escolar';
+  src: url('/fonts/escolar_normal/Escolar_G.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Escolar Dot';
+  src: url('/fonts/escolar_dot/Escolar_P.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mestra Pauta';
+  src: url('/fonts/mestra/Mestra1(MeMimaPautada).TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mestra Pauta Dot';
+  src: url('/fonts/mestra_pautadot/Mestra2(MeMimaPuntejada).TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mestra Montessori';
+  src: url('/fonts/mestra_montessori/Mestra3(DoblePauta).TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mestra Montessori Dot';
+  src: url('/fonts/mestra_montessoridot/Mestra4(DoblePautaPuntejada).TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* Playful & Magic Aesthetic */
   --color-primary: #1A1A1A;     /* For prominent outlines */
@@ -118,14 +175,42 @@ a {
   color: inherit;
 }
 
-.pencilAccentLetter::after {
-  content: "✏️";
+
+
+.spiral-svg-accent {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  width: 4rem; /* Large filigree size */
+  height: 4rem;
+  opacity: 0.15; /* Subtler filigree */
+  transform: translate(-50%, -50%) rotate(-15deg);
+  color: var(--color-secondary);
+  filter: blur(1px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Also a smaller version for the tilde specifically */
+.tilde-spiral {
   position: absolute;
   top: -0.6em;
   left: 0.1em;
-  font-size: 0.45em; /* Large enough to be clearly seen as the accent */
-  transform: rotate(-25deg);
-  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1));
+  width: 0.9em;
+  height: 0.9em;
+  transform: rotate(-45deg);
+  color: var(--color-cta);
+  stroke-width: 4;
+}
+
+.cta-button-hover:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0 #1a1a1a;
+}
+
+.cta-button-hoverSecondary:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0 var(--color-secondary);
 }
 
 /* Landing Page Sections */
@@ -397,4 +482,31 @@ a {
   [style*="grid-template-columns"] {
     grid-template-columns: 1fr !important;
   }
+}
+
+/* Utils */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.loader-orbit {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 4px solid var(--color-secondary);
+  border-top-color: transparent;
+  animation: orbit 1s linear infinite;
+}
+
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 12px 12px 0 var(--color-secondary) !important;
 }

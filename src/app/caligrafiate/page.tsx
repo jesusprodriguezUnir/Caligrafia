@@ -11,7 +11,17 @@ import styles from "./caligrafiate.module.css";
 
 type Formato = "pauta-guiada" | "pauta-normal" | "cuadricula-5" | "cuadricula-4" | null;
 type Margen = "sin" | "con" | null;
-type TipoLetra = "escolar" | "imprenta" | "punteada" | null;
+type TipoLetraVal =
+  | "massallera"
+  | "massallera-dot"
+  | "escolar"
+  | "escolar-dot"
+  | "mestra-pauta"
+  | "mestra-pauta-dot"
+  | "mestra-guiada"
+  | "mestra-guiada-dot";
+
+type TipoLetra = TipoLetraVal[] | null;
 type ModoContenido = "predefinido" | "libre" | null;
 type NumLineas = 8 | 12 | 16;
 
@@ -140,15 +150,51 @@ function contentLabel(contenido: Contenido): string {
   return selected.length ? selected.join(" · ") : "Sin contenido";
 }
 
+// ──────────────────────────────────────────────────────────────────────────────
+// HELPERS DE DIBUJO DE TEXTO
+// ──────────────────────────────────────────────────────────────────────────────
+
+const drawTextWithStyle = (
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  font: string,
+  fontSize: number,
+  isPunteada: boolean,
+  isDottedVersion: boolean,
+  color?: string
+) => {
+  ctx.font = `${fontSize}px ${font}`;
+  
+  // Si es punteada, usamos un gris claro apto para calcomanía (tracing)
+  const drawColor = isPunteada ? "rgba(180, 180, 180, 0.85)" : (color || "rgba(14, 100, 200, 0.55)");
+
+  if (isPunteada && !isDottedVersion) {
+    // Para fuentes sin versión punteada real, simulamos con strokeText discontinuo
+    ctx.strokeStyle = drawColor;
+    ctx.lineWidth = Math.max(1, fontSize * 0.025);
+    ctx.setLineDash([1.5, 3.5]); // Puntos definidos
+    ctx.strokeText(text, x, y);
+    ctx.setLineDash([]);
+  } else {
+    // Para versiones punteadas reales o normales, usamos fillText
+    ctx.fillStyle = drawColor;
+    ctx.fillText(text, x, y);
+  }
+};
+
 function drawContenidoSample(
   ctx: CanvasRenderingContext2D,
   config: Config
 ) {
   const { contenido, tipoLetra, margen, formato } = config;
   const mx = margen === "con" ? 75 : 30;
-  const fontBase = tipoLetra === "escolar" ? "Georgia" : "Arial";
+
+  const selectedFonts = tipoLetra && tipoLetra.length > 0 ? tipoLetra : ["escolar" as TipoLetraVal];
 
   let y = 100;
+  let fontIdx = 0;
 
   const lineStep =
     formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
@@ -158,13 +204,43 @@ function drawContenidoSample(
   const drawRow = (label: string, example: string) => {
     if (y + altRenglon > H - 40) return;
 
+    const currentFontType = selectedFonts[fontIdx % selectedFonts.length];
+
+    const fontBase =
+      currentFontType === "massallera" || currentFontType === "massallera-dot" ? "Massallera, Georgia" :
+        currentFontType === "escolar" || currentFontType === "escolar-dot" ? "Escolar, Georgia" :
+          currentFontType?.startsWith("mestra-pauta") ? "Mestra Pauta, Georgia" :
+            currentFontType?.startsWith("mestra-guiada") ? "Mestra Montessori, Georgia" :
+              "Georgia";
+
+    const isDottedVersion = !!(
+      currentFontType === "escolar-dot" ||
+      currentFontType === "mestra-pauta-dot" ||
+      currentFontType === "mestra-guiada-dot"
+    );
+
+    const isPunteada = !!currentFontType?.includes("-dot");
+
+    const fontToUse = isDottedVersion ?
+      (currentFontType === "escolar-dot" ? "Escolar Dot" :
+        currentFontType === "mestra-pauta-dot" ? "Mestra Pauta Dot" : "Mestra Montessori Dot")
+      : fontBase;
+
     ctx.fillStyle = "#999";
-    ctx.font = `italic 13px ${fontBase}`;
+    ctx.font = `italic 13px Georgia`;
     ctx.fillText(label, mx, y - 5);
 
-    ctx.fillStyle = "rgba(0,0,0,0.12)";
-    ctx.font = `bold ${altRenglon * 0.7}px ${fontBase}`;
-    ctx.fillText(example, mx, y + altRenglon * 0.6);
+    drawTextWithStyle(
+      ctx,
+      example,
+      mx,
+      y + altRenglon * 0.6,
+      fontToUse,
+      Math.floor(altRenglon * 0.7),
+      isPunteada,
+      isDottedVersion,
+      "rgba(0,0,0,0.12)"
+    );
 
     ctx.strokeStyle = "#E0E0E0";
     ctx.lineWidth = 0.5;
@@ -174,9 +250,11 @@ function drawContenidoSample(
     ctx.stroke();
 
     y += altRenglon + 10;
+    fontIdx++;
   };
 
   const drawTrazos = () => {
+    // Trazos siempre usan un estilo base sutil
     ctx.strokeStyle = "rgba(0,0,0,0.12)";
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -189,7 +267,7 @@ function drawContenidoSample(
     ctx.stroke();
 
     ctx.fillStyle = "#999";
-    ctx.font = `italic 13px ${fontBase}`;
+    ctx.font = `italic 13px Georgia`;
     ctx.fillText("Bucles · Espirales · Trazos libres", mx, y - 5);
     y += altRenglon + 20;
   };
@@ -197,12 +275,12 @@ function drawContenidoSample(
   if (contenido.trazos) drawTrazos();
   if (contenido.vocalesMay) drawRow("Vocales Mayúsculas", "A E I O U");
   if (contenido.vocalesMin) drawRow("Vocales minúsculas", "a e i o u");
-  if (contenido.alfabetoMay) drawRow("Alfabeto Mayúsculas", "A B C D E F G ...");
-  if (contenido.alfabetoMin) drawRow("Alfabeto minúsculas", "a b c d e f g ...");
+  if (contenido.alfabetoMay) drawRow("Alfabeto Mayúsculas", "A B C D E F G H I");
+  if (contenido.alfabetoMin) drawRow("Alfabeto minúsculas", "a b c d e f g h i");
   if (contenido.silabas) drawRow("Sílabas", "ma me mi mo mu");
   if (contenido.palabras) drawRow("Palabras", "mamá · papá · sol · casa");
   if (contenido.frases) drawRow("Frase", "Mi mamá me mima.");
-  if (contenido.textos) drawRow("Texto", "El sol brilla. El mar canta. ...");
+  if (contenido.textos) drawRow("Texto", "El sol brilla en el cielo azul.");
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -216,11 +294,8 @@ function drawTextoLibre(
   const { textoLibre, margen, formato, tipoLetra } = config;
   const mx = margen === "con" ? 75 : 35;
   const rightX = W - 30;
-  const fontBase = 
-    tipoLetra === "escolar" ? "Georgia, serif" : 
-    tipoLetra === "punteada" ? "Georgia, serif" : 
-    "Arial, sans-serif";
-  const isPunteada = tipoLetra === "punteada";
+
+  const selectedFonts = tipoLetra && tipoLetra.length > 0 ? tipoLetra : ["escolar" as TipoLetraVal];
 
   // Altura de renglón según numLineas
   const numLineas = textoLibre.numLineas;
@@ -230,7 +305,7 @@ function drawTextoLibre(
   // Encabezado
   if (textoLibre.enunciado.trim()) {
     ctx.fillStyle = "#1A1A1A";
-    ctx.font = `bold ${Math.min(22, fontSize * 0.9)}px ${fontBase}`;
+    ctx.font = `bold ${Math.min(22, fontSize * 0.9)}px Georgia`;
     ctx.fillText(textoLibre.enunciado, mx, 55);
     // Línea bajo enunciado
     ctx.strokeStyle = "#0EA5E9";
@@ -246,16 +321,17 @@ function drawTextoLibre(
   let startY = 80;
 
   if (texto) {
-    // Calculamos el wrapping del texto por líneas
-    ctx.font = `${fontSize}px ${fontBase}`;
     const maxWidth = rightX - mx - 10;
-
     // Dividir por líneas explícitas primero
     const paragrafs = texto.split("\n");
     const lineas: string[] = [];
 
     for (const para of paragrafs) {
       if (!para.trim()) { lineas.push(""); continue; }
+
+      // Mock measure text logic using first font for layout wrapping consistency
+      ctx.font = `${fontSize}px Georgia`;
+
       const palabras = para.split(" ");
       let lineaActual = "";
       for (const palabra of palabras) {
@@ -277,19 +353,38 @@ function drawTextoLibre(
     for (const linea of lineas) {
       if (y > H - 60) break;
 
-      if (isPunteada) {
-        ctx.strokeStyle = "rgba(14, 100, 200, 0.4)";
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([2, 3]);
-        ctx.font = `${fontSize}px ${fontBase}`;
-        ctx.strokeText(linea, mx, y);
-        ctx.setLineDash([]);
-      } else {
-        // Texto guía (el texto a copiar, semitransparente)
-        ctx.fillStyle = "rgba(14, 100, 200, 0.55)";
-        ctx.font = `${fontSize}px ${fontBase}`;
-        ctx.fillText(linea, mx, y);
-      }
+      const currentFontType = selectedFonts[lineIdx % selectedFonts.length];
+
+      const fontBase =
+        currentFontType === "massallera" || currentFontType === "massallera-dot" ? "Massallera, Georgia" :
+          currentFontType === "escolar" || currentFontType === "escolar-dot" ? "Escolar, Georgia" :
+            currentFontType?.startsWith("mestra-pauta") ? "Mestra Pauta, Georgia" :
+              currentFontType?.startsWith("mestra-guiada") ? "Mestra Montessori, Georgia" :
+                "Georgia";
+
+      const isDottedVersion = !!(
+        currentFontType === "escolar-dot" ||
+        currentFontType === "mestra-pauta-dot" ||
+        currentFontType === "mestra-guiada-dot"
+      );
+
+      const isPunteada = !!currentFontType?.includes("-dot");
+
+      const fontToUse = isDottedVersion ?
+        (currentFontType === "escolar-dot" ? "Escolar Dot" :
+          currentFontType === "mestra-pauta-dot" ? "Mestra Pauta Dot" : "Mestra Montessori Dot")
+        : fontBase;
+
+      drawTextWithStyle(
+        ctx,
+        linea,
+        mx,
+        y,
+        fontToUse,
+        fontSize,
+        isPunteada,
+        isDottedVersion
+      );
 
       // Línea punteada para que el alumno escriba debajo (si hay espacio)
       if (lineIdx % 2 === 0 && y + altRenglon < H - 60) {
@@ -312,14 +407,14 @@ function drawTextoLibre(
   } else {
     // Placeholder si no hay texto
     ctx.fillStyle = "rgba(0,0,0,0.1)";
-    ctx.font = `italic ${fontSize}px ${fontBase}`;
+    ctx.font = `italic ${fontSize}px Georgia`;
     ctx.fillText("Escribe el texto que quieres practicar...", mx, startY + altRenglon * 0.75);
   }
 
   // Pie de página
   if (textoLibre.pieDePageina.trim()) {
     ctx.fillStyle = "#888";
-    ctx.font = `italic ${Math.min(14, fontSize * 0.6)}px ${fontBase}`;
+    ctx.font = `italic ${Math.min(14, fontSize * 0.6)}px Georgia`;
     ctx.fillText(textoLibre.pieDePageina, mx, H - 30);
 
     ctx.strokeStyle = "#ddd";
@@ -342,6 +437,76 @@ function drawTextoLibre(
   ctx.restore();
 }
 
+function drawFontsPreview(
+  ctx: CanvasRenderingContext2D,
+  config: Config
+) {
+  const { tipoLetra, margen, formato } = config;
+  const selectedFonts = tipoLetra && tipoLetra.length > 0 ? tipoLetra : [];
+  if (selectedFonts.length === 0) return;
+
+  const mx = margen === "con" ? 75 : 30;
+  let y = 100;
+
+  const lineStep = formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
+  const altRenglon = lineStep > 0 ? lineStep * 4 : formato === "pauta-guiada" ? 60 : 40;
+
+  selectedFonts.forEach((fontType, idx) => {
+    if (y + altRenglon > H - 100) return;
+
+    const fontBase =
+      fontType === "massallera" || fontType === "massallera-dot" ? "Massallera, Georgia" :
+        fontType === "escolar" || fontType === "escolar-dot" ? "Escolar, Georgia" :
+          fontType?.startsWith("mestra-pauta") ? "Mestra Pauta, Georgia" :
+            fontType?.startsWith("mestra-guiada") ? "Mestra Montessori, Georgia" :
+              "Georgia";
+
+    const isDottedVersion = !!(
+      fontType === "escolar-dot" ||
+      fontType === "mestra-pauta-dot" ||
+      fontType === "mestra-guiada-dot"
+    );
+
+    const isPunteada = !!fontType?.includes("-dot");
+
+    const fontToUse = isDottedVersion ?
+      (fontType === "escolar-dot" ? "Escolar Dot" :
+        fontType === "mestra-pauta-dot" ? "Mestra Pauta Dot" : "Mestra Montessori Dot")
+      : fontBase;
+
+    const phrases: Record<string, string> = {
+      "massallera": "Letra Massallera",
+      "massallera-dot": "Massallera Punteada",
+      "escolar": "Letra Escolar",
+      "escolar-dot": "Escolar Punteada",
+      "mestra-pauta": "Mestra Pauta",
+      "mestra-pauta-dot": "Mestra Pauta Dot",
+      "mestra-guiada": "Mestra Montessori",
+      "mestra-guiada-dot": "Mestra Montessori Dot"
+    };
+
+    const label = phrases[fontType as string] || "Muestra";
+
+    ctx.fillStyle = "#999";
+    ctx.font = `italic 13px Georgia`;
+    ctx.fillText(`${idx + 1}. ${label}`, mx, y - 5);
+
+    drawTextWithStyle(
+      ctx,
+      "Abcdefghijklmnopq...",
+      mx,
+      y + altRenglon * 0.6,
+      fontToUse,
+      Math.floor(altRenglon * 0.7),
+      isPunteada,
+      isDottedVersion,
+      "rgba(14, 100, 200, 0.4)"
+    );
+
+    y += altRenglon + 20;
+  });
+}
+
 // ──────────────────────────────────────────────────────────────────────────────
 // COMPONENT
 // ──────────────────────────────────────────────────────────────────────────────
@@ -351,7 +516,7 @@ const STEPS = ["Formato", "Márgenes", "Letra", "Contenido", "¡Tu ficha!"];
 const defaultConfig: Config = {
   formato: null,
   margen: null,
-  tipoLetra: null,
+  tipoLetra: [],
   modoContenido: null,
   contenido: {
     trazos: false,
@@ -372,6 +537,8 @@ const defaultConfig: Config = {
   },
 };
 
+import { SpiralIcon } from "@/components/Icons";
+
 export default function CaligrafiatePage() {
   const [step, setStep] = useState(0);
   const [config, setConfig] = useState<Config>(defaultConfig);
@@ -383,6 +550,15 @@ export default function CaligrafiatePage() {
 
   const updateConfig = <K extends keyof Config>(key: K, val: Config[K]) =>
     setConfig((prev) => ({ ...prev, [key]: val }));
+
+  const toggleTipoLetra = (val: TipoLetraVal) =>
+    setConfig((prev) => {
+      const current = prev.tipoLetra || [];
+      const updated = current.includes(val)
+        ? current.filter((v) => v !== val)
+        : [...current, val];
+      return { ...prev, tipoLetra: updated };
+    });
 
   const updateTextoLibre = (key: keyof TextoLibre, val: string | number) =>
     setConfig((prev) => ({
@@ -416,27 +592,40 @@ export default function CaligrafiatePage() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    
+
     // Solo dibujar si tenemos los datos mínimos (formato y margen)
     // Opcionalmente, podemos dibujar una hoja vacía
     drawLineasGuia(ctx, config.formato, config.margen);
-    
-    if (config.modoContenido === "libre") {
+
+    if (step === 2) {
+      drawFontsPreview(ctx, config);
+    } else if (config.modoContenido === "libre") {
       drawTextoLibre(ctx, config);
     } else if (config.modoContenido === "predefinido") {
       drawContenidoSample(ctx, config);
     }
 
-    // Marca de agua sutil
+    // Marca de agua sutil renovada - Espiral
     ctx.save();
     ctx.translate(W / 2, H / 2);
-    ctx.rotate(-Math.PI / 6);
-    ctx.fillStyle = "rgba(14,165,233,0.05)";
+    ctx.rotate(-Math.PI / 8);
+    ctx.strokeStyle = "rgba(14,165,233,0.06)";
+    ctx.lineWidth = 15; // Espiral gruesa
+    ctx.beginPath();
+    for (let i = 0; i < 720; i++) {
+      const angle = 0.1 * i;
+      const x = (1 + angle) * Math.cos(angle) * 5;
+      const y = (1 + angle) * Math.sin(angle) * 5;
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(14,165,233,0.08)";
     ctx.font = "bold 80px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("Caligra-Fiate", 0, 0);
+    ctx.fillText("Caligra-Fiate", 0, 50);
     ctx.restore();
-  }, [config]);
+  }, [config, step]);
 
   // Actualización PROACTIVA del canvas en cada cambio de configuración
   useEffect(() => {
@@ -539,7 +728,7 @@ export default function CaligrafiatePage() {
   const canContinue = () => {
     if (step === 0) return config.formato !== null;
     if (step === 1) return config.margen !== null;
-    if (step === 2) return config.tipoLetra !== null;
+    if (step === 2) return config.tipoLetra && config.tipoLetra.length > 0;
     if (step === 3) return config.modoContenido !== null && hasAnyContenido;
     return true;
   };
@@ -550,15 +739,21 @@ export default function CaligrafiatePage() {
       <header className={styles.header}>
         <Link href="/" className={styles.backBtn}>← Inicio</Link>
         <h1 className={styles.brand}>
-          CALIGRA<span className={styles.brandUnder}>-</span>F<span className={styles.pencilAccentLetter}>I</span>ATE
+          CALIGRA<span className={styles.brandUnder}>-</span>F<span style={{ position: "relative" }}>I<SpiralIcon className="tilde-spiral" /></span>ATE
         </h1>
-        <span className={styles.tagline}>¡Aprende Jugando con Letras Mágicas! ✨</span>
+        <span className={styles.tagline}>El Arte de Escribir con un Toque de Magia ✨</span>
       </header>
 
       {/* STEPPER */}
       <div className={styles.stepper}>
+        <div className={styles.progressTrack}>
+          <div
+            className={styles.progressBar}
+            style={{ width: `${(step / (STEPS.length - 1)) * 100}%` }}
+          />
+        </div>
         {STEPS.map((label, i) => (
-          <div key={i} className={styles.stepWrap}>
+          <div key={label} className={styles.stepWrap}>
             <div
               className={`${styles.stepDot} ${i < step ? styles.dotDone : ""} ${i === step ? styles.dotActive : ""}`}
               onClick={() => i < step && setStep(i)}
@@ -568,9 +763,6 @@ export default function CaligrafiatePage() {
               {i < step ? "✓" : i + 1}
             </div>
             <span className={`${styles.stepLabel} ${i === step ? styles.labelActive : ""}`}>{label}</span>
-            {i < STEPS.length - 1 && (
-              <div className={`${styles.stepLine} ${i < step ? styles.lineDone : ""}`} />
-            )}
           </div>
         ))}
       </div>
@@ -580,433 +772,477 @@ export default function CaligrafiatePage() {
           {/* CARD */}
           <div className={styles.card} data-anim={animDir} key={step}>
 
-        {/* ──── PASO 0: Formato ────────────────────────────────────────────── */}
-        {step === 0 && (
-          <div className={styles.stepContent}>
-            <h2 className={styles.stepTitle}>
-              <span className={styles.stepNum}>1</span>
-              Elige el formato de hoja
-            </h2>
-            <p className={styles.stepDesc}>Selecciona el tipo de pauta sobre la que el alumno va a escribir:</p>
-            <div className={styles.optionGrid}>
-              {(
-                [
-                  { val: "pauta-guiada", icon: "📏", label: "Pauta guiada", sub: "3 líneas por renglón (ascendente, base, descendente)" },
-                  { val: "pauta-normal", icon: "📄", label: "Pauta normal", sub: "2 líneas por renglón" },
-                  { val: "cuadricula-5", icon: "/icon-cuadricula-5.svg", label: "Cuadrícula 5mm", sub: "Integrada en cuadrícula de 5mm" },
-                  { val: "cuadricula-4", icon: "/icon-cuadricula-4.svg", label: "Cuadrícula 4mm", sub: "Integrada en cuadrícula de 4mm" },
-                ] as const
-              ).map(({ val, icon, label, sub }) => (
-                <button
-                  key={val}
-                  className={`${styles.optionCard} ${config.formato === val ? styles.optionSelected : ""}`}
-                  onClick={() => updateConfig("formato", val)}
-                >
-                  <span className={styles.optionIcon}>
-                    {icon.startsWith("/") ? <img src={icon} alt={label} className={styles.optionIconImg} /> : icon}
-                  </span>
-                  <strong>{label}</strong>
-                  <span className={styles.optionSub}>{sub}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ──── PASO 1: Márgenes ───────────────────────────────────────────── */}
-        {step === 1 && (
-          <div className={styles.stepContent}>
-            <h2 className={styles.stepTitle}>
-              <span className={styles.stepNum}>2</span>
-              Configuración de la página
-            </h2>
-            <p className={styles.stepDesc}>¿La ficha tendrá margen lateral?</p>
-            <div className={styles.optionRow}>
-              {(
-                [
-                  { val: "sin", icon: "⛶", label: "Sin margen", sub: "El área de escritura ocupa toda la página" },
-                  { val: "con", icon: "📋", label: "Con margen", sub: "Línea roja vertical a la izquierda" },
-                ] as const
-              ).map(({ val, icon, label, sub }) => (
-                <button
-                  key={val}
-                  className={`${styles.optionCard} ${styles.optionCardLarge} ${config.margen === val ? styles.optionSelected : ""}`}
-                  onClick={() => updateConfig("margen", val)}
-                >
-                  <span className={styles.optionIcon}>{icon}</span>
-                  <strong>{label}</strong>
-                  <span className={styles.optionSub}>{sub}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ──── PASO 2: Tipo de Letra ──────────────────────────────────────── */}
-        {step === 2 && (
-          <div className={styles.stepContent}>
-            <h2 className={styles.stepTitle}>
-              <span className={styles.stepNum}>3</span>
-              Tipo de letra
-            </h2>
-            <p className={styles.stepDesc}>Seleccione el estilo de letra:</p>
-            <div className={styles.optionRow}>
-              {(
-                [
-                  {
-                    val: "escolar",
-                    icon: "🏠",
-                    label: "Letra escolar",
-                    sub: "Tipo 'casa' enlazada.",
-                    preview: "mamá",
-                    font: "Georgia, serif",
-                  },
-                  {
-                    val: "punteada",
-                    icon: "✏️",
-                    label: "Letra punteada",
-                    sub: "Para calcar y repasar.",
-                    preview: "mamá",
-                    font: "Georgia, serif",
-                    isPunteada: true,
-                  },
-                  {
-                    val: "imprenta",
-                    icon: "🔤",
-                    label: "Imprenta / Mayúsculas",
-                    sub: "Para textos completos.",
-                    preview: "MAMÁ",
-                    font: "Arial, sans-serif",
-                  },
-                ] as const
-              ).map(({ val, icon, label, sub, preview, font, isPunteada }: any) => (
-                <button
-                  key={val}
-                  className={`${styles.optionCard} ${styles.optionCardLarge} ${config.tipoLetra === val ? styles.optionSelected : ""}`}
-                  onClick={() => updateConfig("tipoLetra", val)}
-                >
-                  <strong>{label}</strong>
-                  <span className={styles.optionSub}>{sub}</span>
-                  <span className={isPunteada ? styles.letterPreviewDotted : styles.letterPreview} style={{ fontFamily: font }}>
-                    {preview}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ──── PASO 3: Contenido ──────────────────────────────────────────── */}
-        {step === 3 && (
-          <div className={styles.stepContent}>
-            <h2 className={styles.stepTitle}>
-              <span className={styles.stepNum}>4</span>
-              ¿Qué quieres trabajar?
-            </h2>
-
-            {/* SELECTOR DE MODO */}
-            {config.modoContenido === null && (
-              <>
-                <p className={styles.stepDesc}>Elige cómo quieres crear el contenido de tu ficha:</p>
-                <div className={styles.modoGrid}>
-                  <button
-                    className={styles.modoCard}
-                    onClick={() => updateConfig("modoContenido", "predefinido")}
-                  >
-                    <span className={styles.modoIcon}>🎯</span>
-                    <strong>Contenido predefinido</strong>
-                    <span className={styles.modoDesc}>
-                      Elige entre trazos, vocales, sílabas, palabras o frases. Ideal para seguir el currículum.
-                    </span>
-                    <span className={styles.modoCta}>Seleccionar categorías →</span>
-                  </button>
-
-                  <button
-                    className={`${styles.modoCard} ${styles.modoCardLibre}`}
-                    onClick={() => updateConfig("modoContenido", "libre")}
-                  >
-                    <span className={styles.modoIcon}>✏️</span>
-                    <strong>Texto libre</strong>
-                    <span className={styles.modoDesc}>
-                      Escribe tú el texto exacto que quieres que el alumno practique. Vista previa en tiempo real.
-                    </span>
-                    <span className={styles.modoCta}>Escribir mi texto →</span>
-                  </button>
+            {/* ──── PASO 0: Formato ────────────────────────────────────────────── */}
+            {step === 0 && (
+              <div className={styles.stepContent}>
+                <h2 className={styles.stepTitle}>
+                  <span className={styles.stepNum}>1</span>
+                  Elige el formato de hoja
+                </h2>
+                <p className={styles.stepDesc}>Selecciona el tipo de pauta sobre la que el alumno va a escribir:</p>
+                <div className={styles.optionGrid}>
+                  {(
+                    [
+                      { val: "pauta-guiada", icon: "📏", label: "Pauta guiada", sub: "3 líneas por renglón (ascendente, base, descendente)" },
+                      { val: "pauta-normal", icon: "📄", label: "Pauta normal", sub: "2 líneas por renglón" },
+                      { val: "cuadricula-5", icon: "/icon-cuadricula-5.svg", label: "Cuadrícula 5mm", sub: "Integrada en cuadrícula de 5mm" },
+                      { val: "cuadricula-4", icon: "/icon-cuadricula-4.svg", label: "Cuadrícula 4mm", sub: "Integrada en cuadrícula de 4mm" },
+                    ] as const
+                  ).map(({ val, icon, label, sub }) => (
+                    <button
+                      key={val}
+                      className={`${styles.optionCard} ${config.formato === val ? styles.optionSelected : ""}`}
+                      onClick={() => updateConfig("formato", val)}
+                    >
+                      <span className={styles.optionIcon}>
+                        {icon.startsWith("/") ? <img src={icon} alt={label} className={styles.optionIconImg} /> : icon}
+                      </span>
+                      <strong>{label}</strong>
+                      <span className={styles.optionSub}>{sub}</span>
+                    </button>
+                  ))}
                 </div>
-              </>
+              </div>
             )}
 
-            {/* MODO PREDEFINIDO */}
-            {config.modoContenido === "predefinido" && (
-              <>
-                <p className={styles.stepDesc}>
-                  Selecciona el contenido que aparecerá en la ficha. Puedes elegir varios:
-                  <button
-                    className={styles.cambiarModoBtn}
-                    onClick={() => updateConfig("modoContenido", null)}
-                  >
-                    ← Cambiar modo
-                  </button>
-                </p>
-
-                <div className={styles.checkGroups}>
-                  <div className={styles.checkGroup}>
-                    <h3 className={styles.groupTitle}>🖊️ Iniciación y Trazos</h3>
-                    <label className={`${styles.checkRow} ${config.contenido.trazos ? styles.checkRowActive : ""}`}>
-                      <input type="checkbox" checked={config.contenido.trazos} onChange={() => toggleContenido("trazos")} />
-                      <span>Ejercicios de fuerza / trazo (Bucle, espiral, líneas)</span>
-                    </label>
-                  </div>
-
-                  <div className={styles.checkGroup}>
-                    <h3 className={styles.groupTitle}>🔤 Letras y Sílabas</h3>
-                    {(
-                      [
-                        { k: "vocalesMay", label: "Vocales Mayúsculas (A E I O U)" },
-                        { k: "vocalesMin", label: "Vocales minúsculas ligadas (a e i o u)" },
-                        { k: "alfabetoMay", label: "Alfabeto Mayúsculas (con guía / sin guía)" },
-                        { k: "alfabetoMin", label: "Alfabeto minúsculas ligadas (con guía / sin guía)" },
-                        { k: "silabas", label: "Sílabas Mayúsculas / minúsculas" },
-                      ] as { k: keyof Contenido; label: string }[]
-                    ).map(({ k, label }) => (
-                      <label key={k} className={`${styles.checkRow} ${config.contenido[k] ? styles.checkRowActive : ""}`}>
-                        <input type="checkbox" checked={config.contenido[k]} onChange={() => toggleContenido(k)} />
-                        <span>{label}</span>
-                      </label>
-                    ))}
-                  </div>
-
-                  <div className={styles.checkGroup}>
-                    <h3 className={styles.groupTitle}>📝 Palabras y Textos</h3>
-                    {(
-                      [
-                        { k: "palabras", label: "Palabras (Mayúsculas / minúsculas)" },
-                        { k: "frases", label: "Frases (Mayúsculas / minúsculas)" },
-                        { k: "textos", label: "Textos (Por líneas o Textos completos)" },
-                      ] as { k: keyof Contenido; label: string }[]
-                    ).map(({ k, label }) => (
-                      <label key={k} className={`${styles.checkRow} ${config.contenido[k] ? styles.checkRowActive : ""}`}>
-                        <input type="checkbox" checked={config.contenido[k]} onChange={() => toggleContenido(k)} />
-                        <span>{label}</span>
-                      </label>
-                    ))}
-                  </div>
+            {/* ──── PASO 1: Márgenes ───────────────────────────────────────────── */}
+            {step === 1 && (
+              <div className={styles.stepContent}>
+                <h2 className={styles.stepTitle}>
+                  <span className={styles.stepNum}>2</span>
+                  Configuración de la página
+                </h2>
+                <p className={styles.stepDesc}>¿La ficha tendrá margen lateral?</p>
+                <div className={styles.optionRow}>
+                  {(
+                    [
+                      { val: "sin", icon: "⛶", label: "Sin margen", sub: "El área de escritura ocupa toda la página" },
+                      { val: "con", icon: "📋", label: "Con margen", sub: "Línea roja vertical a la izquierda" },
+                    ] as const
+                  ).map(({ val, icon, label, sub }) => (
+                    <button
+                      key={val}
+                      className={`${styles.optionCard} ${styles.optionCardLarge} ${config.margen === val ? styles.optionSelected : ""}`}
+                      onClick={() => updateConfig("margen", val)}
+                    >
+                      <span className={styles.optionIcon}>{icon}</span>
+                      <strong>{label}</strong>
+                      <span className={styles.optionSub}>{sub}</span>
+                    </button>
+                  ))}
                 </div>
-
-                {!hasAnyContenido && (
-                  <p className={styles.warning}>⚠️ Selecciona al menos un tipo de contenido para continuar.</p>
-                )}
-              </>
+              </div>
             )}
 
-            {/* MODO TEXTO LIBRE */}
-            {config.modoContenido === "libre" && (
-              <>
-                <p className={styles.stepDesc}>
-                  Escribe exactamente el texto que el alumno va a copiar:
-                  <button
-                    className={styles.cambiarModoBtn}
-                    onClick={() => updateConfig("modoContenido", null)}
-                  >
-                    ← Cambiar modo
-                  </button>
-                </p>
+            {/* ──── PASO 2: Tipo de Letra ──────────────────────────────────────── */}
+            {step === 2 && (
+              <div className={styles.stepContent}>
+                <h2 className={styles.stepTitle}>
+                  <span className={styles.stepNum}>3</span>
+                  Tipo de letra
+                </h2>
+                <p className={styles.stepDesc}>Seleccione el estilo de letra:</p>
+                <div className={styles.optionGrid}>
+                  {(
+                    [
+                      {
+                        val: "massallera",
+                        icon: "🏠",
+                        label: "1. Massarella",
+                        sub: "Letra ligada clásica.",
+                        preview: "Caligrafíate",
+                        font: "Massallera, Georgia",
+                      },
+                      {
+                        val: "massallera-dot",
+                        icon: "✒️",
+                        label: "2. Massarella punteada",
+                        sub: "Efecto punteado para calcar.",
+                        preview: "Caligrafíate",
+                        font: "Massallera, Georgia",
+                        isPunteada: true,
+                      },
+                      {
+                        val: "escolar",
+                        icon: "🎒",
+                        label: "3. Escolar",
+                        sub: "Letra escolar estándar.",
+                        preview: "Caligrafíate",
+                        font: "Escolar, Georgia",
+                      },
+                      {
+                        val: "escolar-dot",
+                        icon: "✒️",
+                        label: "4. Escolar punteada",
+                        sub: "Escolar con puntos de guía.",
+                        preview: "Caligrafíate",
+                        font: "Escolar Dot, Georgia",
+                      },
+                      {
+                        val: "mestra-pauta",
+                        icon: "📏",
+                        label: "5. Mestra pauta normal",
+                        sub: "Pauta horizontal simple.",
+                        preview: "Caligrafíate",
+                        font: "Mestra Pauta, Georgia",
+                      },
+                      {
+                        val: "mestra-pauta-dot",
+                        icon: "✒️",
+                        label: "6. Mestra punteada pauta normal",
+                        sub: "Pauta simple punteada.",
+                        preview: "Caligrafíate",
+                        font: "Mestra Pauta Dot, Georgia",
+                      },
+                      {
+                        val: "mestra-guiada",
+                        icon: "📐",
+                        label: "7. Mestra pauta guiada",
+                        sub: "Pauta Montessori.",
+                        preview: "Caligrafíate",
+                        font: "Mestra Montessori, Georgia",
+                      },
+                      {
+                        val: "mestra-guiada-dot",
+                        icon: "✒️",
+                        label: "8. Mestra punteada pauta guiada",
+                        sub: "Montessori punteada.",
+                        preview: "Caligrafíate",
+                        font: "Mestra Montessori Dot, Georgia",
+                      },
+                    ] as const
+                  ).map(({ val, icon, label, sub, preview, font, isPunteada }: any) => (
+                    <button
+                      key={val}
+                      className={`${styles.optionCard} ${config.tipoLetra?.includes(val) ? styles.optionSelected : ""}`}
+                      onClick={() => toggleTipoLetra(val)}
+                    >
+                      <span className={styles.optionIcon}>{icon}</span>
+                      <strong>{label}</strong>
+                      <span className={styles.optionSub}>{sub}</span>
+                      <span className={isPunteada ? styles.letterPreviewDotted : styles.letterPreview} style={{ fontFamily: font }}>
+                        {preview}
+                      </span>
+                      {config.tipoLetra?.includes(val) && <span className={styles.badgeCount}>{config.tipoLetra.indexOf(val) + 1}</span>}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-                <div className={styles.textoLibreForm}>
-                  {/* Enunciado */}
-                  <div className={styles.formField}>
-                    <label className={styles.formLabel} htmlFor="enunciado">
-                      📌 Enunciado / Título de la ficha
-                    </label>
-                    <input
-                      id="enunciado"
-                      type="text"
-                      className={styles.formInput}
-                      placeholder="Ej: Copia estas palabras con cuidado"
-                      maxLength={80}
-                      value={config.textoLibre.enunciado}
-                      onChange={(e) => updateTextoLibre("enunciado", e.target.value)}
-                    />
-                  </div>
+            {/* ──── PASO 3: Contenido ──────────────────────────────────────────── */}
+            {step === 3 && (
+              <div className={styles.stepContent}>
+                <h2 className={styles.stepTitle}>
+                  <span className={styles.stepNum}>4</span>
+                  ¿Qué quieres trabajar?
+                </h2>
 
-                  {/* Texto principal */}
-                  <div className={styles.formField}>
-                    <label className={styles.formLabel} htmlFor="texto">
-                      ✍️ Texto a practicar <span className={styles.formRequired}>*</span>
-                    </label>
-                    <textarea
-                      id="texto"
-                      className={styles.formTextarea}
-                      placeholder={"Escribe aquí el texto que quieres que el alumno copie...\n\nPuedes escribir varias líneas."}
-                      maxLength={2000}
-                      rows={6}
-                      value={config.textoLibre.texto}
-                      onChange={(e) => updateTextoLibre("texto", e.target.value)}
-                    />
-                    <span className={styles.charCount}>
-                      {config.textoLibre.texto.length} / 2000 caracteres
-                    </span>
-                  </div>
+                {/* SELECTOR DE MODO */}
+                {config.modoContenido === null && (
+                  <>
+                    <p className={styles.stepDesc}>Elige cómo quieres crear el contenido de tu ficha:</p>
+                    <div className={styles.modoGrid}>
+                      <button
+                        className={styles.modoCard}
+                        onClick={() => updateConfig("modoContenido", "predefinido")}
+                      >
+                        <span className={styles.modoIcon}>🎯</span>
+                        <strong>Contenido predefinido</strong>
+                        <span className={styles.modoDesc}>
+                          Elige entre trazos, vocales, sílabas, palabras o frases. Ideal para seguir el currículum.
+                        </span>
+                        <span className={styles.modoCta}>Seleccionar categorías →</span>
+                      </button>
 
-                  {/* Tamaño de líneas */}
-                  <div className={styles.formField}>
-                    <label className={styles.formLabel}>📐 Tamaño de letra (nº de líneas)</label>
-                    <div className={styles.lineasRow}>
-                      {([8, 12, 16] as NumLineas[]).map((n) => (
-                        <button
-                          key={n}
-                          className={`${styles.lineasBtn} ${config.textoLibre.numLineas === n ? styles.lineasBtnActive : ""}`}
-                          onClick={() => updateTextoLibre("numLineas", n)}
-                        >
-                          <span className={styles.lineasNum}>{n}</span>
-                          <span className={styles.lineasLabel}>
-                            {n === 8 ? "Grande\n(Infantil)" : n === 12 ? "Mediano\n(1º-2º)" : "Normal\n(3º-6º)"}
-                          </span>
-                        </button>
-                      ))}
+                      <button
+                        className={`${styles.modoCard} ${styles.modoCardLibre}`}
+                        onClick={() => updateConfig("modoContenido", "libre")}
+                      >
+                        <span className={styles.modoIcon}>🖋️</span>
+                        <strong>Texto libre</strong>
+                        <span className={styles.modoDesc}>
+                          Escribe tú el texto exacto que quieres que el alumno practique. Vista previa en tiempo real.
+                        </span>
+                        <span className={styles.modoCta}>Escribir mi texto →</span>
+                      </button>
                     </div>
+                  </>
+                )}
+
+                {/* MODO PREDEFINIDO */}
+                {config.modoContenido === "predefinido" && (
+                  <>
+                    <p className={styles.stepDesc}>
+                      Selecciona el contenido que aparecerá en la ficha. Puedes elegir varios:
+                      <button
+                        className={styles.cambiarModoBtn}
+                        onClick={() => updateConfig("modoContenido", null)}
+                      >
+                        ← Cambiar modo
+                      </button>
+                    </p>
+
+                    <div className={styles.checkGroups}>
+                      <div className={styles.checkGroup}>
+                        <h3 className={styles.groupTitle}>🖊️ Iniciación y Trazos</h3>
+                        <label className={`${styles.checkRow} ${config.contenido.trazos ? styles.checkRowActive : ""}`}>
+                          <input type="checkbox" checked={config.contenido.trazos} onChange={() => toggleContenido("trazos")} />
+                          <span>Ejercicios de fuerza / trazo (Bucle, espiral, líneas)</span>
+                        </label>
+                      </div>
+
+                      <div className={styles.checkGroup}>
+                        <h3 className={styles.groupTitle}>🔤 Letras y Sílabas</h3>
+                        {(
+                          [
+                            { k: "vocalesMay", label: "Vocales Mayúsculas (A E I O U)" },
+                            { k: "vocalesMin", label: "Vocales minúsculas ligadas (a e i o u)" },
+                            { k: "alfabetoMay", label: "Alfabeto Mayúsculas (con guía / sin guía)" },
+                            { k: "alfabetoMin", label: "Alfabeto minúsculas ligadas (con guía / sin guía)" },
+                            { k: "silabas", label: "Sílabas Mayúsculas / minúsculas" },
+                          ] as { k: keyof Contenido; label: string }[]
+                        ).map(({ k, label }) => (
+                          <label key={k} className={`${styles.checkRow} ${config.contenido[k] ? styles.checkRowActive : ""}`}>
+                            <input type="checkbox" checked={config.contenido[k]} onChange={() => toggleContenido(k)} />
+                            <span>{label}</span>
+                          </label>
+                        ))}
+                      </div>
+
+                      <div className={styles.checkGroup}>
+                        <h3 className={styles.groupTitle}>📝 Palabras y Textos</h3>
+                        {(
+                          [
+                            { k: "palabras", label: "Palabras (Mayúsculas / minúsculas)" },
+                            { k: "frases", label: "Frases (Mayúsculas / minúsculas)" },
+                            { k: "textos", label: "Textos (Por líneas o Textos completos)" },
+                          ] as { k: keyof Contenido; label: string }[]
+                        ).map(({ k, label }) => (
+                          <label key={k} className={`${styles.checkRow} ${config.contenido[k] ? styles.checkRowActive : ""}`}>
+                            <input type="checkbox" checked={config.contenido[k]} onChange={() => toggleContenido(k)} />
+                            <span>{label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {!hasAnyContenido && (
+                      <p className={styles.warning}>⚠️ Selecciona al menos un tipo de contenido para continuar.</p>
+                    )}
+                  </>
+                )}
+
+                {/* MODO TEXTO LIBRE */}
+                {config.modoContenido === "libre" && (
+                  <>
+                    <p className={styles.stepDesc}>
+                      Escribe exactamente el texto que el alumno va a copiar:
+                      <button
+                        className={styles.cambiarModoBtn}
+                        onClick={() => updateConfig("modoContenido", null)}
+                      >
+                        ← Cambiar modo
+                      </button>
+                    </p>
+
+                    <div className={styles.textoLibreForm}>
+                      {/* Enunciado */}
+                      <div className={styles.formField}>
+                        <label className={styles.formLabel} htmlFor="enunciado">
+                          📌 Enunciado / Título de la ficha
+                        </label>
+                        <input
+                          id="enunciado"
+                          type="text"
+                          className={styles.formInput}
+                          placeholder="Ej: Copia estas palabras con cuidado"
+                          maxLength={80}
+                          value={config.textoLibre.enunciado}
+                          onChange={(e) => updateTextoLibre("enunciado", e.target.value)}
+                        />
+                      </div>
+
+                      {/* Texto principal */}
+                      <div className={styles.formField}>
+                        <label className={styles.formLabel} htmlFor="texto">
+                          ✍️ Texto a practicar <span className={styles.formRequired}>*</span>
+                        </label>
+                        <textarea
+                          id="texto"
+                          className={styles.formTextarea}
+                          placeholder={"Escribe aquí el texto que quieres que el alumno copie...\n\nPuedes escribir varias líneas."}
+                          maxLength={2000}
+                          rows={6}
+                          value={config.textoLibre.texto}
+                          onChange={(e) => updateTextoLibre("texto", e.target.value)}
+                        />
+                        <span className={styles.charCount}>
+                          {config.textoLibre.texto.length} / 2000 caracteres
+                        </span>
+                      </div>
+
+                      {/* Tamaño de líneas */}
+                      <div className={styles.formField}>
+                        <label className={styles.formLabel}>📐 Tamaño de letra (nº de líneas)</label>
+                        <div className={styles.lineasRow}>
+                          {([8, 12, 16] as NumLineas[]).map((n) => (
+                            <button
+                              key={n}
+                              className={`${styles.lineasBtn} ${config.textoLibre.numLineas === n ? styles.lineasBtnActive : ""}`}
+                              onClick={() => updateTextoLibre("numLineas", n)}
+                            >
+                              <span className={styles.lineasNum}>{n}</span>
+                              <span className={styles.lineasLabel}>
+                                {n === 8 ? "Grande\n(Infantil)" : n === 12 ? "Mediano\n(1º-2º)" : "Normal\n(3º-6º)"}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Pie de página */}
+                      <div className={styles.formField}>
+                        <label className={styles.formLabel} htmlFor="piepagina">
+                          📎 Pie de página <span className={styles.formOptional}>(opcional)</span>
+                        </label>
+                        <input
+                          id="piepagina"
+                          type="text"
+                          className={styles.formInput}
+                          placeholder="Ej: Nombre: ____________   Fecha: ________"
+                          maxLength={80}
+                          value={config.textoLibre.pieDePageina}
+                          onChange={(e) => updateTextoLibre("pieDePageina", e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    {!hasAnyContenido && (
+                      <p className={styles.warning}>⚠️ Escribe el texto que quieres practicar para continuar.</p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* ──── PASO 4: Preview + Descarga ─────────────────────────────────── */}
+            {step === 4 && (
+              <div className={styles.stepContent}>
+                <h2 className={styles.stepTitle}>
+                  <span className={styles.stepNum}>🎉</span>
+                  ¡Tu ficha está lista!
+                </h2>
+                <div className={styles.summaryBar} style={{ marginBottom: "2rem" }}>
+                  <span>📐 {config.formato?.replace("-", " ").replace("cuadricula", "Cuadrícula") ?? "—"}</span>
+                  <span>⬛ Margen: {config.margen === "con" ? "Sí" : "No"}</span>
+                  <span>✍️ {config.tipoLetra && config.tipoLetra.length > 0 ? `${config.tipoLetra.length} tipos de letra` : "Sin selección"}</span>
+                  {config.modoContenido === "libre" ? (
+                    <>
+                      <span>✏️ Texto libre · {config.textoLibre.numLineas} líneas</span>
+                    </>
+                  ) : (
+                    <span>📋 {contentLabel(config.contenido)}</span>
+                  )}
+                </div>
+
+                <div className={styles.contactQrCard}>
+                  <div className={styles.contactQrContent}>
+                    <h3 className={styles.contactQrTitle}>QR de contacto</h3>
+                    <p className={styles.contactQrText}>
+                      Escanea este codigo QR para abrir nuestra pagina de contacto.
+                    </p>
+                    <Link className={styles.contactQrLink} href={CONTACT_ROUTE}>
+                      Ir a contacto
+                    </Link>
                   </div>
 
-                  {/* Pie de página */}
-                  <div className={styles.formField}>
-                    <label className={styles.formLabel} htmlFor="piepagina">
-                      📎 Pie de página <span className={styles.formOptional}>(opcional)</span>
-                    </label>
-                    <input
-                      id="piepagina"
-                      type="text"
-                      className={styles.formInput}
-                      placeholder="Ej: Nombre: ____________   Fecha: ________"
-                      maxLength={80}
-                      value={config.textoLibre.pieDePageina}
-                      onChange={(e) => updateTextoLibre("pieDePageina", e.target.value)}
-                    />
+                  <div className={styles.contactQrImageWrap}>
+                    {contactQrDataUrl ? (
+                      <Image
+                        src={contactQrDataUrl}
+                        alt={`QR para abrir ${contactPageUrl}`}
+                        className={styles.contactQrImage}
+                        width={176}
+                        height={176}
+                        unoptimized
+                      />
+                    ) : (
+                      <div className={styles.contactQrFallback}>
+                        Cargando QR...
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {!hasAnyContenido && (
-                  <p className={styles.warning}>⚠️ Escribe el texto que quieres practicar para continuar.</p>
-                )}
-              </>
+                <div className={styles.downloadBar}>
+                  <div style={{ display: "flex", gap: "1rem", width: "100%" }}>
+                    <button onClick={descargarPng} className={styles.downloadBtn} id="btn-descargar-png">
+                      🖼️ PNG
+                    </button>
+                    <button
+                      onClick={descargarPdf}
+                      className={`${styles.downloadBtn} ${styles.downloadBtnPdf}`}
+                      disabled={isGeneratingPdf}
+                      id="btn-descargar-pdf"
+                    >
+                      {isGeneratingPdf ? "⏳ ..." : "📄 PDF"}
+                    </button>
+                    <button
+                      onClick={() => { setConfig(defaultConfig); setStep(0); }}
+                      className={styles.resetBtn}
+                    >
+                      🔄 Nueva
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
-          </div>
-        )}
 
-        {/* ──── PASO 4: Preview + Descarga ─────────────────────────────────── */}
-        {step === 4 && (
-          <div className={styles.stepContent}>
-            <h2 className={styles.stepTitle}>
-              <span className={styles.stepNum}>🎉</span>
-              ¡Tu ficha está lista!
-            </h2>
-            <div className={styles.summaryBar} style={{ marginBottom: "2rem" }}>
-              <span>📐 {config.formato?.replace("-", " ").replace("cuadricula", "Cuadrícula") ?? "—"}</span>
-              <span>⬛ Margen: {config.margen === "con" ? "Sí" : "No"}</span>
-              <span>✍️ {config.tipoLetra === "escolar" ? "Letra escolar" : config.tipoLetra === "punteada" ? "Letra punteada" : "Imprenta"}</span>
-              {config.modoContenido === "libre" ? (
-                <>
-                  <span>✏️ Texto libre · {config.textoLibre.numLineas} líneas</span>
-                </>
-              ) : (
-                <span>📋 {contentLabel(config.contenido)}</span>
+            {/* NAVIGATION */}
+            <div className={styles.navBar}>
+              {step > 0 && step < STEPS.length - 1 && (
+                <button className={styles.btnBack} onClick={goBack}>← Anterior</button>
+              )}
+              {step < STEPS.length - 1 && (
+                <button
+                  className={`${styles.btnNext} ${!canContinue() ? styles.btnDisabled : ""}`}
+                  onClick={canContinue() ? goNext : undefined}
+                  disabled={!canContinue()}
+                >
+                  {step === STEPS.length - 2 ? "✨ ¡Generar ficha!" : "Siguiente →"}
+                </button>
               )}
             </div>
-
-            <div className={styles.contactQrCard}>
-              <div className={styles.contactQrContent}>
-                <h3 className={styles.contactQrTitle}>QR de contacto</h3>
-                <p className={styles.contactQrText}>
-                  Escanea este codigo QR para abrir nuestra pagina de contacto.
-                </p>
-                <Link className={styles.contactQrLink} href={CONTACT_ROUTE}>
-                  Ir a contacto
-                </Link>
-              </div>
-
-              <div className={styles.contactQrImageWrap}>
-                {contactQrDataUrl ? (
-                  <Image
-                    src={contactQrDataUrl}
-                    alt={`QR para abrir ${contactPageUrl}`}
-                    className={styles.contactQrImage}
-                    width={176}
-                    height={176}
-                    unoptimized
-                  />
-                ) : (
-                  <div className={styles.contactQrFallback}>
-                    Cargando QR...
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className={styles.downloadBar}>
-              <button onClick={descargarPng} className={styles.downloadBtn} id="btn-descargar-png">
-                🖼️ Descargar PNG
-              </button>
-              <button
-                onClick={descargarPdf}
-                className={`${styles.downloadBtn} ${styles.downloadBtnPdf}`}
-                disabled={isGeneratingPdf}
-                id="btn-descargar-pdf"
-              >
-                {isGeneratingPdf ? "⏳ Generando PDF..." : "📄 Descargar PDF"}
-              </button>
-              <button
-                onClick={() => { setConfig(defaultConfig); setStep(0); }}
-                className={styles.resetBtn}
-              >
-                🔄 Nueva ficha
-              </button>
-            </div>
           </div>
-        )}
-
-        {/* NAVIGATION */}
-        <div className={styles.navBar}>
-          {step > 0 && step < STEPS.length - 1 && (
-            <button className={styles.btnBack} onClick={goBack}>← Anterior</button>
-          )}
-          {step < STEPS.length - 1 && (
-            <button
-              className={`${styles.btnNext} ${!canContinue() ? styles.btnDisabled : ""}`}
-              onClick={canContinue() ? goNext : undefined}
-              disabled={!canContinue()}
-            >
-              {step === STEPS.length - 2 ? "✨ ¡Generar ficha!" : "Siguiente →"}
-            </button>
-          )}
         </div>
+
+        {/* SIDEBAR PREVIEW */}
+        <aside className={styles.previewSide}>
+          <h3 className={styles.previewTitle}>✨ Vista Previa</h3>
+          <div className={styles.canvasWrapper}>
+            {(config.formato || config.margen) ? (
+              <canvas
+                ref={canvasRef}
+                width={W}
+                height={H}
+                className={styles.canvas}
+              />
+            ) : (
+              <div className={styles.previewEmpty}>
+                <span className={styles.previewEmptyIcon}>📄</span>
+                <p>Selecciona un formato para empezar a ver tu ficha en tiempo real.</p>
+              </div>
+            )}
+          </div>
+
+          {step === 4 && (
+            <p style={{ fontSize: "0.85rem", color: "#64748b", textAlign: "center", fontStyle: "italic" }}>
+              Revisa que todo esté correcto antes de descargar.
+            </p>
+          )}
+        </aside>
       </div>
-    </div>
-
-    {/* SIDEBAR PREVIEW */}
-      <aside className={styles.previewSide}>
-        <h3 className={styles.previewTitle}>✨ Vista Previa</h3>
-        <div className={styles.canvasWrapper}>
-          {(config.formato || config.margen) ? (
-             <canvas
-              ref={canvasRef}
-              width={W}
-              height={H}
-              className={styles.canvas}
-            />
-          ) : (
-            <div className={styles.previewEmpty}>
-              <span className={styles.previewEmptyIcon}>📄</span>
-              <p>Selecciona un formato para empezar a ver tu ficha en tiempo real.</p>
-            </div>
-          )}
-        </div>
-        
-        {step === 4 && (
-          <p style={{ fontSize: "0.85rem", color: "#64748b", textAlign: "center", fontStyle: "italic" }}>
-            Revisa que todo esté correcto antes de descargar.
-          </p>
-        )}
-      </aside>
-    </div>
-  </main>
-);
+    </main>
+  );
 }
