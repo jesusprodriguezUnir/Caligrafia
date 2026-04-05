@@ -10,7 +10,8 @@ import styles from "./caligrafiate.module.css";
 // ──────────────────────────────────────────────────────────────────────────────
 
 type Formato = "pauta-guiada" | "pauta-normal" | "cuadricula-5" | "cuadricula-4" | null;
-type Margen = "sin" | "con" | null;
+type Margen = "sin" | "con" | "dibujo" | null;
+type MargenDibujo = "tren" | "barco" | "coche" | "arbol" | "casa" | "unicornio" | "perro" | "gato" | "nino" | "nina";
 type TipoLetraVal =
   | "massallera"
   | "massallera-dot"
@@ -47,10 +48,12 @@ interface TextoLibre {
 interface Config {
   formato: Formato;
   margen: Margen;
+  margenDibujo: MargenDibujo;
   tipoLetra: TipoLetra;
   modoContenido: ModoContenido;
   contenido: Contenido;
   textoLibre: TextoLibre;
+  previewTexts: Record<string, string>;
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -65,22 +68,46 @@ const CONTACT_ROUTE = "/contacto";
 // HELPERS DE CANVAS
 // ──────────────────────────────────────────────────────────────────────────────
 
+const getMarginX = (margen: Margen) => {
+  if (margen === "sin") return 20;
+  if (margen === "con") return 60;
+  if (margen === "dibujo") return 85;
+  return 20;
+};
+
+const MARGEN_ICONS: Record<MargenDibujo, string> = {
+  tren: "🚂",
+  barco: "🚢",
+  coche: "🚗",
+  arbol: "🌳",
+  casa: "🏠",
+  unicornio: "🦄",
+  perro: "🐶",
+  gato: "🐱",
+  nino: "👦",
+  nina: "👧",
+};
+
 function drawLineasGuia(
   ctx: CanvasRenderingContext2D,
   formato: Formato,
-  margen: Margen
+  margen: Margen,
+  margenDibujo?: MargenDibujo
 ) {
-  const mx = margen === "con" ? 60 : 20;
+  const mx = getMarginX(margen);
   const lineStep = formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
 
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = "#FFFFFF";
   ctx.fillRect(0, 0, W, H);
 
+  // Fondo sutil para la hoja
   ctx.fillStyle = "#FAFAFA";
   ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = "#FFFFFF";
   ctx.fillRect(mx, 20, W - mx - 20, H - 40);
+
+  const icon = margenDibujo ? MARGEN_ICONS[margenDibujo] : "";
 
   if (formato === "cuadricula-4" || formato === "cuadricula-5") {
     ctx.strokeStyle = "#D1E8FF";
@@ -99,40 +126,174 @@ function drawLineasGuia(
     for (let y = 20; y <= H - 20; y += lineStep * 5) {
       ctx.beginPath(); ctx.moveTo(mx, y); ctx.lineTo(W - 20, y); ctx.stroke();
     }
-  } else {
-    const altRenglon = formato === "pauta-guiada" ? 60 : 40;
-    let y = 80;
-    while (y + altRenglon < H - 30) {
-      if (formato === "pauta-guiada") {
-        ctx.strokeStyle = "#B3D1F7";
-        ctx.lineWidth = 0.8;
-        ctx.beginPath(); ctx.moveTo(mx, y - 20); ctx.lineTo(W - 20, y - 20); ctx.stroke();
-        ctx.strokeStyle = "#7FB3EB";
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(mx, y); ctx.lineTo(W - 20, y); ctx.stroke();
-        ctx.strokeStyle = "#B3D1F7";
-        ctx.lineWidth = 0.8;
-        ctx.beginPath(); ctx.moveTo(mx, y + 20); ctx.lineTo(W - 20, y + 20); ctx.stroke();
-      } else {
-        ctx.strokeStyle = "#7FB3EB";
-        ctx.lineWidth = 0.9;
-        ctx.beginPath(); ctx.moveTo(mx, y); ctx.lineTo(W - 20, y); ctx.stroke();
-        ctx.strokeStyle = "#D0E6FF";
-        ctx.lineWidth = 0.5;
-        ctx.beginPath(); ctx.moveTo(mx, y - (altRenglon / 2)); ctx.lineTo(W - 20, y - (altRenglon / 2)); ctx.stroke();
+    
+    if (margen === "dibujo" && icon) {
+      ctx.font = "28px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      for (let gridY = 20; gridY <= H - lineStep * 5; gridY += lineStep * 5) {
+        ctx.fillText(icon, mx - 40, gridY + lineStep * 2.5);
       }
-      y += altRenglon;
+    }
+  } else {
+    // Sistema Montessori (Pisos de las letras: Cielo, Camino, Tierra)
+    const h = 22; // Altura de cada piso
+    const gap = 30; // Separación entre renglones
+    let lineY = 100;
+
+    while (lineY + h * 3 < H - 50) {
+      const topY = lineY;
+      const midTop = topY + h;
+      const midBot = topY + h * 2;
+      const botY = topY + h * 3;
+
+      if (formato === "pauta-guiada") {
+        // 1. Sombrear zonas (Colores exactos del PDF)
+        ctx.fillStyle = "#E0F2FE"; // Cielo (Azul suave)
+        ctx.fillRect(mx, topY, W - mx - 20, h);
+        // Camino (Blanco - ya está de fondo)
+        ctx.fillStyle = "#FFEDD5"; // Tierra (Melocotón/Tan muy suave)
+        ctx.fillRect(mx, midBot, W - mx - 20, h);
+
+        // 2. Líneas
+        ctx.save();
+        ctx.lineWidth = 1;
+        // Línea 1 (Cielo) - Cian sólido
+        ctx.strokeStyle = "#0EA5E9";
+        ctx.beginPath(); ctx.moveTo(mx, topY); ctx.lineTo(W - 20, topY); ctx.stroke();
+        // Línea 4 (Tierra) - Marrón sólido
+        ctx.strokeStyle = "#92400E";
+        ctx.beginPath(); ctx.moveTo(mx, botY); ctx.lineTo(W - 20, botY); ctx.stroke();
+        // Líneas 2 y 3 (Camino) - Discontinuas Gris oscuro
+        ctx.strokeStyle = "#6B7280";
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.moveTo(mx, midTop); ctx.lineTo(W - 20, midTop); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mx, midBot); ctx.lineTo(W - 20, midBot); ctx.stroke();
+        ctx.restore();
+        
+        // 3. Iconos Guía Dinámicos (Más detallados)
+        if (margen === "dibujo" && margenDibujo) {
+          ctx.save();
+          const iconX = mx - 42;
+          ctx.textAlign = "center";
+          
+          if (margenDibujo === "arbol") {
+            // 1. Nube (Cielo)
+            ctx.fillStyle = "white";
+            ctx.strokeStyle = "#CBD5E1";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(iconX - 8, topY + 11, 6, 0, Math.PI * 2);
+            ctx.arc(iconX, topY + 8, 8, 0, Math.PI * 2);
+            ctx.arc(iconX + 8, topY + 11, 6, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke();
+            
+            // 2. Copa (Camino)
+            ctx.fillStyle = "#22C55E";
+            ctx.beginPath();
+            ctx.arc(iconX - 6, midTop + h/2, 9, 0, Math.PI * 2);
+            ctx.arc(iconX + 6, midTop + h/2, 9, 0, Math.PI * 2);
+            ctx.arc(iconX, midTop + h/2 - 5, 10, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 3. Hierba (Límite Camino/Tierra)
+            ctx.fillStyle = "#16A34A";
+            ctx.beginPath();
+            ctx.ellipse(iconX, midBot, 10, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 4. Tronco y Raíces (Tierra)
+            ctx.strokeStyle = "#78350F"; 
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(iconX, midTop + h/2); ctx.lineTo(iconX, midBot + 4);
+            ctx.stroke();
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(iconX, midBot + 4); ctx.lineTo(iconX - 10, botY - 4);
+            ctx.moveTo(iconX, midBot + 4); ctx.lineTo(iconX, botY - 2);
+            ctx.moveTo(iconX, midBot + 4); ctx.lineTo(iconX + 10, botY - 4);
+            ctx.stroke();
+
+          } else if (margenDibujo === "tren") {
+            // Humo (Cielo)
+            ctx.fillStyle = "rgba(100, 100, 100, 0.4)";
+            ctx.beginPath(); ctx.arc(iconX + 10, topY + 5, 4, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(iconX + 18, topY + 2, 5, 0, Math.PI*2); ctx.fill();
+            
+            // Máquina (Camino)
+            ctx.fillStyle = "#dc2626"; // Rojo intenso
+            ctx.fillRect(iconX - 12, midTop + 2, 24, h - 4); // Cuerpo
+            ctx.fillStyle = "#991b1b"; 
+            ctx.fillRect(iconX + 6, midTop - 4, 6, 6); // Chimenea
+            ctx.fillStyle = "#fef08a"; // Ventana
+            ctx.fillRect(iconX - 8, midTop + 6, 8, 6);
+            
+            // Ruedas (Tierra)
+            ctx.fillStyle = "#0f172a";
+            ctx.beginPath(); ctx.arc(iconX - 8, midBot + h/2, 6, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(iconX + 8, midBot + h/2, 6, 0, Math.PI*2); ctx.fill();
+
+          } else if (margenDibujo === "nino" || margenDibujo === "nina") {
+            // Cabeza (Cielo)
+            ctx.fillStyle = "#ffedd5"; // Piel
+            ctx.beginPath(); ctx.arc(iconX, topY + h/2 + 2, 10, 0, Math.PI*2); ctx.fill();
+            
+            // Pelo
+            ctx.fillStyle = margenDibujo === "nina" ? "#854d0e" : "#451a03";
+            if (margenDibujo === "nina") {
+               // Coletas
+               ctx.beginPath(); ctx.arc(iconX - 10, topY + 12, 6, 0, Math.PI*2); ctx.fill();
+               ctx.beginPath(); ctx.arc(iconX + 10, topY + 12, 6, 0, Math.PI*2); ctx.fill();
+            } else {
+               // Pelo corto
+               ctx.beginPath(); ctx.arc(iconX, topY + 10, 11, Math.PI, 0); ctx.fill();
+            }
+
+            // Cuerpo (Camino)
+            ctx.fillStyle = margenDibujo === "nino" ? "#2563eb" : "#db2777";
+            ctx.beginPath();
+            ctx.roundRect(iconX - 8, midTop + 2, 16, h - 4, 4);
+            ctx.fill();
+            
+            // Piernas (Tierra)
+            ctx.strokeStyle = "#1e293b";
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(iconX - 4, midBot); ctx.lineTo(iconX - 6, botY - 2);
+            ctx.moveTo(iconX + 4, midBot); ctx.lineTo(iconX + 6, botY - 2);
+            ctx.stroke();
+            // Zapatos
+            ctx.fillStyle = "#0f172a";
+            ctx.fillRect(iconX - 9, botY - 4, 6, 3);
+            ctx.fillRect(iconX + 3, botY - 4, 6, 3);
+          } else {
+            // Genérico (Emoji)
+            ctx.font = "28px Arial"; ctx.textBaseline = "middle";
+            ctx.fillText(icon, iconX, midTop + h/2);
+          }
+          ctx.restore();
+        }
+        lineY += h * 3 + gap;
+      } else {
+        // Pauta normal (Solo 2 líneas sitting on the imaginary central path)
+        ctx.strokeStyle = "#6B7280";
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(mx, midTop); ctx.lineTo(W - 20, midTop); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mx, midBot); ctx.lineTo(W - 20, midBot); ctx.stroke();
+        
+        if (margen === "dibujo" && icon) {
+          ctx.font = "28px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.fillText(icon, mx - 42, midTop + h/2);
+        }
+        lineY += h * 3 + gap;
+      }
     }
   }
 
-  if (margen === "con") {
-    ctx.strokeStyle = "#FF9999";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(mx, 20); ctx.lineTo(mx, H - 20); ctx.stroke();
-  }
-
+  // Marco final de la hoja
   ctx.strokeStyle = "#1A1A1A";
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 2.5;
   ctx.strokeRect(10, 10, W - 20, H - 20);
 }
 
@@ -189,7 +350,9 @@ function drawContenidoSample(
   config: Config
 ) {
   const { contenido, tipoLetra, margen, formato } = config;
-  const mx = margen === "con" ? 75 : 30;
+  const h = 22; // Altura carril para Montessori
+  const gap = 30; // Gap entre Montessori
+  const mx = getMarginX(margen) + 15;
 
   const selectedFonts = tipoLetra && tipoLetra.length > 0 ? tipoLetra : ["escolar" as TipoLetraVal];
 
@@ -198,11 +361,12 @@ function drawContenidoSample(
 
   const lineStep =
     formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
-  const altRenglon =
-    lineStep > 0 ? lineStep * 4 : formato === "pauta-guiada" ? 60 : 40;
+  
+  // Altura total del bloque de línea (3 pisos + gap)
+  const fullRenglon = formato === "pauta-guiada" ? h * 3 + gap : (lineStep > 0 ? lineStep * 4 : 40);
 
   const drawRow = (label: string, example: string) => {
-    if (y + altRenglon > H - 40) return;
+    if (y + fullRenglon > H - 40) return;
 
     const currentFontType = selectedFonts[fontIdx % selectedFonts.length];
 
@@ -226,17 +390,20 @@ function drawContenidoSample(
         currentFontType === "mestra-pauta-dot" ? "Mestra Pauta Dot" : "Mestra Montessori Dot")
       : fontBase;
 
+    const fontSize = formato === "pauta-guiada" ? h * 1.6 : 32;
+    const textY = formato === "pauta-guiada" ? y + h * 2 : y + 25;
+
     ctx.fillStyle = "#999";
-    ctx.font = `italic 13px Georgia`;
-    ctx.fillText(label, mx, y - 5);
+    ctx.font = `italic 11px Georgia`;
+    ctx.fillText(label, mx, y - 10);
 
     drawTextWithStyle(
       ctx,
       example,
       mx,
-      y + altRenglon * 0.6,
+      textY,
       fontToUse,
-      Math.floor(altRenglon * 0.7),
+      fontSize,
       isPunteada,
       isDottedVersion,
       "rgba(0,0,0,0.12)"
@@ -244,12 +411,13 @@ function drawContenidoSample(
 
     ctx.strokeStyle = "#E0E0E0";
     ctx.lineWidth = 0.5;
+    const textWidth = ctx.measureText(example).width;
     ctx.beginPath();
-    ctx.moveTo(mx + ctx.measureText(example).width + 20, y + altRenglon * 0.65);
-    ctx.lineTo(W - 30, y + altRenglon * 0.65);
+    ctx.moveTo(mx + textWidth + 20, textY);
+    ctx.lineTo(W - 30, textY);
     ctx.stroke();
 
-    y += altRenglon + 10;
+    y += fullRenglon;
     fontIdx++;
   };
 
@@ -260,16 +428,16 @@ function drawContenidoSample(
     ctx.beginPath();
     for (let i = 0; i < 8; i++) {
       const bx = mx + i * 70;
-      ctx.moveTo(bx, y + altRenglon);
-      ctx.bezierCurveTo(bx + 10, y, bx + 30, y, bx + 35, y + altRenglon / 2);
-      ctx.bezierCurveTo(bx + 40, y + altRenglon, bx + 60, y + altRenglon, bx + 70, y + altRenglon / 2);
+      ctx.moveTo(bx, y + fullRenglon);
+      ctx.bezierCurveTo(bx + 10, y, bx + 30, y, bx + 35, y + fullRenglon / 2);
+      ctx.bezierCurveTo(bx + 40, y + fullRenglon, bx + 60, y + fullRenglon, bx + 70, y + fullRenglon / 2);
     }
     ctx.stroke();
 
     ctx.fillStyle = "#999";
-    ctx.font = `italic 13px Georgia`;
+    ctx.font = `italic 11px Georgia`;
     ctx.fillText("Bucles · Espirales · Trazos libres", mx, y - 5);
-    y += altRenglon + 20;
+    y += fullRenglon;
   };
 
   if (contenido.trazos) drawTrazos();
@@ -292,15 +460,19 @@ function drawTextoLibre(
   config: Config
 ) {
   const { textoLibre, margen, formato, tipoLetra } = config;
-  const mx = margen === "con" ? 75 : 35;
+  const mx = getMarginX(margen) + 15;
   const rightX = W - 30;
 
   const selectedFonts = tipoLetra && tipoLetra.length > 0 ? tipoLetra : ["escolar" as TipoLetraVal];
 
-  // Altura de renglón según numLineas
+  // Altura de renglón según numLineas o sistema Montessori
+  const h = 22;
+  const gap = 30;
   const numLineas = textoLibre.numLineas;
-  const altRenglon = Math.floor((H - 140) / numLineas);
-  const fontSize = Math.floor(altRenglon * 0.55);
+  
+  const hTotalMontessori = h * 3 + gap;
+  const altRenglon = formato === "pauta-guiada" ? hTotalMontessori : Math.floor((H - 140) / numLineas);
+  const fontSize = formato === "pauta-guiada" ? h * 1.2 : Math.floor(altRenglon * 0.55);
 
   // Encabezado
   if (textoLibre.enunciado.trim()) {
@@ -319,6 +491,7 @@ function drawTextoLibre(
   // Texto a copiar: dividir en palabras y envolver en líneas
   const texto = textoLibre.texto.trim();
   let startY = 80;
+  let fontIdx = 0;
 
   if (texto) {
     const maxWidth = rightX - mx - 10;
@@ -445,7 +618,7 @@ function drawFontsPreview(
   const selectedFonts = tipoLetra && tipoLetra.length > 0 ? tipoLetra : [];
   if (selectedFonts.length === 0) return;
 
-  const mx = margen === "con" ? 75 : 30;
+  const mx = getMarginX(margen) + 15;
   let y = 100;
 
   const lineStep = formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
@@ -491,9 +664,11 @@ function drawFontsPreview(
     ctx.font = `italic 13px Georgia`;
     ctx.fillText(`${idx + 1}. ${label}`, mx, y - 5);
 
+    const specificText = config.previewTexts[fontType as string] || "Caligrafíate";
+
     drawTextWithStyle(
       ctx,
-      "Abcdefghijklmnopq...",
+      specificText,
       mx,
       y + altRenglon * 0.6,
       fontToUse,
@@ -516,6 +691,7 @@ const STEPS = ["Formato", "Márgenes", "Letra", "Contenido", "¡Tu ficha!"];
 const defaultConfig: Config = {
   formato: null,
   margen: null,
+  margenDibujo: "tren",
   tipoLetra: [],
   modoContenido: null,
   contenido: {
@@ -535,6 +711,7 @@ const defaultConfig: Config = {
     pieDePageina: "",
     numLineas: 12,
   },
+  previewTexts: {},
 };
 
 import { SpiralIcon } from "@/components/Icons";
@@ -550,6 +727,25 @@ export default function CaligrafiatePage() {
 
   const updateConfig = <K extends keyof Config>(key: K, val: Config[K]) =>
     setConfig((prev) => ({ ...prev, [key]: val }));
+
+  const updatePreviewText = (font: string, text: string) =>
+    setConfig((prev) => ({
+      ...prev,
+      previewTexts: { ...prev.previewTexts, [font]: text },
+    }));
+
+  const saveDraft = () => {
+    localStorage.setItem("caligra_draft", JSON.stringify(config));
+    alert("✨ ¡Borrador guardado correctamente!");
+  };
+
+  const loadDraft = () => {
+    const saved = localStorage.getItem("caligra_draft");
+    if (saved) {
+      setConfig(JSON.parse(saved));
+      setStep(2); // Ir directamente a la edición
+    }
+  };
 
   const toggleTipoLetra = (val: TipoLetraVal) =>
     setConfig((prev) => {
@@ -595,7 +791,7 @@ export default function CaligrafiatePage() {
 
     // Solo dibujar si tenemos los datos mínimos (formato y margen)
     // Opcionalmente, podemos dibujar una hoja vacía
-    drawLineasGuia(ctx, config.formato, config.margen);
+    drawLineasGuia(ctx, config.formato, config.margen, config.margenDibujo);
 
     if (step === 2) {
       drawFontsPreview(ctx, config);
@@ -783,8 +979,8 @@ export default function CaligrafiatePage() {
                 <div className={styles.optionGrid}>
                   {(
                     [
-                      { val: "pauta-guiada", icon: "📏", label: "Pauta guiada", sub: "3 líneas por renglón (ascendente, base, descendente)" },
-                      { val: "pauta-normal", icon: "📄", label: "Pauta normal", sub: "2 líneas por renglón" },
+                      { val: "pauta-guiada", icon: "📏", label: "Pauta Montessori", sub: "4 líneas (3 carriles: cielo, camino y tierra)" },
+                      { val: "pauta-normal", icon: "📄", label: "Pauta normal", sub: "2 líneas horizontales por renglón" },
                       { val: "cuadricula-5", icon: "/icon-cuadricula-5.svg", label: "Cuadrícula 5mm", sub: "Integrada en cuadrícula de 5mm" },
                       { val: "cuadricula-4", icon: "/icon-cuadricula-4.svg", label: "Cuadrícula 4mm", sub: "Integrada en cuadrícula de 4mm" },
                     ] as const
@@ -812,12 +1008,13 @@ export default function CaligrafiatePage() {
                   <span className={styles.stepNum}>2</span>
                   Configuración de la página
                 </h2>
-                <p className={styles.stepDesc}>¿La ficha tendrá margen lateral?</p>
+                <p className={styles.stepDesc}>¿Cómo prefieres el margen lateral?</p>
                 <div className={styles.optionRow}>
                   {(
                     [
                       { val: "sin", icon: "⛶", label: "Sin margen", sub: "El área de escritura ocupa toda la página" },
-                      { val: "con", icon: "📋", label: "Con margen", sub: "Línea roja vertical a la izquierda" },
+                      { val: "con", icon: "📋", label: "Margen clásico", sub: "Línea roja vertical a la izquierda" },
+                      { val: "dibujo", icon: MARGEN_ICONS[config.margenDibujo || "tren"], label: "Margen con dibujo", sub: "Un icono guía al inicio de cada línea" },
                     ] as const
                   ).map(({ val, icon, label, sub }) => (
                     <button
@@ -831,6 +1028,26 @@ export default function CaligrafiatePage() {
                     </button>
                   ))}
                 </div>
+
+                {config.margen === "dibujo" && (
+                  <div className={styles.dibujoSelectWrap}>
+                    <label className={styles.dibujoLabel}>Elige tu dibujo favorito:</label>
+                    <div className={styles.dibujoGrid}>
+                      {(Object.entries(MARGEN_ICONS) as [MargenDibujo, string][]).map(([val, icon]) => (
+                        <button
+                          key={val}
+                          className={`${styles.dibujoBtn} ${config.margenDibujo === val ? styles.dibujoBtnActive : ""}`}
+                          onClick={() => updateConfig("margenDibujo", val)}
+                        >
+                          <span className={styles.dibujoIcon}>{icon}</span>
+                          <span className={styles.dibujoName}>
+                            {val === "nino" ? "Niño" : (val === "nina" ? "Niña" : (val === "arbol" ? "Árbol" : val.charAt(0).toUpperCase() + val.slice(1)))}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -841,7 +1058,40 @@ export default function CaligrafiatePage() {
                   <span className={styles.stepNum}>3</span>
                   Tipo de letra
                 </h2>
-                <p className={styles.stepDesc}>Seleccione el estilo de letra:</p>
+                <p className={styles.stepDesc}>Seleccione el estilo de letra (puedes elegir varias):</p>
+                
+                {/* LIVE PREVIEW EDITOR - MULTI LINE */}
+                <div className={styles.multiPreviewEditor}>
+                  <div className={styles.editorHeader}>
+                    <label className={styles.previewLabel}>✍️ Personalizar texto por tipo de letra:</label>
+                    <button className={styles.saveDraftBtn} onClick={saveDraft} title="Guardar progreso">
+                      💾 Guardar borrador
+                    </button>
+                    <button className={styles.loadDraftBtn} onClick={loadDraft} title="Cargar último guardado">
+                      📂 Cargar
+                    </button>
+                  </div>
+                  
+                  {config.tipoLetra && config.tipoLetra.length > 0 ? (
+                    <div className={styles.previewLinesList}>
+                      {config.tipoLetra.map((fontVal, i) => (
+                        <div key={fontVal} className={styles.previewLineItem}>
+                          <span className={styles.lineNumBadge}>{i + 1}</span>
+                          <input 
+                            type="text" 
+                            className={styles.previewInputSmall}
+                            value={config.previewTexts[fontVal] || ""}
+                            onChange={(e) => updatePreviewText(fontVal, e.target.value)}
+                            placeholder={`Escribe texto para ${fontVal.replace('-', ' ')}...`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className={styles.noFontsHint}>⚠️ Selecciona primero algún tipo de letra abajo para empezar a editar.</p>
+                  )}
+                </div>
+
                 <div className={styles.optionGrid}>
                   {(
                     [
@@ -856,11 +1106,12 @@ export default function CaligrafiatePage() {
                       {
                         val: "massallera-dot",
                         icon: "✒️",
-                        label: "2. Massarella punteada",
+                        label: "2. Massarella puntuada",
                         sub: "Efecto punteado para calcar.",
                         preview: "Caligrafíate",
                         font: "Massallera, Georgia",
                         isPunteada: true,
+                        isSimulated: true,
                       },
                       {
                         val: "escolar",
@@ -877,6 +1128,7 @@ export default function CaligrafiatePage() {
                         sub: "Escolar con puntos de guía.",
                         preview: "Caligrafíate",
                         font: "Escolar Dot, Georgia",
+                        isPunteada: true,
                       },
                       {
                         val: "mestra-pauta",
@@ -893,6 +1145,7 @@ export default function CaligrafiatePage() {
                         sub: "Pauta simple punteada.",
                         preview: "Caligrafíate",
                         font: "Mestra Pauta Dot, Georgia",
+                        isPunteada: true,
                       },
                       {
                         val: "mestra-guiada",
@@ -909,9 +1162,10 @@ export default function CaligrafiatePage() {
                         sub: "Montessori punteada.",
                         preview: "Caligrafíate",
                         font: "Mestra Montessori Dot, Georgia",
+                        isPunteada: true,
                       },
                     ] as const
-                  ).map(({ val, icon, label, sub, preview, font, isPunteada }: any) => (
+                  ).map(({ val, icon, label, sub, preview, font, isPunteada, isSimulated }: any) => (
                     <button
                       key={val}
                       className={`${styles.optionCard} ${config.tipoLetra?.includes(val) ? styles.optionSelected : ""}`}
@@ -920,7 +1174,10 @@ export default function CaligrafiatePage() {
                       <span className={styles.optionIcon}>{icon}</span>
                       <strong>{label}</strong>
                       <span className={styles.optionSub}>{sub}</span>
-                      <span className={isPunteada ? styles.letterPreviewDotted : styles.letterPreview} style={{ fontFamily: font }}>
+                      <span 
+                        className={isSimulated ? styles.letterPreviewSimulated : (isPunteada ? styles.letterPreviewDotted : styles.letterPreview)} 
+                        style={{ fontFamily: font }}
+                      >
                         {preview}
                       </span>
                       {config.tipoLetra?.includes(val) && <span className={styles.badgeCount}>{config.tipoLetra.indexOf(val) + 1}</span>}
@@ -1135,7 +1392,7 @@ export default function CaligrafiatePage() {
                 </h2>
                 <div className={styles.summaryBar} style={{ marginBottom: "2rem" }}>
                   <span>📐 {config.formato?.replace("-", " ").replace("cuadricula", "Cuadrícula") ?? "—"}</span>
-                  <span>⬛ Margen: {config.margen === "con" ? "Sí" : "No"}</span>
+                  <span>⬛ Margen: {config.margen === "sin" ? "Escritura completa" : (config.margen === "con" ? "Línea roja" : (config.margen === "dibujo" ? `Dibujo de ${config.margenDibujo === "nino" ? "niño" : (config.margenDibujo === "nina" ? "niña" : (config.margenDibujo === "arbol" ? "árbol" : config.margenDibujo))}` : "—"))}</span>
                   <span>✍️ {config.tipoLetra && config.tipoLetra.length > 0 ? `${config.tipoLetra.length} tipos de letra` : "Sin selección"}</span>
                   {config.modoContenido === "libre" ? (
                     <>
