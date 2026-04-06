@@ -7,7 +7,18 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:generate": "node scripts/generate-test-pdfs.js"
+    "test:generate": "node scripts/generate-test-pdfs.js",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest run --coverage",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:mobile": "playwright test --project='Mobile*'",
+    "test:e2e:install": "playwright install --with-deps",
+    "test:e2e:report": "playwright show-report",
+    "test:all": "npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",
@@ -17,19 +28,27 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4.2.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.19.37",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.2",
     "autoprefixer": "^10.4.27",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
     "fs-extra": "^11.3.4",
+    "jsdom": "^28.1.0",
     "pdf-lib": "^1.17.1",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.2"
   }
 }

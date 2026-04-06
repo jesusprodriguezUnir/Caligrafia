@@ -124,20 +124,7 @@
   display: none;
 }
 
-.pencilAccentLetter {
-  position: relative;
-  display: inline-block;
-  line-height: 1;
-}
 
-.pencilAccentLetter::before {
-  content: "✏️";
-  position: absolute;
-  top: -0.58em;
-  left: 0.04em;
-  font-size: 0.36em;
-  transform: rotate(-28deg);
-}
 
 @media (max-width: 600px) {
   .mobile-break {
