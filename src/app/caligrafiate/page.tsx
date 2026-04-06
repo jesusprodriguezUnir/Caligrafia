@@ -171,76 +171,18 @@ function drawLineasGuia(
         ctx.beginPath(); ctx.moveTo(mx, midBot); ctx.lineTo(W - 20, midBot); ctx.stroke();
         ctx.restore();
         
-        // 3. Iconos Guía Dinámicos (Más detallados)
-        if (margen === "dibujo" && margenDibujo) {
+        // 3. Iconos Guía (Emoji unificado para todas las pautas)
+        if (margen === "dibujo" && icon) {
           ctx.save();
           const iconX = mx - 42;
           ctx.textAlign = "center";
-          
-          if (margenDibujo === "arbol") {
-            // Copa del árbol (Camino)
-            ctx.fillStyle = "#16A34A"; // Verde
-            ctx.beginPath();
-            ctx.arc(iconX, midTop + h/2, 9, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Tronco (Tierra)
-            ctx.fillStyle = "#78350F"; // Marrón
-            ctx.fillRect(iconX - 2, midBot, 4, h - 2);
-
-          } else if (margenDibujo === "tren") {
-            // Humo (Cielo)
-            ctx.fillStyle = "#94a3b8";
-            ctx.beginPath(); ctx.arc(iconX + 12, topY + 4, 3, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(iconX + 17, topY + 1, 4, 0, Math.PI*2); ctx.fill();
-            
-            // Locomotora (Camino)
-            ctx.fillStyle = "#dc2626"; // Rojo
-            ctx.fillRect(iconX - 10, midTop + 1, 20, h - 2);
-            ctx.fillStyle = "#991b1b"; // Chimenea
-            ctx.fillRect(iconX + 4, midTop - 3, 5, 5);
-            
-            // Ruedas (Tierra)
-            ctx.fillStyle = "#1e293b";
-            ctx.beginPath(); ctx.arc(iconX - 5, midBot + h/2, 4, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(iconX + 5, midBot + h/2, 4, 0, Math.PI*2); ctx.fill();
-
-          } else if (margenDibujo === "nino" || margenDibujo === "nina") {
-            // Cabeza (Cielo)
-            ctx.fillStyle = "#fdba74"; // Piel
-            ctx.beginPath(); ctx.arc(iconX, topY + h/2 + 2, 8, 0, Math.PI*2); ctx.fill();
-            
-            // Pelo
-            ctx.fillStyle = margenDibujo === "nina" ? "#a16207" : "#451a03";
-            if (margenDibujo === "nina") {
-               ctx.beginPath(); ctx.arc(iconX - 9, topY + 10, 5, 0, Math.PI*2); ctx.fill();
-               ctx.beginPath(); ctx.arc(iconX + 9, topY + 10, 5, 0, Math.PI*2); ctx.fill();
-            } else {
-               ctx.beginPath(); ctx.arc(iconX, topY + 9, 9, Math.PI, 0); ctx.fill();
-            }
-
-            // Cuerpo (Camino)
-            ctx.fillStyle = margenDibujo === "nino" ? "#3b82f6" : "#ec4899";
-            ctx.fillRect(iconX - 6, midTop + 1, 12, h - 2);
-            
-            // Piernas (Tierra)
-            ctx.strokeStyle = "#334155";
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(iconX - 3, midBot); ctx.lineTo(iconX - 4, botY - 2);
-            ctx.moveTo(iconX + 3, midBot); ctx.lineTo(iconX + 4, botY - 2);
-            ctx.stroke();
-            // Zapatos
-            ctx.fillStyle = "#1e293b";
-            ctx.fillRect(iconX - 7, botY - 3, 5, 2);
-            ctx.fillRect(iconX + 2, botY - 3, 5, 2);
-          } else {
-            // Genérico (Emoji)
-            ctx.font = "28px Arial"; ctx.textBaseline = "middle";
-            ctx.fillText(icon, iconX, midTop + h/2);
-          }
+          ctx.textBaseline = "middle";
+          ctx.font = "28px Arial";
+          // Centrado en el carril central (Camino)
+          ctx.fillText(icon, iconX, midTop + h/2);
           ctx.restore();
         }
+
         lineY += h * 3 + gap;
       } else {
         // Pauta normal (Solo 2 líneas sitting on the imaginary central path)
