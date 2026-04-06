@@ -40,6 +40,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# testing artifacts
+playwright-report/
+test-results/
+git_status.txt
+tests_list.txt
+
 # Resources and PDFs (Large files)
 /public/recursos/
 /public/test-cuadernos/

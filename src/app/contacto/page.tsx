@@ -12,7 +12,7 @@ export default function ContactoPage() {
   return (
     <main className={styles.main}>
       <section className={styles.card}>
-        <Link href="/caligrafiate" className={styles.backLink}>
+        <Link href="/caligrafiate" className={styles.backLink} id="back-link">
           ← Volver a Caligra-fiate
         </Link>
 

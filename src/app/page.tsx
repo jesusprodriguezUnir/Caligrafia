@@ -66,7 +66,7 @@ export default function Home() {
         </p>
 
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "1.5rem" }}>
-          <Link href="/caligrafiate" style={{
+          <Link href="/caligrafiate" id="cta-start-wizard" style={{
             padding: "20px 50px",
             background: "var(--color-cta)",
             color: "white",
@@ -81,7 +81,7 @@ export default function Home() {
           }} className="cta-button-hover">
             Comenzar mi viaje →
           </Link>
-          <Link href="/cuadernillos" style={{
+          <Link href="/cuadernillos" id="cta-explore-collection" style={{
             padding: "20px 40px",
             background: "white",
             color: "var(--color-primary)",

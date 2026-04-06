@@ -178,95 +178,62 @@ function drawLineasGuia(
           ctx.textAlign = "center";
           
           if (margenDibujo === "arbol") {
-            // 1. Nube (Cielo)
-            ctx.fillStyle = "white";
-            ctx.strokeStyle = "#CBD5E1";
-            ctx.lineWidth = 1;
+            // Copa del árbol (Camino)
+            ctx.fillStyle = "#16A34A"; // Verde
             ctx.beginPath();
-            ctx.arc(iconX - 8, topY + 11, 6, 0, Math.PI * 2);
-            ctx.arc(iconX, topY + 8, 8, 0, Math.PI * 2);
-            ctx.arc(iconX + 8, topY + 11, 6, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-            
-            // 2. Copa (Camino)
-            ctx.fillStyle = "#22C55E";
-            ctx.beginPath();
-            ctx.arc(iconX - 6, midTop + h/2, 9, 0, Math.PI * 2);
-            ctx.arc(iconX + 6, midTop + h/2, 9, 0, Math.PI * 2);
-            ctx.arc(iconX, midTop + h/2 - 5, 10, 0, Math.PI * 2);
+            ctx.arc(iconX, midTop + h/2, 9, 0, Math.PI * 2);
             ctx.fill();
             
-            // 3. Hierba (Límite Camino/Tierra)
-            ctx.fillStyle = "#16A34A";
-            ctx.beginPath();
-            ctx.ellipse(iconX, midBot, 10, 3, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // 4. Tronco y Raíces (Tierra)
-            ctx.strokeStyle = "#78350F"; 
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(iconX, midTop + h/2); ctx.lineTo(iconX, midBot + 4);
-            ctx.stroke();
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(iconX, midBot + 4); ctx.lineTo(iconX - 10, botY - 4);
-            ctx.moveTo(iconX, midBot + 4); ctx.lineTo(iconX, botY - 2);
-            ctx.moveTo(iconX, midBot + 4); ctx.lineTo(iconX + 10, botY - 4);
-            ctx.stroke();
+            // Tronco (Tierra)
+            ctx.fillStyle = "#78350F"; // Marrón
+            ctx.fillRect(iconX - 2, midBot, 4, h - 2);
 
           } else if (margenDibujo === "tren") {
             // Humo (Cielo)
-            ctx.fillStyle = "rgba(100, 100, 100, 0.4)";
-            ctx.beginPath(); ctx.arc(iconX + 10, topY + 5, 4, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(iconX + 18, topY + 2, 5, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "#94a3b8";
+            ctx.beginPath(); ctx.arc(iconX + 12, topY + 4, 3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(iconX + 17, topY + 1, 4, 0, Math.PI*2); ctx.fill();
             
-            // Máquina (Camino)
-            ctx.fillStyle = "#dc2626"; // Rojo intenso
-            ctx.fillRect(iconX - 12, midTop + 2, 24, h - 4); // Cuerpo
-            ctx.fillStyle = "#991b1b"; 
-            ctx.fillRect(iconX + 6, midTop - 4, 6, 6); // Chimenea
-            ctx.fillStyle = "#fef08a"; // Ventana
-            ctx.fillRect(iconX - 8, midTop + 6, 8, 6);
+            // Locomotora (Camino)
+            ctx.fillStyle = "#dc2626"; // Rojo
+            ctx.fillRect(iconX - 10, midTop + 1, 20, h - 2);
+            ctx.fillStyle = "#991b1b"; // Chimenea
+            ctx.fillRect(iconX + 4, midTop - 3, 5, 5);
             
             // Ruedas (Tierra)
-            ctx.fillStyle = "#0f172a";
-            ctx.beginPath(); ctx.arc(iconX - 8, midBot + h/2, 6, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(iconX + 8, midBot + h/2, 6, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "#1e293b";
+            ctx.beginPath(); ctx.arc(iconX - 5, midBot + h/2, 4, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(iconX + 5, midBot + h/2, 4, 0, Math.PI*2); ctx.fill();
 
           } else if (margenDibujo === "nino" || margenDibujo === "nina") {
             // Cabeza (Cielo)
-            ctx.fillStyle = "#ffedd5"; // Piel
-            ctx.beginPath(); ctx.arc(iconX, topY + h/2 + 2, 10, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "#fdba74"; // Piel
+            ctx.beginPath(); ctx.arc(iconX, topY + h/2 + 2, 8, 0, Math.PI*2); ctx.fill();
             
             // Pelo
-            ctx.fillStyle = margenDibujo === "nina" ? "#854d0e" : "#451a03";
+            ctx.fillStyle = margenDibujo === "nina" ? "#a16207" : "#451a03";
             if (margenDibujo === "nina") {
-               // Coletas
-               ctx.beginPath(); ctx.arc(iconX - 10, topY + 12, 6, 0, Math.PI*2); ctx.fill();
-               ctx.beginPath(); ctx.arc(iconX + 10, topY + 12, 6, 0, Math.PI*2); ctx.fill();
+               ctx.beginPath(); ctx.arc(iconX - 9, topY + 10, 5, 0, Math.PI*2); ctx.fill();
+               ctx.beginPath(); ctx.arc(iconX + 9, topY + 10, 5, 0, Math.PI*2); ctx.fill();
             } else {
-               // Pelo corto
-               ctx.beginPath(); ctx.arc(iconX, topY + 10, 11, Math.PI, 0); ctx.fill();
+               ctx.beginPath(); ctx.arc(iconX, topY + 9, 9, Math.PI, 0); ctx.fill();
             }
 
             // Cuerpo (Camino)
-            ctx.fillStyle = margenDibujo === "nino" ? "#2563eb" : "#db2777";
-            ctx.beginPath();
-            ctx.roundRect(iconX - 8, midTop + 2, 16, h - 4, 4);
-            ctx.fill();
+            ctx.fillStyle = margenDibujo === "nino" ? "#3b82f6" : "#ec4899";
+            ctx.fillRect(iconX - 6, midTop + 1, 12, h - 2);
             
             // Piernas (Tierra)
-            ctx.strokeStyle = "#1e293b";
-            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = "#334155";
+            ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(iconX - 4, midBot); ctx.lineTo(iconX - 6, botY - 2);
-            ctx.moveTo(iconX + 4, midBot); ctx.lineTo(iconX + 6, botY - 2);
+            ctx.moveTo(iconX - 3, midBot); ctx.lineTo(iconX - 4, botY - 2);
+            ctx.moveTo(iconX + 3, midBot); ctx.lineTo(iconX + 4, botY - 2);
             ctx.stroke();
             // Zapatos
-            ctx.fillStyle = "#0f172a";
-            ctx.fillRect(iconX - 9, botY - 4, 6, 3);
-            ctx.fillRect(iconX + 3, botY - 4, 6, 3);
+            ctx.fillStyle = "#1e293b";
+            ctx.fillRect(iconX - 7, botY - 3, 5, 2);
+            ctx.fillRect(iconX + 2, botY - 3, 5, 2);
           } else {
             // Genérico (Emoji)
             ctx.font = "28px Arial"; ctx.textBaseline = "middle";
@@ -933,7 +900,7 @@ export default function CaligrafiatePage() {
     <main className={styles.main}>
       {/* HEADER */}
       <header className={styles.header}>
-        <Link href="/" className={styles.backBtn}>← Inicio</Link>
+        <Link href="/" className={styles.backBtn} id="back-to-inicio">← Inicio</Link>
         <h1 className={styles.brand}>
           CALIGRA<span className={styles.brandUnder}>-</span>F<span style={{ position: "relative" }}>I<SpiralIcon className="tilde-spiral" /></span>ATE
         </h1>

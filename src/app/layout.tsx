@@ -3,8 +3,8 @@ import "./globals.css";
 import { MailIcon, InstagramIcon, FacebookIcon, TikTokIcon } from "@/components/Icons";
 
 export const metadata: Metadata = {
-  title: "Caligra-fiate - ¡Aprende Jugando!",
-  description: "¡La plataforma más divertida para que los niños aprendan caligrafía con cuadernos mágicos y juegos de escritura!",
+  title: "Caligra-Fíate - El Arte de la Caligrafía",
+  description: "Domina el arte de la escritura. Nuestra plataforma educativa combina pedagogía clásica con refinamiento artístico para perfeccionar cada trazo.",
 };
 
 import { SecretTrigger } from "@/components/SecretTrigger";
