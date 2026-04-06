@@ -133,60 +133,115 @@ export default function GeneradorMagico() {
     };
 
     const margenWidth = getMargenWidth();
+    const MARGEN_ICONS: Record<string, string> = {
+      nino: "👦",
+      nina: "👧",
+      ninos: "👦👧",
+      arbol: "🌳",
+      flor: "🌸",
+      tren: "🚂",
+      corazon: "❤️",
+      estrella: "⭐",
+      sol: "☀️",
+      casa: "🏠",
+    };
 
     if (showGuides) {
-      const getPautaSpacing = () => {
-        if (formato === "cuadricula-4") return 16;
-        if (formato === "cuadricula-5") return 20;
-        return 40;
-      };
-
-      const lineSpacing = getPautaSpacing();
+      const lineStep = formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
 
       if (formato === "cuadricula-4" || formato === "cuadricula-5") {
-        ctx.strokeStyle = "#e2e8f0";
-        ctx.lineWidth = 0.5;
-        for (let x = margenWidth; x < canvas.width - 20; x += lineSpacing) {
-          ctx.beginPath();
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, canvas.height);
-          ctx.stroke();
+        ctx.strokeStyle = "#D1E8FF";
+        ctx.lineWidth = 0.6;
+        for (let x = margenWidth; x <= canvas.width - 20; x += lineStep) {
+          ctx.beginPath(); ctx.moveTo(x, 20); ctx.lineTo(x, canvas.height - 20); ctx.stroke();
         }
-        for (let y = 0; y < canvas.height; y += lineSpacing) {
-          ctx.beginPath();
-          ctx.moveTo(margenWidth, y);
-          ctx.lineTo(canvas.width - 20, y);
-          ctx.stroke();
+        for (let y = 20; y <= canvas.height - 20; y += lineStep) {
+          ctx.beginPath(); ctx.moveTo(margenWidth, y); ctx.lineTo(canvas.width - 20, y); ctx.stroke();
+        }
+        ctx.strokeStyle = "#A3C4E0";
+        ctx.lineWidth = 0.8;
+        for (let x = margenWidth; x <= canvas.width - 20; x += lineStep * 5) {
+          ctx.beginPath(); ctx.moveTo(x, 20); ctx.lineTo(x, canvas.height - 20); ctx.stroke();
+        }
+        for (let y = 20; y <= canvas.height - 20; y += lineStep * 5) {
+          ctx.beginPath(); ctx.moveTo(margenWidth, y); ctx.lineTo(canvas.width - 20, y); ctx.stroke();
+        }
+        
+        if (margen === "dibujo") {
+          ctx.font = "28px Arial";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          const selectedEmoji = marginImages[margenDibujo];
+          for (let gridY = 20; gridY <= canvas.height - lineStep * 5; gridY += lineStep * 5) {
+            ctx.fillText(selectedEmoji, margenWidth - 40, gridY + lineStep * 2.5);
+          }
         }
       } else if (formato === "pauta-guiada") {
-        for (let y = 0; y < canvas.height; y += lineSpacing * 3) {
-          ctx.strokeStyle = "#1A1A1A";
+        const h = 22;
+        const gap = 30;
+        let lineY = 100;
+
+        while (lineY + h * 3 < canvas.height - 50) {
+          const topY = lineY;
+          const midTop = topY + h;
+          const midBot = topY + h * 2;
+          const botY = topY + h * 3;
+
+          ctx.fillStyle = "#E0F2FE";
+          ctx.fillRect(margenWidth, topY, canvas.width - margenWidth - 20, h);
+          ctx.fillStyle = "#FFEDD5";
+          ctx.fillRect(margenWidth, midBot, canvas.width - margenWidth - 20, h);
+
+          ctx.save();
           ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(margenWidth, y);
-          ctx.lineTo(canvas.width - 20, y);
-          ctx.stroke();
+          ctx.strokeStyle = "#0EA5E9";
+          ctx.beginPath(); ctx.moveTo(margenWidth, topY); ctx.lineTo(canvas.width - 20, topY); ctx.stroke();
+          ctx.strokeStyle = "#92400E";
+          ctx.beginPath(); ctx.moveTo(margenWidth, botY); ctx.lineTo(canvas.width - 20, botY); ctx.stroke();
+          ctx.strokeStyle = "#6B7280";
+          ctx.setLineDash([4, 3]);
+          ctx.beginPath(); ctx.moveTo(margenWidth, midTop); ctx.lineTo(canvas.width - 20, midTop); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(margenWidth, midBot); ctx.lineTo(canvas.width - 20, midBot); ctx.stroke();
+          ctx.restore();
           
-          ctx.beginPath();
-          ctx.moveTo(margenWidth, y + lineSpacing * 2);
-          ctx.lineTo(canvas.width - 20, y + lineSpacing * 2);
-          ctx.stroke();
-          
-          ctx.strokeStyle = "#dbeafe";
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(margenWidth, y + lineSpacing);
-          ctx.lineTo(canvas.width - 20, y + lineSpacing);
-          ctx.stroke();
+          if (margen === "dibujo") {
+            ctx.save();
+            const iconX = margenWidth - 42;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.font = "28px Arial";
+            const selectedEmoji = marginImages[margenDibujo];
+            ctx.fillText(selectedEmoji, iconX, midTop + h/2);
+            ctx.restore();
+          }
+
+          lineY += h * 3 + gap;
         }
       } else {
-        ctx.strokeStyle = "#e2e8f0";
-        ctx.lineWidth = 1;
-        for (let i = 0; i < canvas.height; i += lineSpacing) {
-          ctx.beginPath();
-          ctx.moveTo(margenWidth, i);
-          ctx.lineTo(canvas.width - 20, i);
-          ctx.stroke();
+        const h = 22;
+        const gap = 30;
+        let lineY = 100;
+        const lineSpacing = 60;
+
+        while (lineY + h * 3 < canvas.height - 50) {
+          const topY = lineY;
+          const midTop = topY + h;
+          const midBot = topY + h * 2;
+          const botY = topY + h * 3;
+
+          ctx.strokeStyle = "#6B7280";
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(margenWidth, midTop); ctx.lineTo(canvas.width - 20, midTop); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(margenWidth, midBot); ctx.lineTo(canvas.width - 20, midBot); ctx.stroke();
+          
+          if (margen === "dibujo") {
+            ctx.font = "28px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            const selectedEmoji = marginImages[margenDibujo];
+            ctx.fillText(selectedEmoji, margenWidth - 42, midTop + h/2);
+          }
+          lineY += h * 3 + gap;
         }
       }
 
@@ -196,22 +251,6 @@ export default function GeneradorMagico() {
       ctx.moveTo(margenWidth, 0);
       ctx.lineTo(margenWidth, canvas.height);
       ctx.stroke();
-
-      if (margen === "dibujo") {
-        ctx.font = "24px sans-serif";
-        const selectedEmoji = marginImages[margenDibujo];
-        
-        // Ajustamos el paso de los iconos al de la pauta
-        const stepY = formato === "pauta-guiada" ? 120 : (formato === "cuadricula-4" ? 16 : (formato === "cuadricula-5" ? 20 : 40));
-        const offsetIconY = formato === "pauta-guiada" ? 60 : (stepY / 2);
-        
-        for (let y = 0; y < canvas.height; y += stepY) {
-          if (y + offsetIconY > canvas.height - 20) break;
-          // Evitamos el primer icono si está demasiado arriba
-          if (y === 0 && formato !== "pauta-guiada") continue;
-          ctx.fillText(selectedEmoji, 32, y + offsetIconY + 8);
-        }
-      }
     }
 
     ctx.fillStyle = color;
@@ -228,24 +267,38 @@ export default function GeneradorMagico() {
     };
 
     const lineSpacing = getLineSpacing();
-    const startY = 60;
+    const startY = formato === "cuadricula-4" || formato === "cuadricula-5" ? 100 : 60;
+
+    const isCuadricula = formato === "cuadricula-4" || formato === "cuadricula-5";
+    const textStartX = isCuadricula ? margenWidth + 20 : margenWidth + 10;
 
     lineas.forEach((texto, index) => {
       const y = startY + index * lineSpacing;
       
       ctx.font = `bold ${fontSize}px ${getFontFamily()}`;
-      const textMetrics = ctx.measureText(texto || "");
-      const textWidth = textMetrics.width;
-      const canvasRight = canvas.width - 20;
-      const availableWidth = canvasRight - margenWidth;
-      const maxCenter = margenWidth + availableWidth / 2;
-      const minCenter = margenWidth + textWidth / 2 + 10;
-      const centerX = Math.min(maxCenter, Math.max(minCenter, (margenWidth + canvasRight) / 2));
       
-      if (isDot && texto) {
-        drawDottedText(ctx, texto, centerX, y, fontSize, color, margenWidth);
-      } else if (texto) {
-        ctx.fillText(texto, centerX, y);
+      if (isCuadricula) {
+        ctx.textAlign = "left";
+        if (isDot && texto) {
+          drawDottedTextLeft(ctx, texto, textStartX, y, fontSize, color, margenWidth);
+        } else if (texto) {
+          ctx.fillText(texto, textStartX, y);
+        }
+      } else {
+        ctx.textAlign = "center";
+        const textMetrics = ctx.measureText(texto || "");
+        const textWidth = textMetrics.width;
+        const canvasRight = canvas.width - 20;
+        const availableWidth = canvasRight - margenWidth;
+        const maxCenter = margenWidth + availableWidth / 2;
+        const minCenter = margenWidth + textWidth / 2 + 10;
+        const centerX = Math.min(maxCenter, Math.max(minCenter, (margenWidth + canvasRight) / 2));
+        
+        if (isDot && texto) {
+          drawDottedText(ctx, texto, centerX, y, fontSize, color, margenWidth);
+        } else if (texto) {
+          ctx.fillText(texto, centerX, y);
+        }
       }
     });
 
@@ -286,6 +339,29 @@ export default function GeneradorMagico() {
       ctx.lineWidth = Math.max(1, fontSize * 0.025);
       ctx.setLineDash([1.5, 3.5]);
       ctx.strokeText(text, startX, y);
+      ctx.setLineDash([]);
+    }
+  };
+
+  const drawDottedTextLeft = (ctx: CanvasRenderingContext2D, text: string, x: number, y: number, fontSize: number, color: string, margenWidth: number) => {
+    const isEscolarDot = tipoLetra === "escolar-dot";
+    const isMassalleraDot = tipoLetra === "massallera-dot";
+    
+    if (isEscolarDot) {
+      ctx.font = `${fontSize}px "Escolar Dot", "Escolar", Arial`;
+    } else if (isMassalleraDot) {
+      ctx.font = `bold ${fontSize}px "Massallera", Georgia`;
+    }
+    
+    ctx.textAlign = "left";
+    if (isEscolarDot) {
+      ctx.fillStyle = color;
+      ctx.fillText(text, x, y);
+    } else if (isMassalleraDot) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = Math.max(1, fontSize * 0.025);
+      ctx.setLineDash([1.5, 3.5]);
+      ctx.strokeText(text, x, y);
       ctx.setLineDash([]);
     }
   };
