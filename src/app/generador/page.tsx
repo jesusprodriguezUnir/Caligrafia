@@ -246,35 +246,87 @@ export default function GeneradorMagico() {
     ctx.textBaseline = "middle";
 
     const isDot = tipoLetra === "escolar-dot" || tipoLetra === "massallera-dot";
-
-    const getLineSpacing = () => {
-      if (formato === "cuadricula-4") return 16;
-      if (formato === "cuadricula-5") return 20;
-      if (formato === "pauta-guiada") return 60;
-      return 60;
-    };
-
-    const lineSpacing = getLineSpacing();
-    const startY = formato === "cuadricula-4" || formato === "cuadricula-5" ? 100 : 75;
-
     const isCuadricula = formato === "cuadricula-4" || formato === "cuadricula-5";
-    const textStartX = isCuadricula ? margenWidth + 20 : margenWidth + 10;
 
-    lineas.forEach((texto, index) => {
-      const y = startY + index * lineSpacing;
+    if (isCuadricula) {
+      // === GRID MODE: auto-fit text to grid structure ===
+      const cellSize = formato === "cuadricula-4" ? 16 : 20;
+      const majorStep = cellSize * 5; // heavy line every 5 cells (80px or 100px)
+
+      // Calculate how many grid rows the user's fontSize maps to.
+      // We use the fontSize slider as a *proportion* control: 
+      //   slider min(20) → text occupies 2 major rows  (small)
+      //   slider mid(60)  → text occupies 4 major rows  (normal)
+      //   slider max(100) → text occupies 5 major rows  (large)
+      const rowsForText = Math.max(2, Math.round(fontSize / 20));
+      const effectiveFontSize = Math.round(cellSize * rowsForText * 0.75); // 75% of band height for nice baseline fit
+      const bandHeight = cellSize * rowsForText; // px height each text line occupies
+      const gapRows = Math.max(1, Math.round(rowsForText * 0.4)); // gap between text bands
+      const totalLineStep = bandHeight + cellSize * gapRows;
+
+      // Start text at the first major gridline after top padding
+      const gridStartY = 20; // where grid starts
+      const firstMajorAfterTop = gridStartY + majorStep;
       
-      ctx.font = `bold ${fontSize}px ${getFontFamily()}`;
+      const textStartX = margenWidth + cellSize; // one cell of padding from margin
       
-      if (isCuadricula) {
+      lineas.forEach((texto, index) => {
+        if (!texto) return;
+        
+        // Each text line sits within its own band
+        const bandTopY = firstMajorAfterTop + index * totalLineStep;
+        // Baseline sits at ~75% of the band (so the text "sits" on a grid line)
+        const baselineY = bandTopY + Math.round(bandHeight * 0.78);
+        
+        // Skip if this band would go below the canvas
+        if (bandTopY + bandHeight > canvas.height - 30) return;
+
+        // Draw a subtle highlight band behind the text
+        ctx.fillStyle = "rgba(255, 243, 224, 0.35)";
+        ctx.fillRect(margenWidth, bandTopY, canvas.width - margenWidth - 20, bandHeight);
+
+        // Render the text
+        ctx.fillStyle = color;
+        ctx.font = `bold ${effectiveFontSize}px ${getFontFamily()}`;
         ctx.textAlign = "left";
-        if (isDot && texto) {
-          drawDottedTextLeft(ctx, texto, textStartX, y, fontSize, color, margenWidth);
-        } else if (texto) {
-          ctx.fillText(texto, textStartX, y);
+        ctx.textBaseline = "alphabetic";
+        
+        if (isDot) {
+          drawDottedTextLeft(ctx, texto, textStartX, baselineY, effectiveFontSize, color, margenWidth);
+        } else {
+          ctx.fillText(texto, textStartX, baselineY);
         }
-      } else {
+      });
+    } else {
+      // === PAUTA MODES (Montessori / Normal): existing centered logic ===
+      const lineSpacing = 60;
+      const startY = 75;
+      const textStartX = margenWidth + 10;
+
+      // For pauta modes, use 'middle' baseline and place text between guide lines
+      ctx.textBaseline = "middle";
+
+      // Calculate the actual Y positions of the guide rows
+      const h = 22;
+      const gap = 30;
+      const rowPositions: number[] = [];
+      let lineY = 100;
+      while (lineY + h * 3 < canvas.height - 50) {
+        const midTop = lineY + h;
+        const midBot = lineY + h * 2;
+        rowPositions.push(midTop + (midBot - midTop) / 2); // center between the two guide lines
+        lineY += h * 3 + gap;
+      }
+
+      lineas.forEach((texto, index) => {
+        if (!texto) return;
+        
+        // Use the actual guide row position if available, otherwise fall back to linear
+        const y = index < rowPositions.length ? rowPositions[index] : startY + index * lineSpacing;
+        
+        ctx.font = `bold ${fontSize}px ${getFontFamily()}`;
         ctx.textAlign = "center";
-        const textMetrics = ctx.measureText(texto || "");
+        const textMetrics = ctx.measureText(texto);
         const textWidth = textMetrics.width;
         const canvasRight = canvas.width - 20;
         const availableWidth = canvasRight - margenWidth;
@@ -282,13 +334,13 @@ export default function GeneradorMagico() {
         const minCenter = margenWidth + textWidth / 2 + 10;
         const centerX = Math.min(maxCenter, Math.max(minCenter, (margenWidth + canvasRight) / 2));
         
-        if (isDot && texto) {
+        if (isDot) {
           drawDottedText(ctx, texto, centerX, y, fontSize, color, margenWidth);
-        } else if (texto) {
+        } else {
           ctx.fillText(texto, centerX, y);
         }
-      }
-    });
+      });
+    }
 
     ctx.fillStyle = "rgba(0,0,0,0.05)";
     ctx.font = "bold 14px Arial";
