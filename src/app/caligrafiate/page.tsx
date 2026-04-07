@@ -265,17 +265,31 @@ function drawContenidoSample(
 
   const selectedFonts = tipoLetra && tipoLetra.length > 0 ? tipoLetra : ["escolar" as TipoLetraVal];
 
-  let y = 100;
   let fontIdx = 0;
 
-  const lineStep =
-    formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
-  
-  // Altura total del bloque de línea (3 pisos + gap)
-  const fullRenglon = formato === "pauta-guiada" ? h * 3 + gap : (lineStep > 0 ? lineStep * 4 : 40);
+  const isCuadricula = formato === "cuadricula-4" || formato === "cuadricula-5";
+  const lineStep = formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
+
+  // For grid modes: calculate band dimensions
+  const cellSize = lineStep || 20;
+  const gridRowsPerText = 3; // text occupies 3 major grid rows
+  const bandHeight = cellSize * gridRowsPerText * 5; // each major row = 5 cells
+  const gridGap = cellSize * 5; // one major row of gap
+  const gridFontSize = Math.round(bandHeight * 0.35);
+  const gridStartY = 20 + cellSize * 5; // first major grid line after top
+
+  // For pauta modes
+  const fullRenglon = formato === "pauta-guiada" ? h * 3 + gap : (isCuadricula ? bandHeight + gridGap : 40);
+
+  // Track Y position
+  let y = isCuadricula ? gridStartY : 100;
 
   const drawRow = (label: string, example: string) => {
-    if (y + fullRenglon > H - 40) return;
+    if (isCuadricula) {
+      if (y + bandHeight > H - 40) return;
+    } else {
+      if (y + fullRenglon > H - 40) return;
+    }
 
     const currentFontType = selectedFonts[fontIdx % selectedFonts.length];
 
@@ -299,54 +313,88 @@ function drawContenidoSample(
         currentFontType === "mestra-pauta-dot" ? "Mestra Pauta Dot" : "Mestra Montessori Dot")
       : fontBase;
 
-    const fontSize = formato === "pauta-guiada" ? h * 1.6 : 32;
-    const textY = formato === "pauta-guiada" ? y + h * 2 : y + 25;
+    if (isCuadricula) {
+      // Grid mode: auto-fit text to grid
+      const bandTopY = y;
+      const baselineY = bandTopY + Math.round(bandHeight * 0.78);
 
-    ctx.fillStyle = "#999";
-    ctx.font = `italic 11px Georgia`;
-    ctx.fillText(label, mx, y - 10);
+      // Subtle highlight band
+      ctx.fillStyle = "rgba(255, 243, 224, 0.35)";
+      ctx.fillRect(getMarginX(margen), bandTopY, W - getMarginX(margen) - 20, bandHeight);
 
-    drawTextWithStyle(
-      ctx,
-      example,
-      mx,
-      textY,
-      fontToUse,
-      fontSize,
-      isPunteada,
-      isDottedVersion,
-      "rgba(0,0,0,0.12)"
-    );
+      // Label
+      ctx.fillStyle = "#999";
+      ctx.font = `italic 11px Georgia`;
+      ctx.fillText(label, mx, bandTopY - 4);
 
-    ctx.strokeStyle = "#E0E0E0";
-    ctx.lineWidth = 0.5;
-    const textWidth = ctx.measureText(example).width;
-    ctx.beginPath();
-    ctx.moveTo(mx + textWidth + 20, textY);
-    ctx.lineTo(W - 30, textY);
-    ctx.stroke();
+      // Text
+      drawTextWithStyle(
+        ctx,
+        example,
+        mx,
+        baselineY,
+        fontToUse,
+        gridFontSize,
+        isPunteada,
+        isDottedVersion,
+        "rgba(0,0,0,0.12)"
+      );
 
-    y += fullRenglon;
+      y += bandHeight + gridGap;
+    } else {
+      // Pauta modes (existing logic)
+      const fontSize = formato === "pauta-guiada" ? h * 1.6 : 32;
+      const textY = formato === "pauta-guiada" ? y + h * 2 : y + 25;
+
+      ctx.fillStyle = "#999";
+      ctx.font = `italic 11px Georgia`;
+      ctx.fillText(label, mx, y - 10);
+
+      drawTextWithStyle(
+        ctx,
+        example,
+        mx,
+        textY,
+        fontToUse,
+        fontSize,
+        isPunteada,
+        isDottedVersion,
+        "rgba(0,0,0,0.12)"
+      );
+
+      ctx.strokeStyle = "#E0E0E0";
+      ctx.lineWidth = 0.5;
+      const textWidth = ctx.measureText(example).width;
+      ctx.beginPath();
+      ctx.moveTo(mx + textWidth + 20, textY);
+      ctx.lineTo(W - 30, textY);
+      ctx.stroke();
+
+      y += fullRenglon;
+    }
     fontIdx++;
   };
 
   const drawTrazos = () => {
+    const trazosHeight = isCuadricula ? bandHeight : fullRenglon;
+    if (y + trazosHeight > H - 40) return;
+
     // Trazos siempre usan un estilo base sutil
     ctx.strokeStyle = "rgba(0,0,0,0.12)";
     ctx.lineWidth = 3;
     ctx.beginPath();
     for (let i = 0; i < 8; i++) {
       const bx = mx + i * 70;
-      ctx.moveTo(bx, y + fullRenglon);
-      ctx.bezierCurveTo(bx + 10, y, bx + 30, y, bx + 35, y + fullRenglon / 2);
-      ctx.bezierCurveTo(bx + 40, y + fullRenglon, bx + 60, y + fullRenglon, bx + 70, y + fullRenglon / 2);
+      ctx.moveTo(bx, y + trazosHeight);
+      ctx.bezierCurveTo(bx + 10, y, bx + 30, y, bx + 35, y + trazosHeight / 2);
+      ctx.bezierCurveTo(bx + 40, y + trazosHeight, bx + 60, y + trazosHeight, bx + 70, y + trazosHeight / 2);
     }
     ctx.stroke();
 
     ctx.fillStyle = "#999";
     ctx.font = `italic 11px Georgia`;
     ctx.fillText("Bucles · Espirales · Trazos libres", mx, y - 5);
-    y += fullRenglon;
+    y += trazosHeight + (isCuadricula ? gridGap : 0);
   };
 
   if (contenido.trazos) drawTrazos();
@@ -374,14 +422,25 @@ function drawTextoLibre(
 
   const selectedFonts = tipoLetra && tipoLetra.length > 0 ? tipoLetra : ["escolar" as TipoLetraVal];
 
+  const isCuadricula = formato === "cuadricula-4" || formato === "cuadricula-5";
+  const cellSize = formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
+
   // Altura de renglón según numLineas o sistema Montessori
   const h = 22;
   const gap = 30;
   const numLineas = textoLibre.numLineas;
   
   const hTotalMontessori = h * 3 + gap;
-  const altRenglon = formato === "pauta-guiada" ? hTotalMontessori : Math.floor((H - 140) / numLineas);
-  const fontSize = formato === "pauta-guiada" ? h * 1.2 : Math.floor(altRenglon * 0.55);
+
+  // Grid mode: calculate band dimensions based on numLineas
+  const gridRowsPerText = numLineas <= 8 ? 4 : numLineas <= 12 ? 3 : 2;
+  const gridBandHeight = isCuadricula ? cellSize * gridRowsPerText * 5 : 0;
+  const gridGap = isCuadricula ? cellSize * Math.max(2, gridRowsPerText) : 0;
+  const gridFontSize = isCuadricula ? Math.round(gridBandHeight * 0.35) : 0;
+  const gridStartY = 20 + (isCuadricula ? cellSize * 5 : 0);
+
+  const altRenglon = isCuadricula ? gridBandHeight + gridGap : (formato === "pauta-guiada" ? hTotalMontessori : Math.floor((H - 140) / numLineas));
+  const fontSize = isCuadricula ? gridFontSize : (formato === "pauta-guiada" ? h * 1.2 : Math.floor(altRenglon * 0.55));
 
   // Encabezado
   if (textoLibre.enunciado.trim()) {
@@ -399,8 +458,7 @@ function drawTextoLibre(
 
   // Texto a copiar: dividir en palabras y envolver en líneas
   const texto = textoLibre.texto.trim();
-  let startY = 80;
-  let fontIdx = 0;
+  let startY = isCuadricula ? gridStartY : 80;
 
   if (texto) {
     const maxWidth = rightX - mx - 10;
@@ -430,10 +488,14 @@ function drawTextoLibre(
 
     // Dibujar cada línea sobre su renglón
     let lineIdx = 0;
-    let y = startY + altRenglon * 0.75;
+    let y = isCuadricula ? startY : startY + altRenglon * 0.75;
 
     for (const linea of lineas) {
-      if (y > H - 60) break;
+      if (isCuadricula) {
+        if (y + gridBandHeight > H - 40) break;
+      } else {
+        if (y > H - 60) break;
+      }
 
       const currentFontType = selectedFonts[lineIdx % selectedFonts.length];
 
@@ -457,31 +519,59 @@ function drawTextoLibre(
           currentFontType === "mestra-pauta-dot" ? "Mestra Pauta Dot" : "Mestra Montessori Dot")
         : fontBase;
 
-      drawTextWithStyle(
-        ctx,
-        linea,
-        mx,
-        y,
-        fontToUse,
-        fontSize,
-        isPunteada,
-        isDottedVersion
-      );
+      if (isCuadricula) {
+        // Grid mode: snap to grid with highlight band
+        const bandTopY = y;
+        const baselineY = bandTopY + Math.round(gridBandHeight * 0.78);
 
-      // Línea punteada para que el alumno escriba debajo (si hay espacio)
-      if (lineIdx % 2 === 0 && y + altRenglon < H - 60) {
-        // Línea de práctica (vacía)
-        ctx.strokeStyle = "#B3D1F7";
-        ctx.lineWidth = 1;
-        ctx.setLineDash([4, 6]);
-        ctx.beginPath();
-        ctx.moveTo(mx, y + altRenglon * 0.9);
-        ctx.lineTo(rightX, y + altRenglon * 0.9);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        y += altRenglon * 2;
+        // Highlight band
+        ctx.fillStyle = "rgba(255, 243, 224, 0.35)";
+        ctx.fillRect(getMarginX(margen), bandTopY, W - getMarginX(margen) - 20, gridBandHeight);
+
+        drawTextWithStyle(
+          ctx,
+          linea,
+          mx,
+          baselineY,
+          fontToUse,
+          gridFontSize,
+          isPunteada,
+          isDottedVersion
+        );
+
+        // Practice line below (if alternating)
+        if (lineIdx % 2 === 0 && y + gridBandHeight + gridGap + gridBandHeight < H - 40) {
+          y += gridBandHeight + gridGap + gridBandHeight + gridGap; // skip a band for practice
+        } else {
+          y += gridBandHeight + gridGap;
+        }
       } else {
-        y += altRenglon;
+        // Pauta modes: existing logic
+        drawTextWithStyle(
+          ctx,
+          linea,
+          mx,
+          y,
+          fontToUse,
+          fontSize,
+          isPunteada,
+          isDottedVersion
+        );
+
+        // Línea punteada para que el alumno escriba debajo (si hay espacio)
+        if (lineIdx % 2 === 0 && y + altRenglon < H - 60) {
+          ctx.strokeStyle = "#B3D1F7";
+          ctx.lineWidth = 1;
+          ctx.setLineDash([4, 6]);
+          ctx.beginPath();
+          ctx.moveTo(mx, y + altRenglon * 0.9);
+          ctx.lineTo(rightX, y + altRenglon * 0.9);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          y += altRenglon * 2;
+        } else {
+          y += altRenglon;
+        }
       }
 
       lineIdx++;
@@ -490,7 +580,7 @@ function drawTextoLibre(
     // Placeholder si no hay texto
     ctx.fillStyle = "rgba(0,0,0,0.1)";
     ctx.font = `italic ${fontSize}px Georgia`;
-    ctx.fillText("Escribe el texto que quieres practicar...", mx, startY + altRenglon * 0.75);
+    ctx.fillText("Escribe el texto que quieres practicar...", mx, startY + (isCuadricula ? gridBandHeight * 0.5 : altRenglon * 0.75));
   }
 
   // Pie de página
@@ -528,13 +618,29 @@ function drawFontsPreview(
   if (selectedFonts.length === 0) return;
 
   const mx = getMarginX(margen) + 15;
-  let y = 100;
 
-  const lineStep = formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
-  const altRenglon = lineStep > 0 ? lineStep * 4 : formato === "pauta-guiada" ? 60 : 40;
+  const isCuadricula = formato === "cuadricula-4" || formato === "cuadricula-5";
+  const cellSize = formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
+  const lineStep = cellSize;
+
+  // Grid mode: proper band sizing
+  const gridRowsPerFont = 3;
+  const gridBandHeight = isCuadricula ? cellSize * gridRowsPerFont * 5 : 0;
+  const gridGap = isCuadricula ? cellSize * 5 : 0;
+  const gridFontSize = isCuadricula ? Math.round(gridBandHeight * 0.35) : 0;
+  const gridStartY = 20 + (isCuadricula ? cellSize * 5 : 0);
+
+  // Pauta mode row height
+  const altRenglon = isCuadricula ? gridBandHeight : (formato === "pauta-guiada" ? 60 : 40);
+
+  let y = isCuadricula ? gridStartY : 100;
 
   selectedFonts.forEach((fontType, idx) => {
-    if (y + altRenglon > H - 100) return;
+    if (isCuadricula) {
+      if (y + gridBandHeight > H - 100) return;
+    } else {
+      if (y + altRenglon > H - 100) return;
+    }
 
     const fontBase =
       fontType === "massallera" || fontType === "massallera-dot" ? "Massallera, Georgia" :
@@ -568,26 +674,55 @@ function drawFontsPreview(
     };
 
     const label = phrases[fontType as string] || "Muestra";
-
-    ctx.fillStyle = "#999";
-    ctx.font = `italic 13px Georgia`;
-    ctx.fillText(`${idx + 1}. ${label}`, mx, y - 5);
-
     const specificText = config.previewTexts[fontType as string] || "Caligrafíate";
 
-    drawTextWithStyle(
-      ctx,
-      specificText,
-      mx,
-      y + altRenglon * 0.6,
-      fontToUse,
-      Math.floor(altRenglon * 0.7),
-      isPunteada,
-      isDottedVersion,
-      "rgba(14, 100, 200, 0.4)"
-    );
+    if (isCuadricula) {
+      // Grid mode: snap to grid
+      const bandTopY = y;
+      const baselineY = bandTopY + Math.round(gridBandHeight * 0.78);
 
-    y += altRenglon + 20;
+      // Highlight band
+      ctx.fillStyle = "rgba(255, 243, 224, 0.35)";
+      ctx.fillRect(getMarginX(margen), bandTopY, W - getMarginX(margen) - 20, gridBandHeight);
+
+      // Label
+      ctx.fillStyle = "#999";
+      ctx.font = `italic 13px Georgia`;
+      ctx.fillText(`${idx + 1}. ${label}`, mx, bandTopY - 4);
+
+      drawTextWithStyle(
+        ctx,
+        specificText,
+        mx,
+        baselineY,
+        fontToUse,
+        gridFontSize,
+        isPunteada,
+        isDottedVersion,
+        "rgba(14, 100, 200, 0.4)"
+      );
+
+      y += gridBandHeight + gridGap;
+    } else {
+      // Pauta modes
+      ctx.fillStyle = "#999";
+      ctx.font = `italic 13px Georgia`;
+      ctx.fillText(`${idx + 1}. ${label}`, mx, y - 5);
+
+      drawTextWithStyle(
+        ctx,
+        specificText,
+        mx,
+        y + altRenglon * 0.6,
+        fontToUse,
+        Math.floor(altRenglon * 0.7),
+        isPunteada,
+        isDottedVersion,
+        "rgba(14, 100, 200, 0.4)"
+      );
+
+      y += altRenglon + 20;
+    }
   });
 }
 
