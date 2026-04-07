@@ -19,15 +19,16 @@ export const Header = () => {
       <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}>
         <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
           <SpiralIcon className="header-spiral" />
-          <span style={{ 
+          <h1 style={{ 
             fontFamily: "var(--font-display)", 
             fontWeight: 900, 
             fontSize: "1.5rem", 
             color: "var(--color-primary)",
-            letterSpacing: "-0.5px"
+            letterSpacing: "-0.5px",
+            margin: 0
           }}>
             CALIGRA-FÍATE
-          </span>
+          </h1>
         </div>
       </Link>
 
