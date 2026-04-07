@@ -10,16 +10,25 @@ test.describe('Generador Page', () => {
   });
 
   test('should load the page correctly', async ({ page }) => {
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(generadorPage.title).toBeVisible();
+    await expect(page.locator('header')).toBeVisible();
   });
 
   test('should accept text input', async () => {
-    await generadorPage.fillText('Hola Mundo');
+    const testText = 'Hola Mundo';
+    await generadorPage.fillText(testText);
     const value = await generadorPage.getInputValue();
-    expect(value).toBe('Hola Mundo');
+    expect(value).toBe(testText);
   });
 
   test('should have canvas visible', async () => {
     await expect(generadorPage.canvas).toBeVisible();
+  });
+
+  test('should generate random text when clicking aleatorio', async () => {
+    const initialValue = await generadorPage.getInputValue();
+    await generadorPage.clickAleatorio();
+    const newValue = await generadorPage.getInputValue();
+    expect(newValue).not.toBe(initialValue);
   });
 });

@@ -6,19 +6,19 @@ export class GeneradorPage {
 
   readonly title: Locator;
   readonly textInput: Locator;
-  readonly suggestButtons: Locator;
   readonly canvas: Locator;
   readonly downloadButton: Locator;
+  readonly aleatorioButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.url = '/generador';
 
-    this.title = page.locator('h1:has-text("Generador")');
-    this.textInput = page.locator('input[type="text"]');
-    this.suggestButtons = page.locator('button:has-text("Mamá"), button:has-text("Papá"), button:has-text("Frase")');
+    this.title = page.locator('h2:has-text("Ajustes del Estudio")');
+    this.textInput = page.locator('input[type="text"]').first();
     this.canvas = page.locator('canvas');
-    this.downloadButton = page.locator('button:has-text("Descargar PNG")');
+    this.downloadButton = page.locator('button:has-text("Descargar")');
+    this.aleatorioButton = page.locator('button:has-text("Aleatorio")');
   }
 
   async goto() {
@@ -29,9 +29,8 @@ export class GeneradorPage {
     await this.textInput.fill(text);
   }
 
-  async clickSuggest(suggestion: string) {
-    // Labels are exactly "Mamá", "Papá" or "Frase"
-    await this.page.locator(`button:has-text("${suggestion}")`).click();
+  async clickAleatorio() {
+    await this.aleatorioButton.click();
   }
 
   async isCanvasVisible() {
