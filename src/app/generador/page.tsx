@@ -6,11 +6,10 @@ import { PDFDocument } from 'pdf-lib';
 import styles from "../caligrafiate/caligrafiate.module.css";
 import { Header } from "@/components/Header";
 import { DownloadIcon, SparklesIcon } from "@/components/Icons";
+import { drawLineasGuia, getMarginX, MARGEN_ICONS } from "@/lib/helpers/canvas-helpers";
+import type { Formato, Margen, MargenDibujo } from "@/lib/helpers/types";
 
 type TipoLetra = "escolar" | "escolar-dot" | "massallera" | "massallera-dot" | "mestra-pauta" | "mestra-pauta-dot" | "mestra-montessori" | "mestra-montessori-dot";
-type Margen = "sin" | "con" | "dibujo";
-type MargenDibujo = "tren" | "barco" | "coche" | "arbol" | "casa" | "unicornio" | "perro" | "gato" | "nino" | "nina";
-type Formato = "pauta-guiada" | "pauta-normal" | "cuadricula-5" | "cuadricula-4";
 
 const bancoPalabras = [
   "Lucía", "Martín", "Noemí", "Carlos", "Sofía", "Diego", "María", "Pablo", "Ana", "Javier",
@@ -38,19 +37,6 @@ const bancoFrases = [
   "Me divierto mucho"
 ];
 
-const marginImages: Record<MargenDibujo, string> = {
-  tren: "🚂",
-  barco: "⛵",
-  coche: "🚗",
-  arbol: "🌳",
-  casa: "🏠",
-  unicornio: "🦄",
-  perro: "🐕",
-  gato: "🐱",
-  nino: "👦",
-  nina: "👧"
-};
-
 const plantillas = {
   vocales: ["A", "E", "I", "O", "U", "", "", ""],
   alfabeto: ["A", "B", "C", "D", "E", "F", "G", "H"],
@@ -60,6 +46,7 @@ const plantillas = {
 
 export default function GeneradorMagico() {
   const [lineas, setLineas] = useState<string[]>(["¡Mi magia!", "", "", ""]);
+  const [debouncedLineas, setDebouncedLineas] = useState<string[]>(["¡Mi magia!", "", "", ""]);
   const [numLineas, setNumLineas] = useState(4);
   const [fontSize, setFontSize] = useState(60);
   const [color, setColor] = useState("#0EA5E9");
@@ -69,6 +56,7 @@ export default function GeneradorMagico() {
   const [margenDibujo, setMargenDibujo] = useState<MargenDibujo>("tren");
   const [formato, setFormato] = useState<Formato>("pauta-normal");
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const actualizarLinea = (index: number, valor: string) => {
     const nuevasLineas = [...lineas];
@@ -88,6 +76,17 @@ export default function GeneradorMagico() {
       setLineas(nuevasLineas);
     }
   }, [numLineas, lineas]);
+
+  // Debounce lineas state for canvas rendering (150ms delay)
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setDebouncedLineas(lineas);
+    }, 150);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [lineas]);
 
   const getFontFamily = () => {
     switch (tipoLetra) {
@@ -136,123 +135,22 @@ export default function GeneradorMagico() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    const getMargenWidth = () => {
-      switch (margen) {
-        case "sin": return 20;
-        case "con": return 60;
-        case "dibujo": return 85;
-        default: return 60;
-      }
-    };
-
-    const margenWidth = getMargenWidth();
+    const margenWidth = getMarginX(margen);
 
     if (showGuides) {
-      const lineStep = formato === "cuadricula-4" ? 16 : formato === "cuadricula-5" ? 20 : 0;
+      drawLineasGuia(ctx, formato, margen, margenDibujo, canvas.width, canvas.height);
 
-      if (formato === "cuadricula-4" || formato === "cuadricula-5") {
-        ctx.strokeStyle = "#D1E8FF";
-        ctx.lineWidth = 0.6;
-        for (let x = margenWidth; x <= canvas.width - 20; x += lineStep) {
-          ctx.beginPath(); ctx.moveTo(x, 20); ctx.lineTo(x, canvas.height - 20); ctx.stroke();
-        }
-        for (let y = 20; y <= canvas.height - 20; y += lineStep) {
-          ctx.beginPath(); ctx.moveTo(margenWidth, y); ctx.lineTo(canvas.width - 20, y); ctx.stroke();
-        }
-        ctx.strokeStyle = "#A3C4E0";
-        ctx.lineWidth = 0.8;
-        for (let x = margenWidth; x <= canvas.width - 20; x += lineStep * 5) {
-          ctx.beginPath(); ctx.moveTo(x, 20); ctx.lineTo(x, canvas.height - 20); ctx.stroke();
-        }
-        for (let y = 20; y <= canvas.height - 20; y += lineStep * 5) {
-          ctx.beginPath(); ctx.moveTo(margenWidth, y); ctx.lineTo(canvas.width - 20, y); ctx.stroke();
-        }
-        
-        if (margen === "dibujo") {
-          ctx.font = "28px Arial";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          const selectedEmoji = marginImages[margenDibujo];
-          for (let gridY = 20; gridY <= canvas.height - lineStep * 5; gridY += lineStep * 5) {
-            ctx.fillText(selectedEmoji, margenWidth - 40, gridY + lineStep * 2.5);
-          }
-        }
-      } else if (formato === "pauta-guiada") {
-        const h = 22;
-        const gap = 30;
-        let lineY = 100;
-
-        while (lineY + h * 3 < canvas.height - 50) {
-          const topY = lineY;
-          const midTop = topY + h;
-          const midBot = topY + h * 2;
-          const botY = topY + h * 3;
-
-          ctx.fillStyle = "#E0F2FE";
-          ctx.fillRect(margenWidth, topY, canvas.width - margenWidth - 20, h);
-          ctx.fillStyle = "#FFEDD5";
-          ctx.fillRect(margenWidth, midBot, canvas.width - margenWidth - 20, h);
-
-          ctx.save();
-          ctx.lineWidth = 1;
-          ctx.strokeStyle = "#0EA5E9";
-          ctx.beginPath(); ctx.moveTo(margenWidth, topY); ctx.lineTo(canvas.width - 20, topY); ctx.stroke();
-          ctx.strokeStyle = "#92400E";
-          ctx.beginPath(); ctx.moveTo(margenWidth, botY); ctx.lineTo(canvas.width - 20, botY); ctx.stroke();
-          ctx.strokeStyle = "#6B7280";
-          ctx.setLineDash([4, 3]);
-          ctx.beginPath(); ctx.moveTo(margenWidth, midTop); ctx.lineTo(canvas.width - 20, midTop); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(margenWidth, midBot); ctx.lineTo(canvas.width - 20, midBot); ctx.stroke();
-          ctx.restore();
-          
-          if (margen === "dibujo") {
-            ctx.save();
-            const iconX = margenWidth - 42;
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.font = "28px Arial";
-            const selectedEmoji = marginImages[margenDibujo];
-            ctx.fillText(selectedEmoji, iconX, midTop + h/2);
-            ctx.restore();
-          }
-
-          lineY += h * 3 + gap;
-        }
-      } else {
-        const h = 22;
-        const gap = 30;
-        let lineY = 100;
-
-        while (lineY + h * 3 < canvas.height - 50) {
-          const topY = lineY;
-          const midTop = topY + h;
-          const midBot = topY + h * 2;
-
-          ctx.strokeStyle = "#6B7280";
-          ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.moveTo(margenWidth, midTop); ctx.lineTo(canvas.width - 20, midTop); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(margenWidth, midBot); ctx.lineTo(canvas.width - 20, midBot); ctx.stroke();
-          
-          if (margen === "dibujo") {
-            ctx.font = "28px Arial";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            const selectedEmoji = marginImages[margenDibujo];
-            ctx.fillText(selectedEmoji, margenWidth - 42, midTop + h/2);
-          }
-          lineY += h * 3 + gap;
-        }
-      }
-
+      // Draw pink margin line (generador-specific feature)
       ctx.strokeStyle = "#ffb3b3";
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(margenWidth, 0);
       ctx.lineTo(margenWidth, canvas.height);
       ctx.stroke();
+    } else {
+      // Still need to draw white canvas if not showing guides
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
     ctx.fillStyle = color;
@@ -284,14 +182,14 @@ export default function GeneradorMagico() {
       
       const textStartX = margenWidth + cellSize; // one cell of padding from margin
       
-      lineas.forEach((texto, index) => {
+      debouncedLineas.forEach((texto, index) => {
         if (!texto) return;
-        
+
         // Each text line sits within its own band
         const bandTopY = firstMajorAfterTop + index * totalLineStep;
         // Baseline sits at ~75% of the band (so the text "sits" on a grid line)
         const baselineY = bandTopY + Math.round(bandHeight * 0.78);
-        
+
         // Skip if this band would go below the canvas
         if (bandTopY + bandHeight > canvas.height - 30) return;
 
@@ -304,7 +202,7 @@ export default function GeneradorMagico() {
         ctx.font = `bold ${effectiveFontSize}px ${getFontFamily()}`;
         ctx.textAlign = "left";
         ctx.textBaseline = "alphabetic";
-        
+
         if (isDot) {
           drawDottedTextLeft(ctx, texto, textStartX, baselineY, effectiveFontSize, color, margenWidth);
         } else {
@@ -332,12 +230,12 @@ export default function GeneradorMagico() {
         lineY += h * 3 + gap;
       }
 
-      lineas.forEach((texto, index) => {
+      debouncedLineas.forEach((texto, index) => {
         if (!texto) return;
-        
+
         // Use the actual guide row position if available, otherwise fall back to linear
         const y = index < rowPositions.length ? rowPositions[index] : startY + index * lineSpacing;
-        
+
         ctx.font = `bold ${fontSize}px ${getFontFamily()}`;
         ctx.textAlign = "center";
         const textMetrics = ctx.measureText(texto);
@@ -347,7 +245,7 @@ export default function GeneradorMagico() {
         const maxCenter = margenWidth + availableWidth / 2;
         const minCenter = margenWidth + textWidth / 2 + 10;
         const centerX = Math.min(maxCenter, Math.max(minCenter, (margenWidth + canvasRight) / 2));
-        
+
         if (isDot) {
           drawDottedText(ctx, texto, centerX, y, fontSize, color, margenWidth);
         } else {
@@ -363,7 +261,7 @@ export default function GeneradorMagico() {
     ctx.strokeStyle = "#1A1A1A";
     ctx.lineWidth = 4;
     ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
-  }, [lineas, fontSize, color, showGuides, tipoLetra, margen, margenDibujo, formato]);
+  }, [debouncedLineas, fontSize, color, showGuides, tipoLetra, margen, margenDibujo, formato]);
 
   const drawDottedText = (ctx: CanvasRenderingContext2D, text: string, x: number, y: number, fontSize: number, color: string, margenWidth: number) => {
     const isEscolarDot = tipoLetra === "escolar-dot";
@@ -651,14 +549,14 @@ export default function GeneradorMagico() {
               </div>
               {margen === "dibujo" && (
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", background: "#f8fafc", padding: "15px", borderRadius: "15px" }}>
-                  {(Object.keys(marginImages) as MargenDibujo[]).map((img) => (
-                    <button 
+                  {(Object.keys(MARGEN_ICONS) as MargenDibujo[]).map((img) => (
+                    <button
                       key={img}
                       onClick={() => setMargenDibujo(img)}
-                      style={{ 
-                        width: "42px", 
-                        height: "42px", 
-                        borderRadius: "10px", 
+                      style={{
+                        width: "42px",
+                        height: "42px",
+                        borderRadius: "10px",
                         border: margenDibujo === img ? "3px solid #1A1A1A" : "1px solid transparent",
                         background: "white",
                         cursor: "pointer",
@@ -669,7 +567,7 @@ export default function GeneradorMagico() {
                         transition: "all 0.1s"
                       }}
                     >
-                      {marginImages[img]}
+                      {MARGEN_ICONS[img]}
                     </button>
                   ))}
                 </div>

@@ -1,6 +1,7 @@
 export type Formato = "pauta-guiada" | "pauta-normal" | "cuadricula-5" | "cuadricula-4" | null;
-export type Margen = "sin" | "con" | null;
-export type TipoLetra = "escolar" | "imprenta" | "punteada" | null;
+export type Margen = "sin" | "con" | "dibujo" | null;
+export type MargenDibujo = "tren" | "barco" | "coche" | "arbol" | "casa" | "unicornio" | "perro" | "gato" | "nino" | "nina";
+export type TipoLetra = "escolar" | "escolar-dot" | "massallera" | "massallera-dot" | "mestra-pauta" | "mestra-pauta-dot" | "mestra-guiada" | "mestra-guiada-dot" | null;
 export type ModoContenido = "predefinido" | "libre" | null;
 export type NumLineas = 8 | 12 | 16;
 

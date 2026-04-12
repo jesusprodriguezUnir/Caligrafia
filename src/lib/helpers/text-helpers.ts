@@ -38,11 +38,11 @@ export function drawTextoLibre(
   const { textoLibre, margen, tipoLetra } = options;
   const mx = margen === "con" ? 75 : 35;
   const rightX = width - 30;
-  const fontBase = 
-    tipoLetra === "escolar" ? "Georgia, serif" : 
-    tipoLetra === "punteada" ? "Georgia, serif" : 
+  const fontBase =
+    tipoLetra === "escolar" || tipoLetra === "escolar-dot" ? "Georgia, serif" :
+    tipoLetra?.startsWith("mestra") ? "Georgia, serif" :
     "Arial, sans-serif";
-  const isPunteada = tipoLetra === "punteada";
+  const isPunteada = tipoLetra ? tipoLetra.includes("-dot") : false;
 
   const numLineas = textoLibre.numLineas;
   const altRenglon = Math.floor((height - 140) / numLineas);
