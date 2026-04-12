@@ -150,6 +150,71 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ⚙️ ELIGE TU HERRAMIENTA */}
+      <section className="sectionContainer">
+        <div className="sectionHeader">
+          <h2 className="sectionTitle" style={{ fontFamily: "var(--font-display)" }}>Elige tu herramienta</h2>
+          <p className="sectionSubtitle" style={{ fontWeight: 700 }}>Dos formas de crear fichas de caligrafía mágicas.</p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "3rem", maxWidth: "900px", margin: "0 auto" }}>
+          {/* Generador Libre */}
+          <div className="card-hover-effect" style={{ padding: "3rem", border: "var(--border-thick)", borderRadius: "var(--radius-lg)", background: "#fff7ed", boxShadow: "4px 4px 0 rgba(251, 146, 60, 0.3)" }}>
+            <div style={{ fontSize: "3rem", marginBottom: "1.5rem", textAlign: "center" }}>⚡</div>
+            <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.8rem", marginBottom: "1rem", color: "var(--color-primary)" }}>Generador Libre</h3>
+            <p style={{ fontSize: "1rem", lineHeight: 1.6, color: "#475569", marginBottom: "2rem" }}>
+              Crea fichas al instante. Ajusta formato, fuente, tamaño y color sin complicaciones.
+            </p>
+            <ul style={{ listStyle: "none", marginBottom: "2rem", fontSize: "0.95rem" }}>
+              <li style={{ marginBottom: "0.5rem" }}>✓ Interfaz directa y simple</li>
+              <li style={{ marginBottom: "0.5rem" }}>✓ Personalización rápida</li>
+              <li>✓ Descarga instantánea</li>
+            </ul>
+            <Link href="/generador" style={{
+              display: "inline-block",
+              padding: "15px 35px",
+              background: "var(--color-cta)",
+              color: "white",
+              borderRadius: "100px",
+              fontWeight: 800,
+              textDecoration: "none",
+              border: "var(--border-thick)",
+              boxShadow: "6px 6px 0 #1a1a1a",
+              transition: "transform 0.1s ease, box-shadow 0.1s ease"
+            }} className="cta-button-hover">
+              Crear ficha libre →
+            </Link>
+          </div>
+
+          {/* Asistente Guiado */}
+          <div className="card-hover-effect" style={{ padding: "3rem", border: "var(--border-thick)", borderRadius: "var(--radius-lg)", background: "#f0f9ff", boxShadow: "4px 4px 0 rgba(14, 165, 233, 0.3)" }}>
+            <div style={{ fontSize: "3rem", marginBottom: "1.5rem", textAlign: "center" }}>🧙</div>
+            <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.8rem", marginBottom: "1rem", color: "var(--color-primary)" }}>Asistente Guiado</h3>
+            <p style={{ fontSize: "1rem", lineHeight: 1.6, color: "#475569", marginBottom: "2rem" }}>
+              Construye fichas paso a paso. Perfecto para educadores que buscan control total.
+            </p>
+            <ul style={{ listStyle: "none", marginBottom: "2rem", fontSize: "0.95rem" }}>
+              <li style={{ marginBottom: "0.5rem" }}>✓ Asistente interactivo</li>
+              <li style={{ marginBottom: "0.5rem" }}>✓ Más opciones de contenido</li>
+              <li>✓ Generación avanzada</li>
+            </ul>
+            <Link href="/caligrafiate" style={{
+              display: "inline-block",
+              padding: "15px 35px",
+              background: "var(--color-secondary)",
+              color: "white",
+              borderRadius: "100px",
+              fontWeight: 800,
+              textDecoration: "none",
+              border: "var(--border-thick)",
+              boxShadow: "6px 6px 0 #1a1a1a",
+              transition: "transform 0.1s ease, box-shadow 0.1s ease"
+            }} className="cta-button-hover">
+              Abrir asistente →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ℹ️ SOBRE NOSOTROS */}
       <section className="sectionContainer" style={{ marginBottom: "8rem" }}>
         <div style={{ background: "var(--color-secondary)", color: "white", padding: "4rem", borderRadius: "var(--radius-lg)", border: "var(--border-thick)", boxShadow: "8px 8px 0 var(--color-primary)" }}>
