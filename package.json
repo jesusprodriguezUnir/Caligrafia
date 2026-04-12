@@ -18,7 +18,11 @@
     "test:e2e:mobile": "playwright test --project='Mobile*'",
     "test:e2e:install": "playwright install --with-deps",
     "test:e2e:report": "playwright show-report",
-    "test:all": "npm run test:unit && npm run test:e2e"
+    "test:all": "npm run test:unit && npm run test:e2e",
+    "db:seed": "npx tsx scripts/db-manager.ts seed",
+    "db:reset": "npx tsx scripts/db-manager.ts reset",
+    "db:status": "npx tsx scripts/db-manager.ts status",
+    "test:full": "npm run db:reset && npm run db:seed && npm run test:all"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",
@@ -41,6 +45,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "^4.1.2",
     "autoprefixer": "^10.4.27",
+    "dotenv": "^17.4.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
     "fs-extra": "^11.3.4",
@@ -48,6 +53,7 @@
     "pdf-lib": "^1.17.1",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "vitest": "^4.1.2"
   }
