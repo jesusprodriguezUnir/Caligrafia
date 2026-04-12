@@ -1497,6 +1497,34 @@ export default function CaligrafiatePage() {
                     </button>
                   </div>
                 </div>
+
+                <div style={{
+                  marginTop: "1.5rem",
+                  padding: "1.5rem",
+                  background: "linear-gradient(135deg, #fff7ed 0%, #fce7f3 100%)",
+                  borderRadius: "12px",
+                  border: "2px solid var(--color-cta)",
+                  textAlign: "center"
+                }}>
+                  <p style={{ fontSize: "0.85rem", color: "#64748b", marginBottom: "0.75rem", fontWeight: 600 }}>
+                    ¿Prefieres algo más rápido y simple?
+                  </p>
+                  <Link href="/generador" style={{
+                    display: "inline-block",
+                    padding: "10px 24px",
+                    background: "var(--color-cta)",
+                    color: "white",
+                    borderRadius: "50px",
+                    fontWeight: 800,
+                    textDecoration: "none",
+                    border: "2px solid #1A1A1A",
+                    boxShadow: "4px 4px 0 #1a1a1a",
+                    fontSize: "0.85rem",
+                    transition: "transform 0.1s ease"
+                  }} onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}>
+                    Ir al generador libre →
+                  </Link>
+                </div>
               </div>
             )}
 

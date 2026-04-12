@@ -81,6 +81,9 @@
   --border-dashed: 3px dashed #CBD5E1;
   --shadow-flat: 8px 8px 0px rgba(0,0,0,1);
   --shadow-soft: 0 10px 25px rgba(0,0,0,0.1);
+  --shadow-sm: 2px 2px 0px rgba(0,0,0,0.8);
+  --shadow-md: 4px 4px 0px rgba(0,0,0,0.85);
+  --shadow-lg: 8px 8px 0px rgba(0,0,0,0.9);
 }
 
 * {

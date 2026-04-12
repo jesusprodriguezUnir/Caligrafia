@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { PDFDocument } from 'pdf-lib';
 import styles from "../caligrafiate/caligrafiate.module.css";
 import { Header } from "@/components/Header";
 import { DownloadIcon, SparklesIcon } from "@/components/Icons";
 
-type TipoLetra = "escolar" | "escolar-dot" | "massallera" | "massallera-dot";
+type TipoLetra = "escolar" | "escolar-dot" | "massallera" | "massallera-dot" | "mestra-pauta" | "mestra-pauta-dot" | "mestra-montessori" | "mestra-montessori-dot";
 type Margen = "sin" | "con" | "dibujo";
 type MargenDibujo = "tren" | "barco" | "coche" | "arbol" | "casa" | "unicornio" | "perro" | "gato" | "nino" | "nina";
 type Formato = "pauta-guiada" | "pauta-normal" | "cuadricula-5" | "cuadricula-4";
@@ -50,6 +51,13 @@ const marginImages: Record<MargenDibujo, string> = {
   nina: "👧"
 };
 
+const plantillas = {
+  vocales: ["A", "E", "I", "O", "U", "", "", ""],
+  alfabeto: ["A", "B", "C", "D", "E", "F", "G", "H"],
+  numeros: ["1", "2", "3", "4", "5", "6", "7", "8"],
+  dias: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo", ""]
+};
+
 export default function GeneradorMagico() {
   const [lineas, setLineas] = useState<string[]>(["¡Mi magia!", "", "", ""]);
   const [numLineas, setNumLineas] = useState(4);
@@ -89,6 +97,12 @@ export default function GeneradorMagico() {
       case "escolar":
       case "escolar-dot":
         return "Escolar, Georgia";
+      case "mestra-pauta":
+      case "mestra-pauta-dot":
+        return "Mestra Pauta, Georgia";
+      case "mestra-montessori":
+      case "mestra-montessori-dot":
+        return "Mestra Montessori, Georgia";
       default:
         return "Escolar, Georgia";
     }
@@ -415,6 +429,33 @@ export default function GeneradorMagico() {
     link.click();
   };
 
+  const descargarPDF = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    try {
+      const imgData = canvas.toDataURL('image/png');
+      const pdfDoc = await PDFDocument.create();
+      const page = pdfDoc.addPage([794, 1123]); // A4 dimensions
+      const image = await pdfDoc.embedPng(imgData);
+      page.drawImage(image, {
+        x: 0,
+        y: 0,
+        width: 794,
+        height: 1123,
+      });
+
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes as unknown as ArrayBuffer], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.download = `caligrafia-personalizada.pdf`;
+      link.href = URL.createObjectURL(blob);
+      link.click();
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
+  };
+
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Header />
@@ -531,13 +572,13 @@ export default function GeneradorMagico() {
 
             <section>
               <label style={{ fontWeight: 800, display: "block", marginBottom: "0.5rem", fontSize: "1.1rem" }}>🔤 Estilo de Letra</label>
-              <select 
-                value={tipoLetra} 
+              <select
+                value={tipoLetra}
                 onChange={(e) => setTipoLetra(e.target.value as TipoLetra)}
-                style={{ 
-                  width: "100%", 
-                  padding: "1rem", 
-                  borderRadius: "15px", 
+                style={{
+                  width: "100%",
+                  padding: "1rem",
+                  borderRadius: "15px",
                   border: "3px solid #1A1A1A",
                   fontSize: "1.1rem",
                   fontWeight: 800,
@@ -549,6 +590,10 @@ export default function GeneradorMagico() {
                 <option value="escolar-dot">Escolar Punteada</option>
                 <option value="massallera">Massallera Normal</option>
                 <option value="massallera-dot">Massallera Punteada</option>
+                <option value="mestra-pauta">Mestra Pauta Normal</option>
+                <option value="mestra-pauta-dot">Mestra Pauta Punteada</option>
+                <option value="mestra-montessori">Mestra Montessori Normal</option>
+                <option value="mestra-montessori-dot">Mestra Montessori Punteada</option>
               </select>
             </section>
 
@@ -631,35 +676,94 @@ export default function GeneradorMagico() {
               )}
             </section>
 
-            <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-              <button onClick={generarAleatorio} style={{ 
-                flex: 1,
-                padding: "16px", 
-                border: "3px solid #1A1A1A", 
-                borderRadius: "15px", 
-                background: "var(--color-success)", 
-                color: "white",
-                cursor: "pointer", 
-                fontWeight: 900,
-                boxShadow: "6px 6px 0 #1A1A1A",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                fontSize: "1rem"
-              }}>
-                🎲 Aleatorio
-              </button>
-              <button 
-                onClick={descargarImagen}
-                style={{ 
-                  flex: 1.5,
-                  padding: "16px", 
-                  border: "3px solid #1A1A1A", 
-                  borderRadius: "15px", 
-                  background: "var(--color-cta)", 
+            <section style={{ marginTop: "1rem" }}>
+              <label style={{ fontWeight: 800, display: "block", marginBottom: "0.75rem", fontSize: "1.1rem" }}>⚡ Plantillas rápidas</label>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                <button
+                  onClick={() => setLineas(plantillas.vocales)}
+                  style={{
+                    padding: "12px",
+                    border: "2px solid #ddd",
+                    borderRadius: "12px",
+                    background: "white",
+                    color: "#1A1A1A",
+                    cursor: "pointer",
+                    fontWeight: 700,
+                    fontSize: "0.9rem",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#f0f9ff"; e.currentTarget.style.borderColor = "var(--color-secondary)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#ddd"; }}
+                >
+                  Vocales
+                </button>
+                <button
+                  onClick={() => setLineas(plantillas.alfabeto)}
+                  style={{
+                    padding: "12px",
+                    border: "2px solid #ddd",
+                    borderRadius: "12px",
+                    background: "white",
+                    color: "#1A1A1A",
+                    cursor: "pointer",
+                    fontWeight: 700,
+                    fontSize: "0.9rem",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#f0fdf4"; e.currentTarget.style.borderColor = "var(--color-success)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#ddd"; }}
+                >
+                  Alfabeto
+                </button>
+                <button
+                  onClick={() => setLineas(plantillas.numeros)}
+                  style={{
+                    padding: "12px",
+                    border: "2px solid #ddd",
+                    borderRadius: "12px",
+                    background: "white",
+                    color: "#1A1A1A",
+                    cursor: "pointer",
+                    fontWeight: 700,
+                    fontSize: "0.9rem",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#fff7ed"; e.currentTarget.style.borderColor = "var(--color-cta)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#ddd"; }}
+                >
+                  Números
+                </button>
+                <button
+                  onClick={() => setLineas(plantillas.dias)}
+                  style={{
+                    padding: "12px",
+                    border: "2px solid #ddd",
+                    borderRadius: "12px",
+                    background: "white",
+                    color: "#1A1A1A",
+                    cursor: "pointer",
+                    fontWeight: 700,
+                    fontSize: "0.9rem",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#fce7f3"; e.currentTarget.style.borderColor = "#ec4899"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#ddd"; }}
+                >
+                  Días
+                </button>
+              </div>
+            </section>
+
+            <div style={{ display: "flex", gap: "1rem", marginTop: "1rem", flexDirection: "column" }}>
+              <div style={{ display: "flex", gap: "1rem" }}>
+                <button onClick={generarAleatorio} style={{
+                  flex: 1,
+                  padding: "16px",
+                  border: "3px solid #1A1A1A",
+                  borderRadius: "15px",
+                  background: "var(--color-success)",
                   color: "white",
-                  cursor: "pointer", 
+                  cursor: "pointer",
                   fontWeight: 900,
                   boxShadow: "6px 6px 0 #1A1A1A",
                   display: "flex",
@@ -667,9 +771,51 @@ export default function GeneradorMagico() {
                   justifyContent: "center",
                   gap: "0.5rem",
                   fontSize: "1rem"
+                }}>
+                  🎲 Aleatorio
+                </button>
+                <button
+                  onClick={descargarImagen}
+                  style={{
+                    flex: 1.5,
+                    padding: "16px",
+                    border: "3px solid #1A1A1A",
+                    borderRadius: "15px",
+                    background: "var(--color-cta)",
+                    color: "white",
+                    cursor: "pointer",
+                    fontWeight: 900,
+                    boxShadow: "6px 6px 0 #1A1A1A",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.5rem",
+                    fontSize: "1rem"
+                  }}
+                >
+                  <DownloadIcon /> PNG
+                </button>
+              </div>
+              <button
+                onClick={descargarPDF}
+                style={{
+                  padding: "16px",
+                  border: "3px solid #1A1A1A",
+                  borderRadius: "15px",
+                  background: "#16a34a",
+                  color: "white",
+                  cursor: "pointer",
+                  fontWeight: 900,
+                  boxShadow: "6px 6px 0 #1A1A1A",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                  fontSize: "1rem",
+                  transition: "transform 0.1s ease, box-shadow 0.1s ease"
                 }}
               >
-                <DownloadIcon /> Descargar
+                <DownloadIcon /> Descargar PDF
               </button>
             </div>
           </div>
@@ -738,10 +884,10 @@ export default function GeneradorMagico() {
                 borderRadius: "4px",
                 overflow: "hidden"
               }}>
-                <canvas 
-                  ref={canvasRef} 
-                  width={1000}
-                  height={1200} 
+                <canvas
+                  ref={canvasRef}
+                  width={794}
+                  height={1123} 
                   style={{ 
                     width: "100%", 
                     maxWidth: "700px", 
@@ -752,8 +898,8 @@ export default function GeneradorMagico() {
               </div>
             </div>
 
-            <div style={{ 
-              marginTop: "1.5rem", 
+            <div style={{
+              marginTop: "1.5rem",
               textAlign: "center",
               padding: "1rem",
               background: "#fff7ed",
@@ -763,6 +909,34 @@ export default function GeneradorMagico() {
               <p style={{ fontSize: "0.9rem", color: "#92400e", fontWeight: 700 }}>
                 💡 <strong>Consejo:</strong> Si las palabras se salen del margen, intenta reducir el tamaño de letra o usar frases más cortas.
               </p>
+            </div>
+
+            <div style={{
+              marginTop: "2rem",
+              padding: "2rem",
+              background: "linear-gradient(135deg, #f0f9ff 0%, #f0fdf4 100%)",
+              borderRadius: "15px",
+              border: "2px solid #0EA5E9",
+              textAlign: "center"
+            }}>
+              <p style={{ fontSize: "0.95rem", color: "#475569", marginBottom: "1rem", fontWeight: 700 }}>
+                ¿Buscas algo más personalizado? Prueba nuestro asistente guiado.
+              </p>
+              <Link href="/caligrafiate" style={{
+                display: "inline-block",
+                padding: "12px 28px",
+                background: "var(--color-secondary)",
+                color: "white",
+                borderRadius: "100px",
+                fontWeight: 800,
+                textDecoration: "none",
+                border: "var(--border-thick)",
+                boxShadow: "4px 4px 0 #1a1a1a",
+                fontSize: "0.95rem",
+                transition: "transform 0.1s ease, box-shadow 0.1s ease"
+              }}>
+                Abrir asistente guiado →
+              </Link>
             </div>
           </div>
         </section>
