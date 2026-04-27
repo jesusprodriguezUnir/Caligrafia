@@ -1,10 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import styles from "../page.module.css";
 import Image from "next/image";
-
+import { useTheme } from "@/contexts/ThemeContext";
+import { Header } from "@/components/Header";
 const CATEGORIAS_MAGICAS = [
   { id: 1, titulo: "Preescritura", emoji: "🌀", desc: "¡Controla tu mano mágica con trazos y ondas!", ejercicios: ["Trazos en Zig-Zag", "Líneas de Montañas", "Ondas del Mar"] },
   { id: 2, titulo: "Vocales Mayúsculas", emoji: "🅰️", desc: "A, E, I, O, U en grande para gritar fuerte.", ejercicios: ["Vocal A y E", "Vocal I y O", "Vocal U y Repaso"] },
@@ -24,6 +25,7 @@ export default function Cuadernillos() {
   const [isChangingTab, setIsChangingTab] = useState(false);
 
   const currentCategory = CATEGORIAS_MAGICAS.find(c => c.id === activeTab);
+    const { theme } = useTheme();
 
   const handleTabChange = (id: number) => {
     if (id === activeTab) return;
@@ -41,25 +43,42 @@ export default function Cuadernillos() {
   };
 
   return (
-    <main className={styles.main} style={{ fontFamily: "var(--font-main)" }}>
-      <div className={`${styles.hero}`} style={{ 
+    <main style={{ minHeight: "100vh", fontFamily: "var(--font-main)", background: "var(--color-background)" }}>
+      <Header />
+      <div style={{ 
         maxWidth: "1250px", 
-        padding: "clamp(1.5rem, 5vw, 3.5rem)", 
-        border: "var(--border-thick)", 
-        borderRadius: "var(--radius-lg)", 
-        boxShadow: "var(--shadow-flat)", 
-        background: "white",
-        margin: "0 auto"
+        margin: "0 auto",
+        padding: "clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem)",
       }}>
-        
-        <h1 className={styles.title} style={{ fontSize: "clamp(2rem, 8vw, 3.5rem)", color: "var(--color-primary)", fontWeight: 900 }}>
-          <span style={{ fontFamily: "var(--font-hand)", color: "var(--color-secondary)", fontSize: "1.5rem", display: "block" }}>¡El Tesoro de las Letras!</span>
-          EL COFRE DE <span style={{ color: "var(--color-secondary)" }}>CUADERNOS</span> 🎁
-        </h1>
-        
-        <p className={styles.subtitle} style={{ fontSize: "1.1rem", color: "#475569", fontWeight: 600, marginBottom: "3rem" }}>
-          ¡Elige tu aventura favorita y empieza a dibujar letras mágicas hoy mismo! ✨
-        </p>
+        {/* Page header — varía por tema */}
+        {theme === "tinta" ? (
+          <>
+            <div style={{ marginBottom: "2.5rem" }}>
+              <p style={{ fontFamily: "var(--font-hand)", fontStyle: "italic", color: "var(--color-cta)", fontSize: "1.1rem", marginBottom: "0.5rem" }}>Biblioteca de ejercicios</p>
+              <h1 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 700, fontSize: "clamp(2rem, 5vw, 3rem)", color: "var(--color-primary)", lineHeight: 1.1 }}>Colección de Cuadernos</h1>
+              <p style={{ color: "#64748b", marginTop: "0.75rem", fontSize: "1.05rem" }}>Selecciona una categoría y descarga tus ejercicios de caligrafía.</p>
+            </div>
+          </>
+        ) : theme === "studio" ? (
+          <>
+            <div style={{ marginBottom: "2.5rem" }}>
+              <p style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--color-cta)", textTransform: "uppercase" as const, letterSpacing: "1.5px", marginBottom: "1rem", display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--color-cta)", display: "inline-block" }} />
+                COLECCIÓN DE FICHAS
+              </p>
+              <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "clamp(2rem, 5vw, 3rem)", color: "var(--color-primary)", lineHeight: 1.15 }}>Fichas por categoría</h1>
+              <p style={{ color: "#64748b", marginTop: "0.75rem", fontSize: "1.05rem" }}>10 categorías organizadas por nivel. Descarga en PDF listo para imprimir.</p>
+            </div>
+          </>
+        ) : (
+          <>
+            <h1 style={{ fontSize: "clamp(2rem, 8vw, 3.5rem)", color: "var(--color-primary)", fontWeight: 900, marginBottom: "0.5rem" }}>
+              <span style={{ fontFamily: "var(--font-hand)", color: "var(--color-secondary)", fontSize: "1.5rem", display: "block" }}>¡El Tesoro de las Letras!</span>
+              EL COFRE DE <span style={{ color: "var(--color-secondary)" }}>CUADERNOS</span> 🎁
+            </h1>
+            <p style={{ fontSize: "1.1rem", color: "#475569", fontWeight: 600, marginBottom: "2rem" }}>¡Elige tu aventura favorita y empieza a dibujar letras mágicas hoy mismo! ✨</p>
+          </>
+        )}
 
         {/* Sistema de 10 Pestañas Resposive */}
         <div style={{ 
@@ -97,17 +116,18 @@ export default function Cuadernillos() {
               {cat.titulo}
             </button>
           ))}
+
         </div>
 
         {/* Sección de Contenido Activo */}
         <div style={{ 
           background: "white", 
           padding: "clamp(1.5rem, 5vw, 3rem)", 
-          borderRadius: "30px", 
-          border: "4px solid #1A1A1A",
+          border: "var(--border-thick)",
+          borderRadius: "var(--radius-lg)",
           textAlign: "center",
-          boxShadow: "inset 0 0 20px rgba(0,0,0,0.03)",
-          minHeight: "400px",
+            boxShadow: "var(--shadow-soft)",
+           minHeight: "400px",
           display: "flex",
           flexDirection: "column",
           justifyContent: isChangingTab ? "center" : "flex-start",

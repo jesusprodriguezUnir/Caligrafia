@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Sniglet:wght@400;800&family=Caveat:wght@400;700&family=Outfit:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Lato:wght@400;700&family=Dancing+Script:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
 
 /* --- CUSTOM EDUCATIONAL FONTS --- */
 @font-face {
@@ -513,3 +516,168 @@ a {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 12px 12px 0 var(--color-secondary) !important;
 }
+
+/* ============================================================
+   THEME OVERRIDES — Tinta & Papel
+   ============================================================ */
+body[data-theme="tinta"] {
+  --color-primary: #1B2B4B;
+  --color-secondary: #8B6914;
+  --color-accent: #C1440E;
+  --color-success: #3A7D44;
+  --color-cta: #C1440E;
+  --color-cta-hover: #9D3410;
+  --color-background: #F5F0E8;
+  --color-surface: #FDFAF5;
+  --color-text: #1B2B4B;
+
+  --font-main: 'Lato', sans-serif;
+  --font-display: 'Playfair Display', serif;
+  --font-hand: 'Dancing Script', cursive;
+
+  --radius-lg: 8px;
+  --radius-md: 6px;
+  --radius-sm: 4px;
+
+  --border-thick: 1px solid #1B2B4B;
+  --border-dashed: 1px dashed #C8B89A;
+  --shadow-flat: 0 4px 12px rgba(27, 43, 75, 0.12);
+  --shadow-soft: 0 8px 24px rgba(27, 43, 75, 0.08);
+  --shadow-sm: 0 2px 6px rgba(27, 43, 75, 0.1);
+  --shadow-md: 0 4px 12px rgba(27, 43, 75, 0.12);
+  --shadow-lg: 0 8px 24px rgba(27, 43, 75, 0.15);
+
+  /* Disable notebook pattern */
+  background-image: none;
+}
+
+body[data-theme="tinta"]::before {
+  display: none;
+}
+
+body[data-theme="tinta"] .featureCard {
+  box-shadow: 0 4px 12px rgba(27, 43, 75, 0.1);
+  border: 1px solid #D4C9B5;
+}
+
+body[data-theme="tinta"] .featureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(27, 43, 75, 0.18);
+}
+
+body[data-theme="tinta"] .siteFooterInner {
+  box-shadow: 0 4px 16px rgba(27, 43, 75, 0.1);
+}
+
+body[data-theme="tinta"] .siteFooterSocialLink {
+  box-shadow: none;
+  border: 1px solid #C8B89A;
+}
+
+body[data-theme="tinta"] .siteFooterSocialLink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(27, 43, 75, 0.12);
+}
+
+body[data-theme="tinta"] .cta-button-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(193, 68, 14, 0.3);
+}
+
+body[data-theme="tinta"] .card-hover-effect:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(27, 43, 75, 0.15) !important;
+}
+
+/* ============================================================
+   THEME OVERRIDES — Mundo Mágico (adjustments over :root)
+   ============================================================ */
+body[data-theme="magico"] {
+  --color-background: #EDE9FE;
+  --color-secondary: #7C3AED;
+  --color-cta: #F97316;
+  --font-display: 'Nunito', sans-serif;
+  --font-main: 'Nunito', sans-serif;
+
+  background-image:
+    radial-gradient(circle, rgba(124, 58, 237, 0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-attachment: fixed;
+}
+
+body[data-theme="magico"]::before {
+  display: none;
+}
+
+/* ============================================================
+   THEME OVERRIDES — Studio Limpio
+   ============================================================ */
+body[data-theme="studio"] {
+  --color-primary: #0B1F3A;
+  --color-secondary: #0D9488;
+  --color-accent: #0D9488;
+  --color-success: #059669;
+  --color-cta: #0D9488;
+  --color-cta-hover: #0A7A70;
+  --color-background: #F1F5F9;
+  --color-surface: #FFFFFF;
+  --color-text: #0B1F3A;
+
+  --font-main: 'DM Sans', sans-serif;
+  --font-display: 'DM Sans', sans-serif;
+  --font-hand: 'DM Sans', sans-serif;
+
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --radius-sm: 6px;
+
+  --border-thick: 1px solid #CBD5E1;
+  --border-dashed: 1px dashed #CBD5E1;
+  --shadow-flat: 0 1px 3px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  background-image: none;
+}
+
+body[data-theme="studio"]::before {
+  display: none;
+}
+
+body[data-theme="studio"] .featureCard {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #E2E8F0;
+}
+
+body[data-theme="studio"] .featureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+body[data-theme="studio"] .siteFooterInner {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #E2E8F0;
+}
+
+body[data-theme="studio"] .siteFooterSocialLink {
+  box-shadow: none;
+  border: 1px solid #E2E8F0;
+}
+
+body[data-theme="studio"] .siteFooterSocialLink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body[data-theme="studio"] .cta-button-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(13, 148, 136, 0.3);
+}
+
+body[data-theme="studio"] .card-hover-effect:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1) !important;
+}
+
