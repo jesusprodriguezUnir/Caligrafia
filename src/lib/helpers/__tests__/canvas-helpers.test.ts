@@ -37,7 +37,7 @@ describe('canvas-helpers', () => {
     it('should handle different canvas dimensions', () => {
       const customWidth = 600;
       const customHeight = 800;
-      drawLineasGuia(mockCanvasContext as unknown as CanvasContext, 'pauta-guiada', 'sin', customWidth, customHeight);
+      drawLineasGuia(mockCanvasContext as unknown as CanvasContext, 'pauta-guiada', 'sin', undefined, customWidth, customHeight);
       expect(mockCanvasContext.clearRect).toHaveBeenCalledWith(0, 0, customWidth, customHeight);
     });
 

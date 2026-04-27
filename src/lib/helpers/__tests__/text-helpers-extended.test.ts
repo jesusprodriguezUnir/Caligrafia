@@ -141,7 +141,7 @@ describe('text-helpers - Tests extendidos', () => {
     it('debería usar strokeText para letra punteada', () => {
       const options: TextOptions = {
         ...baseOptions,
-        tipoLetra: 'punteada',
+        tipoLetra: 'escolar-dot',
         textoLibre: { ...emptyTextoLibre, texto: 'Texto para trazar' },
       };
       drawTextoLibre(mockCtx as any, options);
