@@ -6,6 +6,7 @@ import { PDFDocument } from 'pdf-lib';
 import styles from "../caligrafiate/caligrafiate.module.css";
 import { Header } from "@/components/Header";
 import { DownloadIcon, SparklesIcon } from "@/components/Icons";
+import { useTheme } from "@/contexts/ThemeContext";
 import { drawLineasGuia, getMarginX, MARGEN_ICONS } from "@/lib/helpers/canvas-helpers";
 import type { Formato, Margen, MargenDibujo } from "@/lib/helpers/types";
 
@@ -45,6 +46,7 @@ const plantillas = {
 };
 
 export default function GeneradorMagico() {
+  const { theme } = useTheme();
   const [lineas, setLineas] = useState<string[]>(["¡Mi magia!", "", "", ""]);
   const [debouncedLineas, setDebouncedLineas] = useState<string[]>(["¡Mi magia!", "", "", ""]);
   const [numLineas, setNumLineas] = useState(4);
@@ -354,47 +356,238 @@ export default function GeneradorMagico() {
     }
   };
 
+  const isTinta = theme === "tinta";
+  const isStudio = theme === "studio";
+  const panelBorder = isTinta ? "1px solid #D4C9B5" : "var(--border-thick)";
+  const panelShadow = isTinta
+    ? "0 18px 40px rgba(27,43,75,0.12)"
+    : isStudio
+      ? "0 18px 40px rgba(15,23,42,0.10)"
+      : "var(--shadow-flat)";
+  const panelBackground = isTinta
+    ? "linear-gradient(180deg, #FFFDF8 0%, #F7F1E7 100%)"
+    : isStudio
+      ? "linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)"
+      : "white";
+  const previewFrameBackground = isTinta ? "#FBF7F0" : isStudio ? "#F8FAFC" : "#F8FAFC";
+  const previewInnerShadow = isTinta
+    ? "0 18px 36px rgba(27,43,75,0.10), 0 2px 6px rgba(27,43,75,0.08)"
+    : isStudio
+      ? "0 20px 40px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.06)"
+      : "0 10px 30px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.05)";
+  const sectionLabelStyle = {
+    fontWeight: 800,
+    display: "block",
+    marginBottom: "0.75rem",
+    fontSize: "1rem",
+    color: "var(--color-primary)",
+  } as const;
+  const inputSurfaceStyle = {
+    width: "100%",
+    padding: "1rem",
+    borderRadius: "var(--radius-md)",
+    border: panelBorder,
+    fontSize: "1rem",
+    fontWeight: 700,
+    outline: "none",
+    background: isTinta ? "#FFFDF8" : "white",
+    color: "var(--color-primary)",
+    transition: "border-color 0.2s, box-shadow 0.2s, transform 0.15s",
+  } as const;
+  const buttonShadow = isTinta ? "0 10px 22px rgba(193,68,14,0.18)" : isStudio ? "0 14px 24px rgba(13,148,136,0.16)" : "var(--shadow-flat)";
+  const mutedButtonShadow = isTinta ? "0 10px 20px rgba(27,43,75,0.12)" : isStudio ? "0 12px 24px rgba(15,23,42,0.10)" : "var(--shadow-md)";
+  const introEyebrow = isTinta ? "TALLER DE CALIGRAFÍA" : isStudio ? "ESTUDIO DE COMPOSICIÓN" : "LABORATORIO CREATIVO";
+  const introTitle = isTinta ? "Diseña tu hoja como un copista" : isStudio ? "Generador libre de fichas" : "Generador mágico en tiempo real";
+  const introCopy = isTinta
+    ? "Ajusta fuente, pauta y márgenes con una interfaz más sobria, pensada para preparar cuadernos listos para imprimir."
+    : isStudio
+      ? "Configura el ejercicio, revisa el lienzo y exporta un PDF limpio desde un panel claro y rápido."
+      : "Escribe, mezcla plantillas y descarga tus fichas con un flujo lúdico y directo.";
+  const panelTitle = isTinta ? "Mesa del copista" : isStudio ? "Ajustes del estudio" : "Ajustes del Estudio";
+  const previewTitle = isTinta ? "Hoja en composición" : isStudio ? "Preview de impresión" : "Tu Obra Maestra ✨";
+  const previewBadge = isTinta ? "LISTO PARA AULA" : isStudio ? "PDF READY" : "CALIDAD HD";
+  const tipBackground = isTinta ? "#FFF7ED" : isStudio ? "#F0FDFA" : "#FFF7ED";
+  const tipBorder = isTinta ? "1px solid #FED7AA" : isStudio ? "1px solid #99F6E4" : "1px solid #FFEDD5";
+  const tipTextColor = isTinta ? "#9A3412" : isStudio ? "#0F766E" : "#92400E";
+  const ctaPanelBackground = isTinta
+    ? "linear-gradient(135deg, #FFF7ED 0%, #FDF2F8 100%)"
+    : isStudio
+      ? "linear-gradient(135deg, #EFF6FF 0%, #F0FDFA 100%)"
+      : "linear-gradient(135deg, #F0F9FF 0%, #F0FDF4 100%)";
+  const ctaPanelBorder = isTinta ? "1px solid #FDBA74" : isStudio ? "1px solid #99F6E4" : "2px solid #0EA5E9";
+
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--color-background)", fontFamily: "var(--font-main)" }}>
       <Header />
       
       <main style={{ 
         flex: 1, 
-        display: "flex", 
-        flexDirection: "row", 
-        flexWrap: "wrap",
         background: "var(--color-background)",
-        padding: "1rem"
+        padding: "clamp(1rem, 3vw, 2rem)"
       }}>
-        
+        <div style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <section style={{
+            display: "grid",
+            gridTemplateColumns: "1.15fr 0.85fr",
+            gap: "1.5rem",
+            alignItems: "stretch",
+          }} className="generador-hero-grid">
+            <div style={{
+              background: panelBackground,
+              border: panelBorder,
+              borderRadius: "var(--radius-lg)",
+              boxShadow: panelShadow,
+              padding: "clamp(1.5rem, 3vw, 2.5rem)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: "1.25rem",
+            }}>
+              <div>
+                <p style={{
+                  fontSize: isTinta ? "0.9rem" : "0.78rem",
+                  fontWeight: 800,
+                  color: isTinta ? "var(--color-cta)" : "var(--color-secondary)",
+                  textTransform: "uppercase" as const,
+                  letterSpacing: isTinta ? "1.2px" : "1.6px",
+                  marginBottom: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: isTinta ? "var(--color-cta)" : "var(--color-secondary)", display: "inline-block" }} />
+                  {introEyebrow}
+                </p>
+                <h1 style={{
+                  fontFamily: "var(--font-display)",
+                  fontStyle: isTinta ? "italic" : "normal",
+                  fontWeight: isTinta ? 700 : isStudio ? 700 : 900,
+                  fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                  lineHeight: 1.08,
+                  color: "var(--color-primary)",
+                  marginBottom: "1rem",
+                }}>
+                  {introTitle}
+                </h1>
+                <p style={{ color: "#475569", fontSize: "1.02rem", lineHeight: 1.75, maxWidth: 640 }}>
+                  {introCopy}
+                </p>
+              </div>
+              <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                {["8 fuentes educativas", "Exportación PNG y PDF", "Vista previa instantánea"].map((item) => (
+                  <span key={item} style={{
+                    padding: "0.7rem 1rem",
+                    borderRadius: isTinta ? "999px" : "var(--radius-md)",
+                    background: isTinta ? "rgba(255,255,255,0.72)" : "white",
+                    border: panelBorder,
+                    color: "var(--color-primary)",
+                    fontWeight: 700,
+                    fontSize: "0.9rem",
+                  }}>
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div style={{
+              background: isTinta ? "#FCF8F1" : isStudio ? "#FFFFFF" : "white",
+              border: panelBorder,
+              borderRadius: "var(--radius-lg)",
+              boxShadow: panelShadow,
+              padding: "clamp(1.25rem, 2vw, 1.75rem)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+              justifyContent: "space-between",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+                <div>
+                  <p style={{ fontWeight: 800, color: "var(--color-primary)", fontSize: "1rem", marginBottom: "0.35rem" }}>Resumen del ejercicio</p>
+                  <p style={{ color: "#64748b", fontSize: "0.92rem" }}>Configura texto, pauta, margen y tipografía desde un solo panel.</p>
+                </div>
+                <div style={{
+                  padding: "0.75rem 1rem",
+                  borderRadius: isTinta ? "999px" : "var(--radius-md)",
+                  background: isTinta ? "#FFF7ED" : isStudio ? "#F0FDFA" : "#EDE9FE",
+                  color: isTinta ? "#9A3412" : isStudio ? "#0F766E" : "#6B21A8",
+                  fontWeight: 800,
+                  fontSize: "0.84rem",
+                }}>
+                  {numLineas} líneas · {fontSize}px · {formato}
+                </div>
+              </div>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: "0.9rem",
+              }}>
+                {[
+                  { label: "Fuente", value: tipoLetra },
+                  { label: "Margen", value: margen === "sin" ? "sin" : margen === "con" ? "línea" : margenDibujo },
+                  { label: "Guías", value: showGuides ? "activas" : "ocultas" },
+                  { label: "Color", value: color.toUpperCase() },
+                ].map((item) => (
+                  <div key={item.label} style={{
+                    padding: "1rem",
+                    borderRadius: "var(--radius-md)",
+                    background: previewFrameBackground,
+                    border: panelBorder,
+                  }}>
+                    <p style={{ fontSize: "0.78rem", fontWeight: 800, letterSpacing: "0.5px", color: "#64748b", textTransform: "uppercase" as const, marginBottom: "0.45rem" }}>{item.label}</p>
+                    <p style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-primary)" }}>{item.value}</p>
+                  </div>
+                ))}
+              </div>
+              <Link href="/caligrafiate" style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem",
+                alignSelf: "flex-start",
+                padding: "0.9rem 1.2rem",
+                borderRadius: isTinta ? "999px" : "var(--radius-md)",
+                background: "var(--color-cta)",
+                color: "white",
+                border: "var(--border-thick)",
+                fontWeight: 800,
+                textDecoration: "none",
+                boxShadow: buttonShadow,
+              }}>
+                <SparklesIcon /> Abrir asistente guiado
+              </Link>
+            </div>
+          </section>
+
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(340px, 520px) minmax(0, 1fr)", gap: "1.5rem", alignItems: "start" }} className="generador-layout-grid">
         {/* SIDEBAR DE CONTROLES */}
         <aside 
           style={{ 
-            flex: "1 1 500px", 
-            maxWidth: "600px",
-            padding: "1rem", 
+            padding: 0,
             display: "flex",
             flexDirection: "column",
             gap: "1rem",
-            height: "calc(100vh - 5rem)",
             position: "sticky",
-            top: "5rem",
-            overflowY: "auto",
+            top: "5.75rem",
           }}
         >
           <div style={{ 
-            background: "white", 
-            padding: "2.5rem 2rem 5rem 2rem", 
-            borderRadius: "var(--radius-md)", 
-            border: "var(--border-thick)", 
-            boxShadow: "var(--shadow-flat)",
+            background: panelBackground,
+            padding: "2rem", 
+            borderRadius: "var(--radius-lg)", 
+            border: panelBorder,
+            boxShadow: panelShadow,
             display: "flex",
             flexDirection: "column",
             gap: "1.5rem"
           }}>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "2.2rem", color: "var(--color-primary)", marginBottom: "0.25rem" }}>
-              Ajustes del Estudio
-            </h2>
+            <div>
+              <p style={{ fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1.4px", color: isTinta ? "var(--color-cta)" : "var(--color-secondary)", textTransform: "uppercase" as const, marginBottom: "0.75rem" }}>Panel de control</p>
+              <h2 style={{ fontFamily: "var(--font-display)", fontStyle: isTinta ? "italic" : "normal", fontSize: "2.2rem", color: "var(--color-primary)", marginBottom: "0.35rem" }}>
+                {panelTitle}
+              </h2>
+              <p style={{ color: "#64748b", lineHeight: 1.65, fontSize: "0.96rem" }}>Modifica el ejercicio y observa el resultado al instante en el lienzo de la derecha.</p>
+            </div>
 
             <section>
               <label style={{ fontWeight: 800, display: "flex", justifyContent: "space-between", marginBottom: "0.75rem", fontSize: "1.2rem" }}>
@@ -418,16 +611,7 @@ export default function GeneradorMagico() {
                     onChange={(e) => actualizarLinea(index, e.target.value)}
                     placeholder={`Escribe algo aquí...`}
                     maxLength={40}
-                    style={{ 
-                      width: "100%", 
-                      padding: "1rem", 
-                      borderRadius: "15px", 
-                      border: "3px solid #e2e8f0",
-                      fontSize: "1.1rem",
-                      fontWeight: 700,
-                      outline: "none",
-                      transition: "border-color 0.2s"
-                    }} 
+                    style={inputSurfaceStyle}
                   />
                 ))}
               </div>
@@ -435,7 +619,7 @@ export default function GeneradorMagico() {
 
             <section style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "1.5rem" }}>
               <div>
-                <label style={{ fontWeight: 800, display: "block", marginBottom: "0.5rem", fontSize: "1.1rem" }}>📏 Tamaño</label>
+                <label style={sectionLabelStyle}>📏 Tamaño</label>
                 <input 
                   type="range" 
                   min="20" 
@@ -446,7 +630,7 @@ export default function GeneradorMagico() {
                 />
               </div>
               <div>
-                <label style={{ fontWeight: 800, display: "block", marginBottom: "0.5rem", fontSize: "1.1rem" }}>🎨 Color</label>
+                <label style={sectionLabelStyle}>🎨 Color</label>
                 <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                   {["#1A1A1A", "#0EA5E9", "#EF4444", "#22C55E", "#FB923C"].map(c => (
                     <button 
@@ -457,7 +641,7 @@ export default function GeneradorMagico() {
                         height: "32px", 
                         borderRadius: "50%", 
                         background: c, 
-                        border: color === c ? "3px solid #1A1A1A" : "1px solid #ddd",
+                        border: color === c ? "3px solid var(--color-primary)" : "1px solid #cbd5e1",
                         cursor: "pointer",
                         transform: color === c ? "scale(1.15)" : "none",
                         transition: "transform 0.2s"
@@ -469,20 +653,11 @@ export default function GeneradorMagico() {
             </section>
 
             <section>
-              <label style={{ fontWeight: 800, display: "block", marginBottom: "0.5rem", fontSize: "1.1rem" }}>🔤 Estilo de Letra</label>
+              <label style={sectionLabelStyle}>🔤 Estilo de Letra</label>
               <select
                 value={tipoLetra}
                 onChange={(e) => setTipoLetra(e.target.value as TipoLetra)}
-                style={{
-                  width: "100%",
-                  padding: "1rem",
-                  borderRadius: "15px",
-                  border: "3px solid #1A1A1A",
-                  fontSize: "1.1rem",
-                  fontWeight: 800,
-                  background: "white",
-                  cursor: "pointer"
-                }}
+                style={{ ...inputSurfaceStyle, fontWeight: 800, cursor: "pointer" }}
               >
                 <option value="escolar">Escolar Normal</option>
                 <option value="escolar-dot">Escolar Punteada</option>
@@ -496,7 +671,7 @@ export default function GeneradorMagico() {
             </section>
 
             <section>
-              <label style={{ fontWeight: 800, display: "block", marginBottom: "0.5rem", fontSize: "1.1rem" }}>📐 Formato de Pauta</label>
+              <label style={sectionLabelStyle}>📐 Formato de Pauta</label>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                 {[
                   { val: "pauta-guiada" as Formato, label: "Montessori" },
@@ -509,13 +684,14 @@ export default function GeneradorMagico() {
                     onClick={() => setFormato(f.val)}
                     style={{ 
                       padding: "12px", 
-                      borderRadius: "12px", 
-                      border: formato === f.val ? "4px solid #1A1A1A" : "2px solid #ddd",
-                      background: formato === f.val ? "var(--color-secondary)" : "#f8fafc",
+                      borderRadius: "var(--radius-md)", 
+                      border: formato === f.val ? "var(--border-thick)" : panelBorder,
+                      background: formato === f.val ? "var(--color-secondary)" : previewFrameBackground,
                       color: formato === f.val ? "white" : "#475569",
                       fontWeight: 800,
                       cursor: "pointer",
-                      fontSize: "0.95rem"
+                      fontSize: "0.95rem",
+                      boxShadow: formato === f.val ? mutedButtonShadow : "none",
                     }}
                   >
                     {f.label}
@@ -525,7 +701,7 @@ export default function GeneradorMagico() {
             </section>
 
             <section>
-              <label style={{ fontWeight: 800, display: "block", marginBottom: "0.75rem", fontSize: "1.1rem" }}>🖼️ Dibujo de Margen</label>
+              <label style={sectionLabelStyle}>🖼️ Dibujo de Margen</label>
               <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1rem" }}>
                 {(["sin", "con", "dibujo"] as Margen[]).map((m) => (
                   <button 
@@ -534,13 +710,14 @@ export default function GeneradorMagico() {
                     style={{ 
                       flex: 1,
                       padding: "12px", 
-                      borderRadius: "12px", 
-                      border: margen === m ? "3px solid #1A1A1A" : "2px solid #ddd",
-                      background: margen === m ? "var(--color-cta)" : "white",
+                      borderRadius: "var(--radius-md)", 
+                      border: margen === m ? "var(--border-thick)" : panelBorder,
+                      background: margen === m ? "var(--color-cta)" : isTinta ? "#FFFDF8" : "white",
                       color: margen === m ? "white" : "#1A1A1A",
                       fontWeight: 800,
                       cursor: "pointer",
-                      fontSize: "0.9rem"
+                      fontSize: "0.9rem",
+                      boxShadow: margen === m ? buttonShadow : "none",
                     }}
                   >
                     {m === "sin" ? "Sin" : m === "con" ? "Línea" : "Emoji"}
@@ -548,7 +725,7 @@ export default function GeneradorMagico() {
                 ))}
               </div>
               {margen === "dibujo" && (
-                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", background: "#f8fafc", padding: "15px", borderRadius: "15px" }}>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", background: previewFrameBackground, padding: "15px", borderRadius: "var(--radius-md)", border: panelBorder }}>
                   {(Object.keys(MARGEN_ICONS) as MargenDibujo[]).map((img) => (
                     <button
                       key={img}
@@ -556,15 +733,16 @@ export default function GeneradorMagico() {
                       style={{
                         width: "42px",
                         height: "42px",
-                        borderRadius: "10px",
-                        border: margenDibujo === img ? "3px solid #1A1A1A" : "1px solid transparent",
+                        borderRadius: "var(--radius-sm)",
+                        border: margenDibujo === img ? "var(--border-thick)" : "1px solid transparent",
                         background: "white",
                         cursor: "pointer",
                         fontSize: "1.4rem",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        transition: "all 0.1s"
+                        transition: "all 0.1s",
+                        boxShadow: margenDibujo === img ? mutedButtonShadow : "none",
                       }}
                     >
                       {MARGEN_ICONS[img]}
@@ -575,15 +753,15 @@ export default function GeneradorMagico() {
             </section>
 
             <section style={{ marginTop: "1rem" }}>
-              <label style={{ fontWeight: 800, display: "block", marginBottom: "0.75rem", fontSize: "1.1rem" }}>⚡ Plantillas rápidas</label>
+              <label style={sectionLabelStyle}>⚡ Plantillas rápidas</label>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                 <button
                   onClick={() => setLineas(plantillas.vocales)}
                   style={{
                     padding: "12px",
-                    border: "2px solid #ddd",
-                    borderRadius: "12px",
-                    background: "white",
+                    border: panelBorder,
+                    borderRadius: "var(--radius-md)",
+                    background: isTinta ? "#FFFDF8" : "white",
                     color: "#1A1A1A",
                     cursor: "pointer",
                     fontWeight: 700,
@@ -599,9 +777,9 @@ export default function GeneradorMagico() {
                   onClick={() => setLineas(plantillas.alfabeto)}
                   style={{
                     padding: "12px",
-                    border: "2px solid #ddd",
-                    borderRadius: "12px",
-                    background: "white",
+                    border: panelBorder,
+                    borderRadius: "var(--radius-md)",
+                    background: isTinta ? "#FFFDF8" : "white",
                     color: "#1A1A1A",
                     cursor: "pointer",
                     fontWeight: 700,
@@ -617,9 +795,9 @@ export default function GeneradorMagico() {
                   onClick={() => setLineas(plantillas.numeros)}
                   style={{
                     padding: "12px",
-                    border: "2px solid #ddd",
-                    borderRadius: "12px",
-                    background: "white",
+                    border: panelBorder,
+                    borderRadius: "var(--radius-md)",
+                    background: isTinta ? "#FFFDF8" : "white",
                     color: "#1A1A1A",
                     cursor: "pointer",
                     fontWeight: 700,
@@ -635,9 +813,9 @@ export default function GeneradorMagico() {
                   onClick={() => setLineas(plantillas.dias)}
                   style={{
                     padding: "12px",
-                    border: "2px solid #ddd",
-                    borderRadius: "12px",
-                    background: "white",
+                    border: panelBorder,
+                    borderRadius: "var(--radius-md)",
+                    background: isTinta ? "#FFFDF8" : "white",
                     color: "#1A1A1A",
                     cursor: "pointer",
                     fontWeight: 700,
@@ -657,13 +835,13 @@ export default function GeneradorMagico() {
                 <button onClick={generarAleatorio} style={{
                   flex: 1,
                   padding: "16px",
-                  border: "3px solid #1A1A1A",
-                  borderRadius: "15px",
+                  border: "var(--border-thick)",
+                  borderRadius: "var(--radius-md)",
                   background: "var(--color-success)",
                   color: "white",
                   cursor: "pointer",
                   fontWeight: 900,
-                  boxShadow: "6px 6px 0 #1A1A1A",
+                  boxShadow: mutedButtonShadow,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -677,13 +855,13 @@ export default function GeneradorMagico() {
                   style={{
                     flex: 1.5,
                     padding: "16px",
-                    border: "3px solid #1A1A1A",
-                    borderRadius: "15px",
+                    border: "var(--border-thick)",
+                    borderRadius: "var(--radius-md)",
                     background: "var(--color-cta)",
                     color: "white",
                     cursor: "pointer",
                     fontWeight: 900,
-                    boxShadow: "6px 6px 0 #1A1A1A",
+                    boxShadow: buttonShadow,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -698,13 +876,13 @@ export default function GeneradorMagico() {
                 onClick={descargarPDF}
                 style={{
                   padding: "16px",
-                  border: "3px solid #1A1A1A",
-                  borderRadius: "15px",
-                  background: "#16a34a",
+                  border: "var(--border-thick)",
+                  borderRadius: "var(--radius-md)",
+                  background: "var(--color-cta)",
                   color: "white",
                   cursor: "pointer",
                   fontWeight: 900,
-                  boxShadow: "6px 6px 0 #1A1A1A",
+                  boxShadow: buttonShadow,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -721,8 +899,7 @@ export default function GeneradorMagico() {
 
         {/* ÁREA PRINCIPAL: PREVIEW DE LA FICHA */}
         <section style={{ 
-          flex: "1 1 600px", 
-          padding: "1rem", 
+          padding: 0,
           display: "flex", 
           flexDirection: "column",
           alignItems: "center"
@@ -730,11 +907,11 @@ export default function GeneradorMagico() {
           <div style={{ 
             width: "100%", 
             maxWidth: "900px",
-            background: "white", 
+            background: panelBackground,
             padding: "2rem", 
             borderRadius: "var(--radius-lg)", 
-            border: "var(--border-thick)", 
-            boxShadow: "var(--shadow-flat)",
+            border: panelBorder,
+            boxShadow: panelShadow,
             position: "relative"
           }}>
             <div style={{ 
@@ -742,42 +919,42 @@ export default function GeneradorMagico() {
                justifyContent: "space-between", 
                alignItems: "center", 
                marginBottom: "1.5rem",
-               borderBottom: "2px dashed #e2e8f0",
+               borderBottom: isTinta ? "1px dashed #D4C9B5" : "2px dashed #E2E8F0",
                paddingBottom: "1rem"
             }}>
               <div>
-                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.8rem", color: "var(--color-primary)" }}>
-                  Tu Obra Maestra ✨
+                <h3 style={{ fontFamily: "var(--font-display)", fontStyle: isTinta ? "italic" : "normal", fontSize: "1.8rem", color: "var(--color-primary)" }}>
+                  {previewTitle}
                 </h3>
                 <p style={{ color: "#64748b", fontWeight: 700, fontSize: "0.9rem" }}>
                   Vista previa en tiempo real
                 </p>
               </div>
               <div style={{ 
-                background: "var(--color-secondary)", 
+                background: isTinta ? "var(--color-cta)" : "var(--color-secondary)", 
                 color: "white", 
                 padding: "8px 16px", 
-                borderRadius: "50px", 
+                borderRadius: isTinta ? "999px" : "50px", 
                 fontWeight: 800,
                 fontSize: "0.8rem",
-                border: "2px solid #1A1A1A"
+                border: panelBorder
               }}>
-                CALIDAD HD
+                {previewBadge}
               </div>
             </div>
 
             <div style={{ 
-              background: "#F8FAFC", 
-              borderRadius: "15px", 
+              background: previewFrameBackground, 
+              borderRadius: "var(--radius-md)", 
               padding: "2rem",
-              border: "2px solid #E2E8F0",
+              border: panelBorder,
               display: "flex",
               justifyContent: "center",
-              boxShadow: "inset 0 2px 10px rgba(0,0,0,0.05)"
+              boxShadow: isTinta ? "inset 0 2px 12px rgba(27,43,75,0.04)" : "inset 0 2px 10px rgba(0,0,0,0.05)"
             }}>
               <div style={{ 
                 background: "white", 
-                boxShadow: "0 10px 30px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.05)",
+                boxShadow: previewInnerShadow,
                 lineHeight: 0,
                 borderRadius: "4px",
                 overflow: "hidden"
@@ -800,11 +977,11 @@ export default function GeneradorMagico() {
               marginTop: "1.5rem",
               textAlign: "center",
               padding: "1rem",
-              background: "#fff7ed",
-              borderRadius: "15px",
-              border: "1px solid #ffedd5"
+              background: tipBackground,
+              borderRadius: "var(--radius-md)",
+              border: tipBorder
             }}>
-              <p style={{ fontSize: "0.9rem", color: "#92400e", fontWeight: 700 }}>
+              <p style={{ fontSize: "0.9rem", color: tipTextColor, fontWeight: 700 }}>
                 💡 <strong>Consejo:</strong> Si las palabras se salen del margen, intenta reducir el tamaño de letra o usar frases más cortas.
               </p>
             </div>
@@ -812,9 +989,9 @@ export default function GeneradorMagico() {
             <div style={{
               marginTop: "2rem",
               padding: "2rem",
-              background: "linear-gradient(135deg, #f0f9ff 0%, #f0fdf4 100%)",
-              borderRadius: "15px",
-              border: "2px solid #0EA5E9",
+              background: ctaPanelBackground,
+              borderRadius: "var(--radius-lg)",
+              border: ctaPanelBorder,
               textAlign: "center"
             }}>
               <p style={{ fontSize: "0.95rem", color: "#475569", marginBottom: "1rem", fontWeight: 700 }}>
@@ -823,13 +1000,13 @@ export default function GeneradorMagico() {
               <Link href="/caligrafiate" style={{
                 display: "inline-block",
                 padding: "12px 28px",
-                background: "var(--color-secondary)",
+                background: isTinta ? "var(--color-cta)" : "var(--color-secondary)",
                 color: "white",
-                borderRadius: "100px",
+                borderRadius: isTinta ? "999px" : "100px",
                 fontWeight: 800,
                 textDecoration: "none",
                 border: "var(--border-thick)",
-                boxShadow: "4px 4px 0 #1a1a1a",
+                boxShadow: buttonShadow,
                 fontSize: "0.95rem",
                 transition: "transform 0.1s ease, box-shadow 0.1s ease"
               }}>
@@ -839,6 +1016,22 @@ export default function GeneradorMagico() {
           </div>
         </section>
 
+          </div>
+        </div>
+        <style>{`
+          @media (max-width: 1100px) {
+            .generador-hero-grid,
+            .generador-layout-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+
+          @media (max-width: 768px) {
+            .generador-hero-grid {
+              gap: 1rem !important;
+            }
+          }
+        `}</style>
       </main>
     </div>
   );
