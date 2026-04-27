@@ -34,7 +34,7 @@ export const Header = () => {
             letterSpacing: "-0.5px",
             margin: 0
           }}>
-            CALIGRA-FÃATE
+            CALIGRA-FÍATE
           </h1>
         </div>
       </Link>
@@ -52,7 +52,7 @@ export const Header = () => {
           transition: "color 0.2s",
           padding: "6px 12px",
         }} className="nav-link">
-          <BookIcon /> ColecciÃ³n
+          <BookIcon /> Colección
         </Link>
         <Link href="/generador" style={{
           display: "flex",
@@ -104,9 +104,9 @@ export const Header = () => {
           flexShrink: 0,
         }}
         className="hamburger-btn"
-        aria-label="Abrir menÃº"
+        aria-label="Abrir menú"
       >
-        {isMenuOpen ? "âœ•" : "â˜°"}
+        {isMenuOpen ? "✕" : "☰"}
       </button>
 
       {/* Mobile Menu */}
@@ -140,7 +140,7 @@ export const Header = () => {
             textDecoration: "none",
             padding: "0.5rem 0",
           }} onClick={() => setIsMenuOpen(false)}>
-            <BookIcon /> ColecciÃ³n
+            <BookIcon /> Colección
           </Link>
           <Link href="/generador" style={{
             display: "flex",

@@ -4,8 +4,8 @@ import { MailIcon, InstagramIcon, FacebookIcon, TikTokIcon } from "@/components/
 import { ThemeProvider, ThemeScript } from "@/contexts/ThemeContext";
 
 export const metadata: Metadata = {
-  title: "Caligra-FÃ­ate - El Arte de la CaligrafÃ­a",
-  description: "Domina el arte de la escritura. Nuestra plataforma educativa combina pedagogÃ­a clÃ¡sica con refinamiento artÃ­stico para perfeccionar cada trazo.",
+  title: "Caligra-Fíate - El Arte de la Caligrafía",
+  description: "Domina el arte de la escritura. Nuestra plataforma educativa combina pedagogía clásica con refinamiento artístico para perfeccionar cada trazo.",
 };
 
 import { SecretTrigger } from "@/components/SecretTrigger";
@@ -24,7 +24,7 @@ export default function RootLayout({
 
   return (
     <html lang="es">
-      <body>
+      <body suppressHydrationWarning>
         <ThemeScript />
         <ThemeProvider>
           <SecretTrigger />
@@ -33,12 +33,12 @@ export default function RootLayout({
             <div className="siteFooterInner">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "2rem", marginBottom: "2rem" }}>
                 <div>
-                  <p className="siteFooterTitle">Siguenos y contacta</p>
+                  <p className="siteFooterTitle">Síguenos y contacta</p>
                   <p className="siteFooterSubtitle">Accede a nuestros perfiles oficiales y al correo de contacto.</p>
                 </div>
                 <div style={{ paddingBottom: "0.5rem" }}>
                    <p style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--color-primary)" }}>
-                     Â© {new Date().getFullYear()} Caligra-FÃ­ate. Todos los derechos reservados.
+                     © {new Date().getFullYear()} Caligra-Fíate. Todos los derechos reservados.
                    </p>
                 </div>
               </div>
